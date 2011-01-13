@@ -1,5 +1,5 @@
 '''
-slinqer.py A module for LINQ-like facility in Python
+queryable.py A module for LINQ-like facility in Python.
 '''
 
 import heapq
@@ -18,7 +18,6 @@ class Queryable(object):
 
     def __init__(self, iterable):
         self._iterator = iter(iterable)
-
 
     def __iter__(self):
         return self._iterator

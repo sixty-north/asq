@@ -1,5 +1,11 @@
 syntax: glob
+# Python development
 *.pyc
+
+# Distutils
+dist/*
+
+# PyCharm
 .idea/*
 *.iml
 
