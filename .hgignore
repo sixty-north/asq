@@ -1,6 +1,8 @@
 syntax: glob
 *.pyc
+.idea/*
+*.iml
 
 syntax: regexp
 .*~
-.idea/*
+
