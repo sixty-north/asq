@@ -9,6 +9,7 @@ import functools
 default = object()
 
 def identity(x):
+    '''The identity function.'''
     return x
 
 def using(iterable):

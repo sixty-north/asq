@@ -3,6 +3,7 @@ syntax: glob
 *.pyc
 
 # Distutils
+build/*
 dist/*
 
 # PyCharm
