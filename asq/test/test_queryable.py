@@ -1,14 +1,10 @@
 '''
-test_queryable.py Unit tests for slinqer.Queryable
+test_queryable.py Unit tests for asq.queryable.Queryable
 '''
 
 import unittest
 
 from asq.queryable import Queryable, identity
-from asq.parallel_queryable import ParallelQueryable
-
-def identity(x):
-    return x
 
 def times_two(x):
     return 2 * x

@@ -36,6 +36,7 @@ class ParallelQueryable(Queryable):
     def close(self):
         if self._own_pool:
             self._pool.close()
+        super(ParallelQueryable, self).close()
 
     def select(self, selector):
         '''Transforms each element of a sequence into a new form.

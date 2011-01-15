@@ -12,15 +12,54 @@ def identity(x):
     '''The identity function.'''
     return x
 
-def using(iterable):
+def asq(iterable):
+    '''Create a Queryable object from any iterable.
+
+    Currently this factory only provides support for objects supporting the
+    iterator protocol.  Future implementations may support other providers.
+
+    Args:
+        iterable: Any object supporting the iterator protocol.
+
+    Returns:
+        An instance of Queryable.
+    '''
     return Queryable(iterable)
 
 class Queryable(object):
+    '''Queryable supports all of the chainable query methods implemented in a serial fashion,
+
+    Queryable objects are constructed from iterables.
+    '''
 
     def __init__(self, iterable):
+        '''Construct a Queryable from any iterable.
+
+        Args:
+            iterable: Any object supporting the iterator protocol.
+            
+        Raises:
+            ValueError: if iterable is None
+            TypeError: if iterable does not support the iterator protocol.
+
+        '''
+        if iterable is None:
+            raise ValueError("Cannot create Queryable from None type.")
+
+        self._iterable = iterable
         self._iterator = iter(iterable)
 
     def __iter__(self):
+        '''Support for the iterator protocol.
+
+        Allows Queryable instances to be used anywhere an iterable is required.
+
+        Raises:
+            ValueError: If the Queryable has been closed().
+        '''
+        if self.closed():
+            raise ValueError("Attempt to use closed() Queryable")
+
         return self._iterator
 
     def _create(self, iterable):
@@ -36,8 +75,21 @@ class Queryable(object):
         self.close()
         return False
 
+    def closed(self):
+        '''Determine whether the Queryable has been closed.
+
+        Returns:
+            True if closed, otherwise False.
+        '''
+        return self._iterable is None and self._iterator is None
+
     def close(self):
-        pass
+        '''Closes the queryable.
+
+        The Queryable should not be used following a call to close. This method is idempotent.
+        '''
+        self._iterable = None
+        self._iterator = None
 
     def select(self, selector):
         '''Transforms each element of a sequence into a new form.
@@ -59,7 +111,14 @@ class Queryable(object):
         Returns:
             A generated sequence whose elements are the result of invoking the selector function on each element of the
             source sequence.
+
+        Raises:
+            ValueError: If this Queryable has been closed.
+            TypeError: If selector is not callable.
         '''
+        if self.closed():
+            raise ValueError("Attempt to call select() on a closed Queryable.")
+
         return self._create(map(selector, iter(self)))
 
 
@@ -84,7 +143,14 @@ class Queryable(object):
         Returns:
             A generated sequence whose elements are the result of invoking the selector function on each element of the
             source sequence
+
+        Raises:
+            ValueError: If this Queryable has been closed.
+            TypeError: If selector is not callable.
         '''
+        if self.closed():
+            raise ValueError("Attempt to call select_with_index() on a closed Queryable.")
+
         return self._create(itertools.starmap(selector, enumerate(iter(self))))
 
     def select_many(self, projector, selector=identity):
@@ -116,7 +182,14 @@ class Queryable(object):
         Returns:
             A generated sequence whose elements are the result of projecting each element of the source sequence using
             projector function and then mapping each element through an optional selector function.
+
+        Raises:
+            ValueError: If this Queryable has been closed.
+            TypeError: If projector [and selector] are not callable.
         '''
+        if self.closed():
+            raise ValueError("Attempt to call select_many() on a closed Queryable.")
+
         sequences = (self._create(item).select(projector) for item in iter(self))
         chained_sequence = itertools.chain.from_iterable(sequences)
         return self._create(map(selector, chained_sequence))
@@ -152,7 +225,14 @@ class Queryable(object):
         Returns:
             A generated sequence whose elements are the result of projecting each element of the source sequence using
             projector function and then mapping each element through an optional selector function.
+
+        Raises:
+            ValueError: If this Queryable has been closed.
+            TypeError: If projector [and selector] are not callable.
         '''
+        if self.closed():
+            raise ValueError("Attempt to call select_many_with_index() on a closed Queryable.")
+
         sequences = self.select_with_index(projector)
         chained_sequence = itertools.chain.from_iterable(sequences)
         return self._create(map(selector, chained_sequence))
@@ -187,16 +267,20 @@ class Queryable(object):
                 Returns:
                     The selected value derived from the element value
 
+        Raises:
+            ValueError: If this Queryable has been closed.
+            TypeError: If projector or selector are not callable.
         '''
+
+        if self.closed():
+            raise ValueError("Attempt to call select_many_with_index() on a closed Queryable.")
 
         corresponding_projector = lambda x: (x, projector(x))
         corresponding_selector = lambda x_y : selector(x_y[0], x_y[1])
 
         sequences = self.select_many(corresponding_projector)
-        print(sequences)
         chained_sequence = itertools.chain.from_iterable(sequences)
         return self._create(map(corresponding_selector, chained_sequence))
-
 
     def group_by(self, func=identity):
         return self._create(itertools.groupby(self.order_by(func), func))
@@ -254,17 +338,29 @@ class Queryable(object):
         return self._create(iter(lst))
 
     def element_at(self, index):
+        # Attempt to use __getitem__
+        try:
+            return self._iterable[index]
+        except TypeError:
+            pass
 
-        def element_at_result():
-            for i, item in enumerate(iter(self)):
-                if i == index:
-                    yield item
-                    break
-
-        return self._create(element_at_result())
+        # Fall back to iterating
+        for i, item in enumerate(iter(self)):
+            if i == index:
+                return item
+        raise IndexError("element_at(index) out of range.")
+            
 
     def count(self):
-        
+        '''Return the number of elements in the iterable'''
+
+        # Attempt to use len()
+        try:
+            return len(self._iterable)
+        except TypeError:
+            pass
+
+        # Fall back to iterating
         index = -1
 
         for index, item in enumerate(iter(self)):
@@ -294,10 +390,8 @@ class Queryable(object):
         return total / index
 
     def contains(self, value):
-        for item in iter(self):
-            if item == value:
-                return True
-        return False
+        # Test that this works with objects supporting only __contains__, __getitem__ and __iter__
+        return value in self._iterable
 
     def default_if_empty(self, default):
         # Try to get an element from the iterator, if we succeed, the sequence
@@ -444,6 +538,17 @@ class Queryable(object):
         from .parallel_queryable import ParallelQueryable
         return ParallelQueryable(self, pool)
 
+    # Methods for more Pythonic usage
+
+    def __len__(self):
+        return self.count()
+
+    def __contains__(self, item):
+        return self.contains(item)
+
+    def __getitem__(self, index):
+        return self.element_at(index)
+
     def __str__(self):
         return repr(self)
 
@@ -451,9 +556,14 @@ class Queryable(object):
         return ', '.join(map(repr, self))
 
 class OrderedQueryable(Queryable):
+    '''A Queryable representing an ordered iterable.
+
+    The sorting implemented by this class in that a partial sort is performed so you don't pay
+    for sorting results which are never enumerated.'''
 
     def __init__(self, iterable, order, func):
-        '''
+        '''Create an OrderedIterable.
+
             Args:
                 iterable: The iterable sequence to be ordered
                 order: +1 for ascending, -1 for descending
@@ -481,11 +591,14 @@ class OrderedQueryable(Queryable):
         directions = [direction for direction, _ in self._funcs]
         direction_total = sum(directions)
         if direction_total == -len(self._funcs):
+            # Uniform ascending sort - do nothing
             pass
         elif direction_total == len(self._funcs):
             # Uniform descending sort - swap the comparison operators
             SortingTuple.__lt__, SortingTyple.__gt__ = SortingTuple.__gt__, SortingTyple.__lt__
         else:
+            # TODO: We could use fome runtime code generation here to compile a custom
+            #       comparison operator
             # Mixed ascending/descending sort
             def less(lhs, rhs):
                 for direction, lhs_element, rhs_element in zip(directions, lhs, rhs):
@@ -503,6 +616,8 @@ class OrderedQueryable(Queryable):
         while lst:
             key, item = heapq.heappop(lst)
             yield item
+
+    # TODO: For some operators (such as contains(), or count() we can avoid sorting...
 
     
 
