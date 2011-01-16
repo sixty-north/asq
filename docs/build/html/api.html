@@ -1,0 +1,751 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API &mdash; asq v0.5 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="asq v0.5 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to asq’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to asq’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">asq v0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api">
+<span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<p>You can find some basic API information here.</p>
+<div class="section" id="serial-asq">
+<h2>Serial asq<a class="headerlink" href="#serial-asq" title="Permalink to this headline">¶</a></h2>
+<p>In this section we cover some basics about <cite>asq</cite>&#8216;s serial
+API which performs query operations in a single thread or process.</p>
+<span class="target" id="module-asq.queryable"></span><p>queryable.py A module for LINQ-like facility in Python.</p>
+<dl class="class">
+<dt id="asq.queryable.OrderedQueryable">
+<em class="property">class </em><tt class="descclassname">asq.queryable.</tt><tt class="descname">OrderedQueryable</tt><big>(</big><em>iterable</em>, <em>order</em>, <em>func</em><big>)</big><a class="headerlink" href="#asq.queryable.OrderedQueryable" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="asq.queryable.OrderedQueryable.then_by">
+<tt class="descname">then_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.OrderedQueryable.then_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.OrderedQueryable.then_by_descending">
+<tt class="descname">then_by_descending</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.OrderedQueryable.then_by_descending" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="asq.queryable.Queryable">
+<em class="property">class </em><tt class="descclassname">asq.queryable.</tt><tt class="descname">Queryable</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="asq.queryable.Queryable.aggregate">
+<tt class="descname">aggregate</tt><big>(</big><em>func</em>, <em>seed=&lt;object object at 0x403a8a98&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.aggregate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.all">
+<tt class="descname">all</tt><big>(</big><em>predicate=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.any">
+<tt class="descname">any</tt><big>(</big><em>predicate=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.any" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.as_parallel">
+<tt class="descname">as_parallel</tt><big>(</big><em>pool=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.as_parallel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.average">
+<tt class="descname">average</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.average" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.concat">
+<tt class="descname">concat</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.concat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.contains">
+<tt class="descname">contains</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.contains" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.count">
+<tt class="descname">count</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.default_if_empty">
+<tt class="descname">default_if_empty</tt><big>(</big><em>default</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.default_if_empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.difference">
+<tt class="descname">difference</tt><big>(</big><em>second_iterable</em>, <em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.difference" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.distinct">
+<tt class="descname">distinct</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.distinct" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.element_at">
+<tt class="descname">element_at</tt><big>(</big><em>index</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.element_at" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.empty">
+<tt class="descname">empty</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.first">
+<tt class="descname">first</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.first" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.first_or_default">
+<tt class="descname">first_or_default</tt><big>(</big><em>default</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.first_or_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.group_by">
+<tt class="descname">group_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.group_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.intersect">
+<tt class="descname">intersect</tt><big>(</big><em>second_iterable</em>, <em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.intersect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.join">
+<tt class="descname">join</tt><big>(</big><em>inner_iterable</em>, <em>outer_key_func=&lt;function identity at 0xad3464c&gt;</em>, <em>inner_key_func=&lt;function identity at 0xad3464c&gt;</em>, <em>result_func=&lt;function &lt;lambda&gt; at 0xad34fb4&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.join" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.last">
+<tt class="descname">last</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.last" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.last_or_default">
+<tt class="descname">last_or_default</tt><big>(</big><em>default</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.last_or_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.max">
+<tt class="descname">max</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.min">
+<tt class="descname">min</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.of_type">
+<tt class="descname">of_type</tt><big>(</big><em>type</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.of_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.order_by">
+<tt class="descname">order_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.order_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.order_by_descending">
+<tt class="descname">order_by_descending</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.order_by_descending" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.range">
+<tt class="descname">range</tt><big>(</big><em>start</em>, <em>count</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.repeat">
+<tt class="descname">repeat</tt><big>(</big><em>element</em>, <em>count</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.repeat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.reverse">
+<tt class="descname">reverse</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.reverse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.select">
+<tt class="descname">select</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms each element of a sequence into a new form.</p>
+<p>Each element is transformed through a selector function to produce a value for each value in the source
+sequence. The generated sequence is lazily evaluated.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>selector: A unary function mapping a value in the source sequence to the corresponding value in the generated</dt>
+<dd><p class="first">generated sequence. The argument of the selector function
+(which can have any name) is,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the element value</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
+source sequence.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.select_many">
+<tt class="descname">select_many</tt><big>(</big><em>projector</em>, <em>selector=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects each element of a sequence to an intermediate new sequence, flattens the resulting sequence into one
+sequence and optionally transforms the flattened sequence using a selector function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no</dt>
+<dd><p class="first">projection function is provided, the intermediate sequence will consist of the single corresponding
+element from the source sequence. The projector function argument (which can have any name) and return
+values are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>An iterable derived from the element value</dd>
+</dl>
+</dd>
+<dt>selector: An optional unary functon mapping the elements in the flattened intermediate sequence to</dt>
+<dd><p class="first">corresponding elements of the result sequence. If no selector function is provided, the identity
+function is used.  The selector function argument and return values are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>element: The value of the intermediate element from the concatenated sequences arising from the</dt>
+<dd>projector function.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the element value</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A generated sequence whose elements are the result of projecting each element of the source sequence using
+projector function and then mapping each element through an optional selector function.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.select_many_with_correspondence">
+<tt class="descname">select_many_with_correspondence</tt><big>(</big><em>projector=&lt;function &lt;lambda&gt; at 0xad3495c&gt;</em>, <em>selector=&lt;function &lt;lambda&gt; at 0xad34994&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many_with_correspondence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects each element of a sequence to an intermediate new sequence, and flattens the resulting sequence,
+into one sequence and uses a selector function to incorporate the corresponding source for each item in the
+result sequence.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no</dt>
+<dd><p class="first">projection function is provided, the intermediate sequence will consist of the single corresponding
+element from the source sequence. The projector function argument (which can have any name) and return
+values are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>source_element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>An iterable derived from the element value</dd>
+</dl>
+</dd>
+<dt>selector: An optional unary functon mapping the elements in the flattened intermediate sequence to</dt>
+<dd><p class="first">corresponding elements of the result sequence. If no selector function is provided, the identity
+function is used.  The selector function argument and return values are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd><p class="first">source_element: The corresponding source element</p>
+<dl class="last docutils">
+<dt>element: The value of the intermediate element from the concatenated sequences arising from the</dt>
+<dd>projector function.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the element value</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.select_many_with_index">
+<tt class="descname">select_many_with_index</tt><big>(</big><em>projector=&lt;function &lt;lambda&gt; at 0xad348ec&gt;</em>, <em>selector=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many_with_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects each element of a sequence to an intermediate new sequence, incorporating the index of the element,
+flattens the resulting sequence into one sequence and optionally transforms the flattened sequence using a
+selector function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no</dt>
+<dd><p class="first">projection function is provided, the intermediate sequence will consist of the single corresponding
+element from the source sequence. The projector function argument (which can have any name) and return
+values are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>index: The index of the element in the source sequence
+element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>An iterable derived from the element value</dd>
+</dl>
+</dd>
+<dt>selector: An optional unary functon mapping the elements in the flattened intermediate sequence to</dt>
+<dd><p class="first">corresponding elements of the result sequence. If no selector function is provided, the identity
+function is used.  The selector function argument and return values are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>element: The value of the intermediate element from the concatenated sequences arising from the</dt>
+<dd>projector function.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the element value</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A generated sequence whose elements are the result of projecting each element of the source sequence using
+projector function and then mapping each element through an optional selector function.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.select_with_index">
+<tt class="descname">select_with_index</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_with_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms each element of a sequence into a new form, incorporating the index of the element.</p>
+<p>Each element is transformed through a selector function which accepts the element value and its zero-based index
+in the source sequence. The generated sequence is lazily evaluated.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>selector: A two argument function mapping the index of a value in the source sequence and the element value</dt>
+<dd><p class="first">itself to the corresponding value in the generated sequence. The two arguments of the selector function
+(which can have any names) and its return value are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>index: The zero-based index of the element
+element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the index and element</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
+source sequence</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.skip">
+<tt class="descname">skip</tt><big>(</big><em>n=1</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.skip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.skip_while">
+<tt class="descname">skip_while</tt><big>(</big><em>predicate</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.skip_while" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.sum">
+<tt class="descname">sum</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.sum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.take">
+<tt class="descname">take</tt><big>(</big><em>n=1</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.take" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.take_while">
+<tt class="descname">take_while</tt><big>(</big><em>predicate</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.take_while" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.to_list">
+<tt class="descname">to_list</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.to_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.to_tuple">
+<tt class="descname">to_tuple</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.to_tuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.union">
+<tt class="descname">union</tt><big>(</big><em>second_iterable</em>, <em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.union" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.where">
+<tt class="descname">where</tt><big>(</big><em>predicate</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.where" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.zip">
+<tt class="descname">zip</tt><big>(</big><em>second_iterable</em>, <em>func=&lt;function &lt;lambda&gt; at 0xad3b1ec&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.zip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="asq.queryable.identity">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">identity</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#asq.queryable.identity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="asq.queryable.my_range">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">my_range</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#asq.queryable.my_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="asq.queryable.using">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">using</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.queryable.using" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="parallel-asq">
+<h2>Parallel asq<a class="headerlink" href="#parallel-asq" title="Permalink to this headline">¶</a></h2>
+<p>In this section we cover some basics about <cite>asq</cite>&#8216;s parallel
+API which performs query operations across multiple threads or processes.</p>
+<span class="target" id="module-asq.parallel_queryable"></span><dl class="class">
+<dt id="asq.parallel_queryable.OrderedParallelQueryable">
+<em class="property">class </em><tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">OrderedParallelQueryable</tt><big>(</big><em>iterable</em>, <em>func=None</em>, <em>pool=None</em>, <em>chunksize=1</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="asq.parallel_queryable.OrderedParallelQueryable.as_unordered">
+<tt class="descname">as_unordered</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable.as_unordered" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.OrderedParallelQueryable.create">
+<tt class="descname">create</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.OrderedParallelQueryable.select">
+<tt class="descname">select</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms each element of a sequence into a new form.</p>
+<p>Each element is transformed through a selector function to produce a value for each value in the source
+sequence. The generated sequence is lazily evaluated.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>selector: A unary function mapping a value in the source sequence to the corresponding value in the generated</dt>
+<dd><p class="first">generated sequence. The argument of the selector function
+(which can have any name) is,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the element value</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
+source sequence.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.OrderedParallelQueryable.then_by">
+<tt class="descname">then_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable.then_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="asq.parallel_queryable.ParallelQueryable">
+<em class="property">class </em><tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">ParallelQueryable</tt><big>(</big><em>iterable</em>, <em>pool=None</em>, <em>chunksize=1</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A parallel version of Queryable using the multiprocessing module.</p>
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.aggregate">
+<tt class="descname">aggregate</tt><big>(</big><em>func</em>, <em>seed=&lt;object object at 0x403a8a98&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.aggregate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.as_ordered">
+<tt class="descname">as_ordered</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.as_ordered" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.as_sequential">
+<tt class="descname">as_sequential</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.as_sequential" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.group_by">
+<tt class="descname">group_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.group_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.order_by">
+<tt class="descname">order_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.order_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.select">
+<tt class="descname">select</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms each element of a sequence into a new form.</p>
+<p>Each element is transformed through a selector function to produce a value for each value in the source
+sequence. The generated sequence is lazily evaluated.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>selector: A unary function mapping a value in the source sequence to the corresponding value in the generated</dt>
+<dd><p class="first">generated sequence. The argument of the selector function
+(which can have any name) is,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the element value</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
+source sequence.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.select_many">
+<tt class="descname">select_many</tt><big>(</big><em>projector</em>, <em>selector=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects each element of a sequence to an intermediate new sequence, flattens the resulting sequence into one
+sequence and optionally transforms the flattened sequence using a selector function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no</dt>
+<dd><p class="first">projection function is provided, the intermediate sequence will consist of the single corresponding
+element from the source sequence. The projector function argument (which can have any name) and return
+values are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>An iterable derived from the element value</dd>
+</dl>
+</dd>
+<dt>selector: An optional unary functon mapping the elements in the flattened intermediate sequence to</dt>
+<dd><p class="first">corresponding elements of the result sequence. If no selector function is provided, the identity
+function is used.  The selector function argument and return values are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>element: The value of the intermediate element from the concatenated sequences arising from the</dt>
+<dd>projector function.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the element value</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A generated sequence whose elements are the result of projecting each element of the source sequence using
+projector function and then mapping each element through an optional selector function.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.select_many_with_correspondence">
+<tt class="descname">select_many_with_correspondence</tt><big>(</big><em>projector=&lt;function &lt;lambda&gt; at 0xb0655dc&gt;</em>, <em>selector=&lt;function &lt;lambda&gt; at 0xb065614&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select_many_with_correspondence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.select_many_with_index">
+<tt class="descname">select_many_with_index</tt><big>(</big><em>projector=&lt;function &lt;lambda&gt; at 0xb06556c&gt;</em>, <em>selector=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select_many_with_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.select_with_index">
+<tt class="descname">select_with_index</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select_with_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms each element of a sequence into a new form, incorporating the index of the element.</p>
+<p>Each element is transformed through a selector function which accepts the element value and its zero-based index
+in the source sequence. The generated sequence is lazily evaluated.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>selector: A two argument function mapping the index of a value in the source sequence and the element value</dt>
+<dd><p class="first">itself to the corresponding value in the generated sequence. The two arguments of the selector function
+(which can have any names) and its return value are,</p>
+<dl class="last docutils">
+<dt>Args:</dt>
+<dd>index: The zero-based index of the element
+element: The value of the element</dd>
+<dt>Returns:</dt>
+<dd>The selected value derived from the index and element</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
+source sequence</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.parallel_queryable.ParallelQueryable.where">
+<tt class="descname">where</tt><big>(</big><em>predicate</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.where" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="asq.parallel_queryable.partition">
+<tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">partition</tt><big>(</big><em>iterable</em>, <em>floor=1</em>, <em>ceiling=32768</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.partition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Partition an iterable into chunks.  Returns an iterator over partitions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="asq.parallel_queryable.realize_partitions">
+<tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">realize_partitions</tt><big>(</big><em>iterable</em>, <em>floor=1</em>, <em>ceiling=32768</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.realize_partitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Partition the input sequence into a list of lists</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="asq.parallel_queryable.sorter">
+<tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">sorter</tt><big>(</big><em>funcs_iterable</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.sorter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="asq.parallel_queryable.star">
+<tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">star</tt><big>(</big><em>func_and_args</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.star" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#serial-asq">Serial asq</a></li>
+<li><a class="reference internal" href="#parallel-asq">Parallel asq</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to asq&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to asq’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">asq v0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Robert Smallshire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.6.
+    </div>
+  </body>
+</html>
