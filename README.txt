@@ -1,4 +1,4 @@
-Asq
+asq
 ===
 
 A simple implementation of a LINQ-inspired API for Python which operates over
