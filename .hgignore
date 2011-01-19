@@ -1,0 +1,15 @@
+syntax: glob
+# Python development
+*.pyc
+
+# Distutils
+build/lib.*
+dist/*
+
+# PyCharm
+.idea/*
+*.iml
+
+syntax: regexp
+.*~
+
