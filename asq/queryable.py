@@ -5,6 +5,9 @@ queryable.py A module for LINQ-like facility in Python.
 import heapq
 import itertools
 import functools
+import sys
+from asq.lookup import Lookup
+
 
 default = object()
 
@@ -46,8 +49,10 @@ class Queryable(object):
         if iterable is None:
             raise ValueError("Cannot create Queryable from None type.")
 
+        #iter(iterable) # Simply to check that iterable is in fact iterable
+
         self._iterable = iterable
-        self._iterator = iter(iterable)
+        #self._iterator = iter(iterable)
 
     def __iter__(self):
         '''Support for the iterator protocol.
@@ -60,7 +65,11 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to use closed() Queryable")
 
-        return self._iterator
+        #for item in iter(self._iterable):
+        #    print item
+        #    yield item
+
+        return iter(self._iterable)
 
     def _create(self, iterable):
         return Queryable(iterable)
@@ -81,7 +90,7 @@ class Queryable(object):
         Returns:
             True if closed, otherwise False.
         '''
-        return self._iterable is None and self._iterator is None
+        return self._iterable is None# and self._iterator is None
 
     def close(self):
         '''Closes the queryable.
@@ -89,7 +98,7 @@ class Queryable(object):
         The Queryable should not be used following a call to close. This method is idempotent.
         '''
         self._iterable = None
-        self._iterator = None
+        #self._iterator = None
 
     def select(self, selector):
         '''Transforms each element of a sequence into a new form.
@@ -139,7 +148,7 @@ class Queryable(object):
 
                 Returns:
                     The selected value derived from the index and element
-
+corresponding_projector
         Returns:
             A generated sequence whose elements are the result of invoking the selector function on each element of the
             source sequence
@@ -194,7 +203,7 @@ class Queryable(object):
         chained_sequence = itertools.chain.from_iterable(sequences)
         return self._create(map(selector, chained_sequence))
         
-    def select_many_with_index(self, projector=lambda i,x:[x], selector=identity):
+    def select_many_with_index(self, projector=lambda i,x:iter(x), selector=identity):
         '''Projects each element of a sequence to an intermediate new sequence, incorporating the index of the element,
         flattens the resulting sequence into one sequence and optionally transforms the flattened sequence using a
         selector function.
@@ -237,24 +246,27 @@ class Queryable(object):
         chained_sequence = itertools.chain.from_iterable(sequences)
         return self._create(map(selector, chained_sequence))
 
-    def select_many_with_correspondence(self, projector=lambda x:[x], selector=lambda x, y: y):
+    def select_many_with_correspondence(self, projector=iter, selector=lambda x, y: y):
         '''Projects each element of a sequence to an intermediate new sequence, and flattens the resulting sequence,
         into one sequence and uses a selector function to incorporate the corresponding source for each item in the
         result sequence.
 
         Args:
-            projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no
+            projector: A unary function mapping each ele   ment of the source sequence into an intermediate sequence. If no
                 projection function is provided, the intermediate sequence will consist of the single corresponding
                 element from the source sequence. The projector function argument (which can have any name) and return
                 values are,
 
-                Args:
+                Args:    for item in self:
+                intermediate_sequence = projector(item)
+                for intermediate_item in intermediate_sequence:
+                    yield selector(item, intermediate_item)
                     source_element: The value of the element
 
                 Returns:
                     An iterable derived from the element value
 
-            selector: An optional unary functon mapping the elements in the flattened intermediate sequence to
+            selector: An optional binary function mapping the elements in the flattened intermediate sequence to
                 corresponding elements of the result sequence. If no selector function is provided, the identity
                 function is used.  The selector function argument and return values are,
 
@@ -273,17 +285,42 @@ class Queryable(object):
         '''
 
         if self.closed():
-            raise ValueError("Attempt to call select_many_with_index() on a closed Queryable.")
+            raise ValueError("Attempt to call select_many_with_correspondence() on a closed Queryable.")
 
-        corresponding_projector = lambda x: (x, projector(x))
-        corresponding_selector = lambda x_y : selector(x_y[0], x_y[1])
+        return self._create(self._generate_select_many_with_correspondence(projector, selector))
 
-        sequences = self.select_many(corresponding_projector)
-        chained_sequence = itertools.chain.from_iterable(sequences)
-        return self._create(map(corresponding_selector, chained_sequence))
+    def _generate_select_many_with_correspondence(self, projector, selector):
+        for item in self:
+            intermediate_sequence = projector(item)
+            for intermediate_item in intermediate_sequence:
+                value = selector(item, intermediate_item)
+                yield value
 
-    def group_by(self, func=identity):
-        return self._create(itertools.groupby(self.order_by(func), func))
+    def group_by(self, selector=identity):
+        # TODO: Add missing parameters
+        '''Groups the elements according to the value of a key extracted by a selector function.
+
+        Note that this method has different behaviour to itertools.groupby in the Python standard library
+        because it aggregates all items with the same key, rather than returning groups of consecutive
+        items of the same key.
+
+        Execution is deferred, but consumption of a single result will lead to evaluation of the whole source sequence.
+
+        Args:
+            selector: A unary function mapping a value in the source sequence to a key. The argument of the selector
+                function (which can have any name) is,
+
+                Args:
+                    element: The value of the element
+
+                Returns:
+                    The selected value derived from the element value
+
+        Returns:
+            TODO
+        '''
+        lookup = self.to_lookup(selector)
+        return iter(lookup)
 
     def where(self, predicate):
         return self._create(filter(predicate, iter(self)))
@@ -509,22 +546,24 @@ class Queryable(object):
         return self._create(itertools.repeat(element, count))
 
     def zip(self, second_iterable, func=lambda x,y: (x,y)):
+        if self.closed():
+            raise ValueError("Attempt to call zip() on a closed Queryable.")
+        return self._create(self._generate_zip_result(second_iterable, func))
 
-        def zip_result():
-            second_iterator = iter(second_iterable)
-            try:
-                while True:
-                    x = next(iter(self))
-                    y = next(second_iterator)
-                    yield func(x, y)
-            except StopIteration:
-                pass
-
-        return self._create(zip_result)
+    def _generate_zip_result(self, second_iterable, func):
+        second_iterator = iter(second_iterable)
+        try:
+            while True:
+                x = next(iter(self))
+                y = next(second_iterator)
+                yield func(x, y)
+        except StopIteration:
+            pass
 
     def to_list(self):
+        # Maybe use with closable(self) construct to achieve this.
         lst = list(self)
-        # Ideally we would close here
+        # Ideally we would close here. Why can't we - what is the problem?
         #self.close()
         return lst
 
@@ -534,14 +573,32 @@ class Queryable(object):
         #self.close()
         return tup
 
+    def to_lookup(self, selector=identity):
+        '''Returns a MultiDict object, using the provided selector to generate a key for each item.
+
+        Execution is immediate.
+        '''
+        lookup = Lookup()
+        for item in self:
+            key = selector(item)
+            lookup[key] = item
+        # Ideally we would close here
+        #self.close()
+        return multidict
+
+
     def as_parallel(self, pool=None):
         from .parallel_queryable import ParallelQueryable
         return ParallelQueryable(self, pool)
 
     # Methods for more Pythonic usage
 
-    def __len__(self):
-        return self.count()
+    # Note: __len__ cannot be efficiently implemented in an idempotent fashion (without consuming
+    #       the iterable or changing the state of the object. Call count() instead.
+    #       see http://stackoverflow.com/questions/3723337/listy-behavior-is-wrong-on-first-call
+    #       for more details.
+    #       This is problematic if a Queryable is realized using the list() constructor, which calls
+    #       __len__ prior to constructing the list as an efficiency optimisation.
 
     def __contains__(self, item):
         return self.contains(item)
@@ -553,7 +610,8 @@ class Queryable(object):
         return repr(self)
 
     def __repr__(self):
-        return ', '.join(map(repr, self))
+        # Must be careful not to consume the iterable here
+        return 'Queryable({iterable})'.format(iterable=self._iterable)
 
 class OrderedQueryable(Queryable):
     '''A Queryable representing an ordered iterable.
@@ -611,7 +669,7 @@ class OrderedQueryable(Queryable):
             SortingTuple.__lt__ = less
 
         # Uniform ascending sort - decorate, sort, undecorate using tuple element
-        lst = [(SortingTuple(func(item) for _, func in self._funcs), item) for item in self._iterator]
+        lst = [(SortingTuple(func(item) for _, func in self._funcs), item) for item in self._iterable]
         heapq.heapify(lst)
         while lst:
             key, item = heapq.heappop(lst)
@@ -619,12 +677,6 @@ class OrderedQueryable(Queryable):
 
     # TODO: For some operators (such as contains(), or count() we can avoid sorting...
 
-    
-
-def my_range(x):
-    for i in range(x):
-        print("yield {0}".format(i))
-        yield i
 
 
 
