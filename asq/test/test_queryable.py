@@ -4,7 +4,7 @@ test_queryable.py Unit tests for asq.queryable.Queryable
 
 import unittest
 
-from asq.queryable import Queryable
+from asq.queryable import Queryable, Lookup, Grouping
 
 def times_two(x):
     return 2 * x
@@ -84,6 +84,25 @@ class TestQueryable(unittest.TestCase):
              ('Bob', 'b'), ('Chris', 'C'), ('Chris', 'h'), ('Chris', 'r'), ('Chris', 'i'), ('Chris', 's')]
         self.assertEqual(b, c)
 
+    def test_group_by(self):
+        a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
+             'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']
+        b = Queryable(a).group_by(lambda x: x[0])
+        self.assert_(isinstance(b, Lookup))
+        self.assertEqual(len(b), 3)
+        self.assert_('A' in b)
+        self.assert_('B' in b)
+        self.assert_('C' in b)
+        g1 = b['A']
+        g2 = b['B']
+        g3 = b['C']
+        self.assert_(isinstance(g1, Grouping))
+        self.assert_(isinstance(g2, Grouping))
+        self.assert_(isinstance(g3, Grouping))
+        self.assertEqual(g1.to_list(), ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis'])
+        self.assertEqual(g2.to_list(), ['Bouvardia'])
+        self.assertEqual(g3.to_list(), ['Carnations', 'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum'])
+        
 
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence

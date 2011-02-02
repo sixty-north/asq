@@ -6,8 +6,16 @@ import heapq
 import itertools
 import functools
 import sys
-from asq.lookup import Lookup
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    try:
+        from ordereddict import OrderedDict
+    except ImportError:
+        sys.stderr.write('Could not import OrderedDict. For Python versions earlier than 2.7 install the')
+        sys.stderr.write('ordereddict module from the Python Package Index with easy_install ordereddict.')
+        sys.exit(1)
 
 default = object()
 
@@ -49,10 +57,7 @@ class Queryable(object):
         if iterable is None:
             raise ValueError("Cannot create Queryable from None type.")
 
-        #iter(iterable) # Simply to check that iterable is in fact iterable
-
         self._iterable = iterable
-        #self._iterator = iter(iterable)
 
     def __iter__(self):
         '''Support for the iterator protocol.
@@ -65,10 +70,13 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to use closed() Queryable")
 
-        #for item in iter(self._iterable):
-        #    print item
-        #    yield item
+        return self._iter()
 
+    def _iter(self):
+        '''Return an unsorted iterator over the iterable around which this Queryable has been constructed.
+
+        Useful in subclasses to obtain a raw iterator over the iterable where __iter__ has been overridden.
+        '''
         return iter(self._iterable)
 
     def _create(self, iterable):
@@ -148,7 +156,7 @@ class Queryable(object):
 
                 Returns:
                     The selected value derived from the index and element
-corresponding_projector
+
         Returns:
             A generated sequence whose elements are the result of invoking the selector function on each element of the
             source sequence
@@ -221,7 +229,7 @@ corresponding_projector
                 Returns:
                     An iterable derived from the element value
 
-            selector: An optional unary functon mapping the elements in the flattened intermediate sequence to
+            selector: An optional unary function mapping the elements in the flattened intermediate sequence to
                 corresponding elements of the result sequence. If no selector function is provided, the identity
                 function is used.  The selector function argument and return values are,
 
@@ -252,7 +260,7 @@ corresponding_projector
         result sequence.
 
         Args:
-            projector: A unary function mapping each ele   ment of the source sequence into an intermediate sequence. If no
+            projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no
                 projection function is provided, the intermediate sequence will consist of the single corresponding
                 element from the source sequence. The projector function argument (which can have any name) and return
                 values are,
@@ -317,10 +325,10 @@ corresponding_projector
                     The selected value derived from the element value
 
         Returns:
-            TODO
+            A Lookup containing Groupings.
         '''
-        lookup = self.to_lookup(selector)
-        return iter(lookup)
+        # TODO: Defer execution somehow
+        return self.to_lookup(selector)
 
     def where(self, predicate):
         return self._create(filter(predicate, iter(self)))
@@ -335,14 +343,13 @@ corresponding_projector
         return self._create_ordered(iter(self), +1, func)
 
     def take(self, n=1):
+        return self._create(self._generate_take(n))
 
-        def take_result():
-            for index, item in enumerate(iter(self)):
-                if index == n:
-                    break
-                yield item
-
-        return self._create(take_result())
+    def _generate_take(self, n):
+        for index, item in enumerate(iter(self)):
+            if index == n:
+                break
+            yield item
 
     def take_while(self, predicate):
         return self._create(itertools.takewhile(predicate, iter(self)))
@@ -389,7 +396,10 @@ corresponding_projector
             
 
     def count(self):
-        '''Return the number of elements in the iterable'''
+        '''Return the number of elements in the iterable.
+
+        Immediate execution.
+        '''
 
         # Attempt to use len()
         try:
@@ -578,13 +588,10 @@ corresponding_projector
 
         Execution is immediate.
         '''
-        lookup = Lookup()
-        for item in self:
-            key = selector(item)
-            lookup[key] = item
+        lookup = Lookup((selector(item), item) for item in self)
         # Ideally we would close here
         #self.close()
-        return multidict
+        return lookup
 
 
     def as_parallel(self, pool=None):
@@ -655,7 +662,7 @@ class OrderedQueryable(Queryable):
             # Uniform descending sort - swap the comparison operators
             SortingTuple.__lt__, SortingTyple.__gt__ = SortingTuple.__gt__, SortingTyple.__lt__
         else:
-            # TODO: We could use fome runtime code generation here to compile a custom
+            # TODO: We could use some runtime code generation here to compile a custom
             #       comparison operator
             # Mixed ascending/descending sort
             def less(lhs, rhs):
@@ -675,12 +682,50 @@ class OrderedQueryable(Queryable):
             key, item = heapq.heappop(lst)
             yield item
 
-    # TODO: For some operators (such as contains(), or count() we can avoid sorting...
+class Lookup(Queryable):
+    '''A read-only ordered dictionary for which there can be multiple value for each key.'''
 
+    def __init__(self, key_value_pairs):
+        '''Construct with a sequence of (key, value) tuples.'''
+        self._dict = OrderedDict()
+        for key, value in key_value_pairs:
+            if key not in self._dict:
+                self._dict[key] = []
+            self._dict[key].append(value)
+        super(Lookup, self).__init__(Grouping(self._dict, key) for key in self._dict)
 
+    def __getitem__(self, key):
+        '''The sequence corresponding to a given key.'''
+        return Grouping(self._dict, key)
 
+    def __len__(self):
+        '''The number of groupings (keys) in the lookup.'''
+        return len(self._dict)
 
+    def __contains__(self, key):
+        return key in self._dict
 
+    def __repr__(self):
+        # TODO: Display in a format that would be consumable by the constructor
+        return 'Lookup({d})'.format(d=self._dict)
+
+class Grouping(Queryable):
+
+    def __init__(self, ordereddict, key):
+        self._key = key
+        sequence = ordereddict[key]
+        super(Grouping, self).__init__(sequence)
+
+    key = property(lambda self: self._key)
+
+    def __len__(self):
+        return self.count()
+
+    def __repr__(self):
+        # TODO: Display in a format that would be consumable by the constructor
+        return 'Grouping(key={k})'.format(k=self._key)
+
+# TODO: Should we use a class factory to generate the parallel equivalents of these?
 
 
 

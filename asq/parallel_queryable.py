@@ -211,8 +211,7 @@ class OrderedParallelQueryable(ParallelQueryable):
     # TODO: then_by_descending
 
     def __iter__(self):
-        iterator = super(ParallelQueryable, self).__iter__()
-        partitions = realize_partitions(iterator)
+        partitions = realize_partitions(self._iter())
         # TODO: Try using functools.partial and respond to
         # http://techguyinmidtown.com/2009/01/23/hack-for-functoolspartial-and-multiprocessing/
         # Actually, maybe functools.partial is pickleable in Python 3
