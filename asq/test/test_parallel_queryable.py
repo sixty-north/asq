@@ -1,5 +1,6 @@
 import unittest
 from asq.queryable import Queryable, identity
+from asq.test.test_queryable import times, inc_chr, times_two
 
 class TestParallelQueryable(unittest.TestCase):
 
