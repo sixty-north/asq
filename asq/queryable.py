@@ -346,7 +346,7 @@ class Queryable(object):
         return self._create_ordered(iter(self), +1, func)
 
     def take(self, n=1):
-        return self._create(self._generate_take(n))
+        return self._create(itertools.islice(self, n))
 
     def _generate_take(self, n):
         for index, item in enumerate(iter(self)):
