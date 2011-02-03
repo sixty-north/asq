@@ -136,10 +136,6 @@ class ParallelQueryable(Queryable):
         chained_sequence = itertools.chain.from_iterable(sequences)
         return self._create(self._pool.imap_unordered(corresponding_selector, chained_sequence, self._chunksize))
 
-    def group_by(self, func=identity):
-        # TODO: Make parallel
-        return self._create(itertools.groupby(self.order_by(func), func))
-
     def order_by(self, func=identity):
         return self._create_ordered(iter(self), func)
 

@@ -327,6 +327,9 @@ class Queryable(object):
         Returns:
             A Lookup containing Groupings.
         '''
+        if self.closed():
+            raise ValueError("Attempt to call select_with_index() on a closed Queryable.")
+
         # TODO: Defer execution somehow
         return self.to_lookup(selector)
 
@@ -379,7 +382,7 @@ class Queryable(object):
     def reverse(self):
         lst = list(iter(self))
         lst.reverse()
-        return self._create(iter(lst))
+        return self._create(lst)
 
     def element_at(self, index):
         # Attempt to use __getitem__
@@ -416,10 +419,10 @@ class Queryable(object):
         return index + 1
 
     def any(self, predicate=identity):
-        return any(self._create(iter(self)).select(predicate))
+        return any(self.select(predicate))
 
     def all(self, predicate=identity):
-        return all(self._create(iter(self)).select(predicate))
+        return all(self.select(predicate))
 
     def min(self, func=identity):
         return min(self.select(func))
@@ -549,9 +552,11 @@ class Queryable(object):
             return functools.reduce(func, iter(self))
         return functools.reduce(func, iter(self), seed)
 
+    @staticmethod
     def range(self, start, count):
         return self._create(range(start, start + count))
 
+    @staticmethod
     def repeat(self, element, count):
         return self._create(itertools.repeat(element, count))
 
@@ -588,7 +593,8 @@ class Queryable(object):
 
         Execution is immediate.
         '''
-        lookup = Lookup((selector(item), item) for item in self)
+        key_value_pairs = self.select(lambda item: (selector(item), item))
+        lookup = Lookup(key_value_pairs)
         # Ideally we would close here
         #self.close()
         return lookup
@@ -660,18 +666,23 @@ class OrderedQueryable(Queryable):
             pass
         elif direction_total == len(self._funcs):
             # Uniform descending sort - swap the comparison operators
-            SortingTuple.__lt__, SortingTyple.__gt__ = SortingTuple.__gt__, SortingTyple.__lt__
+            def less(lhs, rhs):
+                return lhs > rhs
+            SortingTuple.__lt__ = less
         else:
             # TODO: We could use some runtime code generation here to compile a custom
             #       comparison operator
             # Mixed ascending/descending sort
+
             def less(lhs, rhs):
                 for direction, lhs_element, rhs_element in zip(directions, lhs, rhs):
-                    cmp = (lhs_element > rhs_element) - (rhs_element < lhs_element)
+                    cmp = (lhs_element > rhs_element) - (rhs_element > lhs_element)
                     if cmp == 0:
                         continue
                     if cmp == direction:
                         return True
+                    if cmp == -direction:
+                        return False
                 return False
             SortingTuple.__lt__ = less
 
@@ -708,6 +719,14 @@ class Lookup(Queryable):
     def __repr__(self):
         # TODO: Display in a format that would be consumable by the constructor
         return 'Lookup({d})'.format(d=self._dict)
+
+    def apply_result_selector(self, selector=lambda key, sequence: sequence):
+        return self._create(self._generate_apply_result_selector(selector))
+
+    def _generate_apply_result_selector(self, selector):
+        for grouping in self:
+            yield selector(grouping.key, grouping)
+        
 
 class Grouping(Queryable):
 

@@ -103,6 +103,70 @@ class TestQueryable(unittest.TestCase):
         self.assertEqual(g2.to_list(), ['Bouvardia'])
         self.assertEqual(g3.to_list(), ['Carnations', 'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum'])
         
+    def test_where(self):
+        a = range(0, 100)
+        b = Queryable(a).where(lambda x: x % 3 == 0).to_list()
+        c = list(range(0, 100, 3))
+        self.assertEqual(b, c)
+        
+
+    def test_of_type(self):
+        a = ['one', 2, 3, 'four', 'five', 6, 'seven', 8, 9, 'ten']
+        b = Queryable(a).of_type(int).to_list()
+        c = [2, 3, 6, 8, 9]
+        self.assertEqual(b, c)
+        d = Queryable(a).of_type(str).to_list()
+        e = ['one', 'four', 'five', 'seven', 'ten']
+        self.assertEqual(d, e)
+
+    def test_order_by(self):
+        a = [1, 9, 7, 2, 5, 4, 6, 3, 8, 10]
+        b = Queryable(a).order_by().to_list()
+        c = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertEqual(b, c)
+
+    def test_order_by_key(self):
+        a = ['Sort', 'words', 'by', 'length']
+        b = Queryable(a).order_by(len).to_list()
+        c = ['by', 'Sort', 'words', 'length']
+        self.assertEqual(b, c)
+
+    def test_then_by(self):
+        a = ['sort', 'these', 'words', 'by', 'length', 'and', 'then', 'lexicographically']
+        b = Queryable(a).order_by(len).then_by().to_list()
+        c = ['by', 'and', 'sort', 'then', 'these', 'words', 'length', 'lexicographically']
+        self.assertEqual(b, c)
+
+    def test_then_by_key(self):
+        a = ['sort', 'using', 'third', 'letter', 'then', 'second']
+        b = Queryable(a).order_by(lambda x: x[2]).then_by(lambda y: y[1]).to_list()
+        c = ['second', 'then', 'third', 'using', 'sort', 'letter']
+        self.assertEqual(b, c)
+
+    def test_order_by_descending(self):
+        a = [1, 9, 7, 2, 5, 4, 6, 3, 8, 10]
+        b = Queryable(a).order_by_descending().to_list()
+        c = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        self.assertEqual(b, c)
+
+    def test_order_by_descending_key(self):
+        a = ['Sort', 'words', 'by', 'length']
+        b = Queryable(a).order_by_descending(len).to_list()
+        c = ['length', 'words', 'Sort', 'by']
+        self.assertEqual(b, c)
+
+    def test_then_by_descending(self):
+        a = ['sort', 'these', 'words', 'by', 'length', 'and', 'then', 'lexicographically']
+        b = Queryable(a).order_by(len).then_by_descending().to_list()
+        c = ['by', 'and', 'then', 'sort', 'words', 'these', 'length', 'lexicographically']
+        self.assertEqual(b, c)
+
+    def test_then_by_descending_key(self):
+        a = ['sort', 'using', 'third', 'letter', 'then', 'second']
+        b = Queryable(a).order_by(lambda x: x[2]).then_by_descending(lambda y: y[1]).to_list()
+        c = ['second', 'then', 'using', 'third', 'sort', 'letter']
+        self.assertEqual(b, c)
+
 
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence
