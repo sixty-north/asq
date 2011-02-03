@@ -167,6 +167,18 @@ class TestQueryable(unittest.TestCase):
         c = ['second', 'then', 'using', 'third', 'sort', 'letter']
         self.assertEqual(b, c)
 
+    def test_take_one(self):
+        a = ['a', 'b', 'c']
+        b = Queryable(a).take().to_list()
+        c = ['a']
+        self.assertEqual(b, c)
+
+    def test_take_five(self):
+        a = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        b = Queryable(a).take(5).to_list()
+        c = ['a', 'b', 'c', 'd', 'e']
+        self.assertEqual(b, c)
+
 
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence
