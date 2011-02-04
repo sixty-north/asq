@@ -334,48 +334,99 @@ class Queryable(object):
         return self.to_lookup(selector)
 
     def where(self, predicate):
+        if self.closed():
+            raise ValueError("Attempt to call where() on a closed Queryable.")
+
         return self._create(filter(predicate, iter(self)))
 
     def of_type(self, type):
+        if self.closed():
+            raise ValueError("Attempt to call of_type() on a closed Queryable.")
+
         return self.where(lambda x: isinstance(x, type))
 
     def order_by(self, func=identity):
+        if self.closed():
+            raise ValueError("Attempt to call order_by() on a closed Queryable.")
+
         return self._create_ordered(iter(self), -1, func)
 
     def order_by_descending(self, func=identity):
+        if self.closed():
+            raise ValueError("Attempt to call order_by_descending() on a closed Queryable.")
+
         return self._create_ordered(iter(self), +1, func)
 
-    def take(self, n=1):
-        return self._create(itertools.islice(self, n))
+    def take(self, count=1):
+        '''Returns a specified number of contiguous elements from the start of a sequence.
 
-    def _generate_take(self, n):
-        for index, item in enumerate(iter(self)):
-            if index == n:
-                break
-            yield item
+        If the source sequence contains fewer elements than requested only the available
+        elements will be returned and no exception will be raised.
+
+        Args:
+            count: The number of elements to take.
+
+        Returns:
+            The first count elements of the source sequence, or the number of elements in
+            the source, whichever is greater.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call take() on a closed Queryable.")
+
+        return self._create(itertools.islice(self, count))
 
     def take_while(self, predicate):
-        return self._create(itertools.takewhile(predicate, iter(self)))
+        '''Returns a contiguous sequence of elements from the source sequence for which
+        the supplied predicate is True.
 
-    def skip(self, n=1):
+        Args:
+            predicate: A function returning True or False with which elements will be tested.
 
-        def skip_result():
-            for index, item in enumerate(iter(self)):
-                if index >= n:
-                    yield item
+        Returns:
+            The elements from the beginning of the source sequence for which predicate is True.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call take_while() on a closed Queryable.")
 
-        return self._create(skip_result())
+        # Cannot use itertools.takewhile here because it is not lazy
+        #return self._create(itertools.takewhile(predicate, self))
+
+        return self._create(self._generate_take_while_result(predicate))
+
+    def _generate_take_while_result(self, predicate):
+        for x in self:
+            if predicate(x):
+                yield x
+            else:
+                break
+
+    def skip(self, count=1):
+        '''Skip the first count contiguous elements of the source sequence.
+
+        If the source sequence contains fewer than count elements returns an empty sequence
+        and does not raise an exception.
+
+        Args:
+            count: The number of elements to skip from the beginning of the sequence.
+
+        Returns:
+            The elements of source excluding the first count elements.
+        '''
+        return self._create(self._generate_skip_result(count))
+
+    def _generate_skip_result(self, count):
+        for i, item in enumerate(self):
+            if i < count:
+                continue
+            yield item
 
     def skip_while(self, predicate):
 
-        def skip_while_result():
-            for item in iter(self):
-                if not predicate(item):
-                    yield item
-                    break
+        if self.closed():
+            raise ValueError("Attempt to call take_while() on a closed Queryable.")
 
-        return self._create(skip_while_result())
-
+        return self._create(itertools.dropwhile(predicate, self))
+        
     def concat(self, iterable):
         return self._create(itertools.chain(iter(self), iterable))
 
@@ -390,6 +441,9 @@ class Queryable(object):
             return self._iterable[index]
         except TypeError:
             pass
+
+        # TODO: Look at itertools recipe
+        # return next(islice(iterable, n, None), default)
 
         # Fall back to iterating
         for i, item in enumerate(iter(self)):
