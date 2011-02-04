@@ -301,6 +301,9 @@ class TestQueryable(unittest.TestCase):
         b = Queryable(a).element_at(3)
         self.assertEqual(b, 8)
 
+    def test_element_at_out_of_range_infinite(self):
+        self.assertRaises(ValueError, lambda: Queryable(infinite()).element_at(-1))
+
     def test_element_at_out_of_range(self):
         a = [1, 2, 4, 8, 16, 32, 64, 128]
         self.assertRaises(ValueError, lambda: Queryable(a).element_at(20))
@@ -308,7 +311,31 @@ class TestQueryable(unittest.TestCase):
     def test_element_at_infinite(self):
         b = Queryable(infinite()).element_at(5)
         self.assertEqual(b, 5)
-        
+
+    def test_count_empty_collection(self):
+        b = Queryable([]).count()
+        self.assertEqual(b, 0)
+
+    def test_count_empty_sequence(self):
+        def empty():
+            if False:
+                yield 0
+        b = Queryable(empty()).count()
+        self.assertEqual(b, 0)
+
+    def test_finite_collection(self):
+        a = [1, 2, 3]
+        b = Queryable(a).count()
+        self.assertEqual(b, 3)
+
+    def test_finite_sequence(self):
+        def seq():
+            yield 1
+            yield 2
+            yield 3
+        b = Queryable(seq()).count()
+        self.assertEqual(b, 3)
+
 
 
 
