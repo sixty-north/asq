@@ -323,12 +323,12 @@ class TestQueryable(unittest.TestCase):
         b = Queryable(empty()).count()
         self.assertEqual(b, 0)
 
-    def test_finite_collection(self):
+    def test_count_finite_collection(self):
         a = [1, 2, 3]
         b = Queryable(a).count()
         self.assertEqual(b, 3)
 
-    def test_finite_sequence(self):
+    def test_count_finite_sequence(self):
         def seq():
             yield 1
             yield 2
