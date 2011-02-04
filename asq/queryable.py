@@ -326,6 +326,9 @@ class Queryable(object):
 
         Returns:
             A Lookup containing Groupings.
+
+        Raises:
+            ValueError: If the Queryable is closed()
         '''
         if self.closed():
             raise ValueError("Attempt to call select_with_index() on a closed Queryable.")
@@ -369,6 +372,9 @@ class Queryable(object):
         Returns:
             The first count elements of the source sequence, or the number of elements in
             the source, whichever is greater.
+
+        Raises:
+            ValueError: If the Queryable is closed()
         '''
         if self.closed():
             raise ValueError("Attempt to call take() on a closed Queryable.")
@@ -384,6 +390,9 @@ class Queryable(object):
 
         Returns:
             The elements from the beginning of the source sequence for which predicate is True.
+
+        Raises:
+            ValueError: If the Queryable is closed()
         '''
         if self.closed():
             raise ValueError("Attempt to call take_while() on a closed Queryable.")
@@ -407,10 +416,14 @@ class Queryable(object):
         and does not raise an exception.
 
         Args:
-            count: The number of elements to skip from the beginning of the sequence.
+            count: The number of elements to skip from the beginning of the sequence. If omitted
+                defaults to one.
 
         Returns:
             The elements of source excluding the first count elements.
+
+        Raises:
+            ValueError: If the Queryable is closed()
         '''
         return self._create(self._generate_skip_result(count))
 
@@ -421,32 +434,83 @@ class Queryable(object):
             yield item
 
     def skip_while(self, predicate):
+        '''Omit a contiguous sequence of elements from the beginning of the source sequence
+        which match a predicate.
 
+        Args:
+            predicate: A single argument predicate function.
+
+        Returns:
+            The sequence of elements beginning with the first element for which the predicate
+            returns False.
+
+        Raises:
+            ValueError: If the Queryable is closed()
+        '''
         if self.closed():
             raise ValueError("Attempt to call take_while() on a closed Queryable.")
 
         return self._create(itertools.dropwhile(predicate, self))
         
     def concat(self, iterable):
-        return self._create(itertools.chain(iter(self), iterable))
+        if self.closed():
+            raise ValueError("Attempt to call concat() on a closed Queryable.")
+
+        return self._create(itertools.chain(self, iterable))
 
     def reverse(self):
+        '''Returns the sequence reversed.
+
+        Execution is deferred.
+
+        Returns:
+            The source sequence in reverse order.
+
+        Raises:
+            ValueError: If the Queryable is closed()
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call reverse() on a closed Queryable.")
+
+        return self._create(self._generate_reverse_result())
+
+    def _generate_reverse_result(self):
         lst = list(iter(self))
         lst.reverse()
-        return self._create(lst)
+        for item in lst:
+            yield item
 
     def element_at(self, index):
+        '''Return the element at ordinal index.
+
+        This method is evaluated immediately.
+
+        Args:
+            index: The index of the element to be returned.
+
+        Returns:
+            The element at ordinal index in the source sequence.
+
+        Raises:
+            ValueError: If the Queryable is closed()
+            ValueError: If index is out of range.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call element_at() on a closed Queryable.")
+
+        if index < 0:
+            raise ValueError("Attempt to use negative index")
+
         # Attempt to use __getitem__
         try:
             return self._iterable[index]
+        except IndexError:
+            raise ValueError("Index out of range")
         except TypeError:
             pass
 
-        # TODO: Look at itertools recipe
-        # return next(islice(iterable, n, None), default)
-
         # Fall back to iterating
-        for i, item in enumerate(iter(self)):
+        for i, item in enumerate(self):
             if i == index:
                 return item
         raise IndexError("element_at(index) out of range.")
@@ -455,7 +519,7 @@ class Queryable(object):
     def count(self):
         '''Return the number of elements in the iterable.
 
-        Immediate execution.
+        This method is evaluated immediately.
         '''
 
         # Attempt to use len()
@@ -467,7 +531,7 @@ class Queryable(object):
         # Fall back to iterating
         index = -1
 
-        for index, item in enumerate(iter(self)):
+        for index, item in enumerate(self):
             pass
 
         return index + 1
@@ -489,7 +553,7 @@ class Queryable(object):
 
     def average(self, func=identity):
         total = 0
-        for index, item in enumerate(iter(self)):
+        for index, item in enumerate(self):
             total += func(item)
         return total / index
 
@@ -508,7 +572,7 @@ class Queryable(object):
             def head_generator():
                 yield head
 
-            return self._create(itertools.chain(head_generator(), iter(self)))
+            return self._create(itertools.chain(head_generator(), self))
 
         except StopIteration:
             # Return a sequence containing a single instance of the default val
@@ -519,7 +583,7 @@ class Queryable(object):
 
         def distinct_result():
             seen = set()
-            for item in iter(self):
+            for item in self:
                 t_item = func(item)
                 if t_item in seen:
                     continue
@@ -535,7 +599,7 @@ class Queryable(object):
 
         def difference_result():
             second_set = set(func(x) for x in second_iterable)
-            for item in iter(self):
+            for item in self:
                 if func(item) in second_set:
                     continue
                 yield item
@@ -546,20 +610,20 @@ class Queryable(object):
 
         def intersect_result():
             second_set = set(func(x) for x in second_iterable)
-            for item in iter(self):
+            for item in self:
                 if func(item) in second_set:
                     yield item
 
         return self._create(intersect_result())
 
     def union(self, second_iterable, func=identity):
-        return self._create(itertools.chain(iter(self), second_iterable)).distinct(func)
+        return self._create(itertools.chain(self, second_iterable)).distinct(func)
 
     def join(self, inner_iterable, outer_key_func=identity, inner_key_func=identity,
              result_func=lambda outer, inner: (outer, inner)):
 
         def join_result():
-            for outer_item in iter(self):
+            for outer_item in self:
                 outer_key = outer_key_func(outer_item)
                 for inner_item in inner_iterable:
                     inner_key = inner_key_func(inner_item)
@@ -581,13 +645,13 @@ class Queryable(object):
         sentinel = object()
         result = sentinel
 
-        for item in iter(self):
+        for item in self:
             result = item
 
-        if item is sentinel:
+        if result is sentinel:
             raise StopIteration()
 
-        return item
+        return result
 
     def last_or_default(self, default):
         sentinel = object()
@@ -596,10 +660,10 @@ class Queryable(object):
         for item in iter(self):
             result = item
 
-        if item is sentinel:
+        if result is sentinel:
             return default
 
-        return item
+        return result
 
     def aggregate(self, func, seed=default):
         if seed is default:

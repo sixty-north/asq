@@ -270,6 +270,50 @@ class TestQueryable(unittest.TestCase):
         c = b.take().to_list()
         self.assertEqual(c, [3])
 
+    def test_concat(self):
+        a = [1, 2, 3]
+        b = Queryable(a).concat([4, 5, 6]).to_list()
+        c = [1, 2, 3, 4, 5, 6]
+        self.assertEqual(b, c)
+
+    def test_concat_infinite(self):
+        b = Queryable(infinite()).concat(infinite()).take(3).to_list()
+        c = [0, 1, 2]
+        self.assertEqual(b, c)
+
+    def test_concat_is_deferred(self):
+        a = TracingGenerator()
+        self.assertEqual(a.trace, [])
+        b = TracingGenerator()
+        self.assertEqual(b.trace, [])
+        c = Queryable(a).concat(b).take().to_list()
+        self.assertEqual(a.trace, [0])
+        self.assertEqual(b.trace, [])
+
+    def test_reverse(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        b = Queryable(a).reverse().to_list()
+        c = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        self.assertEqual(b, c)
+
+    def test_element_at(self):
+        a = [1, 2, 4, 8, 16, 32, 64, 128]
+        b = Queryable(a).element_at(3)
+        self.assertEqual(b, 8)
+
+    def test_element_at_out_of_range(self):
+        a = [1, 2, 4, 8, 16, 32, 64, 128]
+        self.assertRaises(ValueError, lambda: Queryable(a).element_at(20))
+
+    def test_element_at_infinite(self):
+        b = Queryable(infinite()).element_at(5)
+        self.assertEqual(b, 5)
+        
+
+
+
+
+
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence
 
