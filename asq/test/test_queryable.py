@@ -12,6 +12,26 @@ def times_two(x):
 def times(x, y):
     return x * y
 
+def infinite():
+    i = 0
+    while True:
+        yield i
+        i += 1
+
+class TracingGenerator(object):
+
+    def __init__(self):
+        self._trace = []
+        self._i = 0
+
+    def __iter__(self):
+        while True:
+            self._trace.append(self._i)
+            yield self._i
+            self._i += 1
+
+    trace = property(lambda self: self._trace)
+
 class TestQueryable(unittest.TestCase):
 
     def test_to_tuple(self):
@@ -179,6 +199,76 @@ class TestQueryable(unittest.TestCase):
         c = ['a', 'b', 'c', 'd', 'e']
         self.assertEqual(b, c)
 
+    def test_take_too_many(self):
+        a = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        b = Queryable(a).take(10).to_list()
+        c = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        self.assertEqual(b, c)
+
+    def test_take_from_infinite(self):
+        b = Queryable(infinite()).take(5).to_list()
+        c = [0, 1, 2, 3, 4]
+        self.assertEqual(b, c)
+
+    def test_take_is_deferred(self):
+        a = TracingGenerator()
+        self.assertEqual(a.trace, [])
+        b = Queryable(a).take()
+        self.assertEqual(a.trace, [])
+        c = b.to_list()
+        self.assertEqual(a.trace, [0])
+
+    def test_take_while(self):
+        a = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        b = Queryable(a).take_while(lambda x: x < 'e').to_list()
+        c = ['a', 'b', 'c', 'd']
+        self.assertEqual(b, c)
+
+    def test_take_while_from_infinite(self):
+        b = Queryable(infinite()).take_while(lambda x: x < 5).to_list()
+        c = [0, 1, 2, 3, 4]
+        self.assertEqual(b, c)
+
+    def test_take_while_is_deferred(self):
+        a = TracingGenerator()
+        self.assertEqual(a.trace, [])
+        b = Queryable(a).take_while(lambda x: x < 3)
+        self.assertEqual(a.trace, [])
+        c = b.to_list()
+        # 3 is included here in the trace because it must have been consumed in order to test
+        # whether it satisfies the predicate
+        self.assertEqual(a.trace, [0, 1, 2, 3])
+        
+    def test_skip_one(self):
+        a = ['a', 'b', 'c']
+        b = Queryable(a).skip().to_list()
+        c = ['b', 'c']
+        self.assertEqual(b, c)
+
+    def test_skip_five(self):
+        a = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        b = Queryable(a).skip(5).to_list()
+        c = ['f', 'g']
+        self.assertEqual(b, c)
+
+    def test_skip_too_many(self):
+        a = ['a', 'b', 'c']
+        b = Queryable(a).skip(5).to_list()
+        c = []
+        self.assertEqual(b, c)
+
+    def test_skip_from_infinite(self):
+        b = Queryable(infinite()).skip(5).take().to_list()
+        c = [5]
+        self.assertEqual(b, c)
+
+    def test_skip_is_deferred(self):
+        a = TracingGenerator()
+        self.assertEqual(a.trace, [])
+        b = Queryable(a).skip(3)
+        self.assertEqual(a.trace, [])
+        c = b.take().to_list()
+        self.assertEqual(c, [3])
 
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence
