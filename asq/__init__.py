@@ -1,4 +1,4 @@
-from queryable import asq
+from .queryable import asq
 
 __all__ = ['asq']
 

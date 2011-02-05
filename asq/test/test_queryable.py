@@ -1,6 +1,7 @@
 '''
 test_queryable.py Unit tests for asq.queryable.Queryable
 '''
+import math
 
 import unittest
 
@@ -107,15 +108,11 @@ class TestQueryable(unittest.TestCase):
     def test_group_by(self):
         a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
              'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']
-        b = Queryable(a).group_by(lambda x: x[0])
-        self.assert_(isinstance(b, Lookup))
+        b = Queryable(a).group_by(lambda x: x[0]).to_list()
         self.assertEqual(len(b), 3)
-        self.assert_('A' in b)
-        self.assert_('B' in b)
-        self.assert_('C' in b)
-        g1 = b['A']
-        g2 = b['B']
-        g3 = b['C']
+        g1 = b[0]
+        g2 = b[1]
+        g3 = b[2]
         self.assert_(isinstance(g1, Grouping))
         self.assert_(isinstance(g2, Grouping))
         self.assert_(isinstance(g3, Grouping))
@@ -336,10 +333,156 @@ class TestQueryable(unittest.TestCase):
         b = Queryable(seq()).count()
         self.assertEqual(b, 3)
 
+    def test_any_empty(self):
+        a = []
+        b = Queryable(a).any()
+        self.assertFalse(b)
 
+    def test_any_not_empty(self):
+        a = [False, False, False]
+        b = Queryable(a).any()
+        self.assertTrue(b)
 
+    def test_any_negative_predicate(self):
+        a = [1, 2, 3, 4, 8, 34]
+        b = Queryable(a).any(lambda x: x == 15)
+        self.assertFalse(b)
 
+    def test_any_positive_predicate(self):
+        a = [1, 2, 3, 4, 8, 34]
+        b = Queryable(a).any(lambda x: x == 8)
+        self.assertTrue(b)
 
+    def test_any_infinite(self):
+        b = Queryable(infinite()).any()
+        self.assertTrue(b)
+
+    def test_any_infinite_predicate(self):
+        b = Queryable(infinite()).any(lambda x: x == 1000)
+
+    def test_all_positive(self):
+        a = [True, True, True, True]
+        b = Queryable(a).all()
+        self.assertTrue(b)
+
+    def test_all_negative(self):
+        a = [True, True, True, False]
+        b = Queryable(a).all()
+        self.assertFalse(b)
+
+    def test_all_empty(self):
+        a = []
+        b = Queryable(a).all()
+        self.assertTrue(b)
+
+    def test_min(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -8, 7]
+        b = Queryable(a).min()
+        self.assertEqual(b, -8)
+
+    def test_min_selector(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -8, 7]
+        b = Queryable(a).min(abs)
+        self.assertEqual(b, 1)
+
+    def test_min_empty(self):
+        self.assertRaises(ValueError, lambda: Queryable([]).min())
+
+    def test_max(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -8, 7]
+        b = Queryable(a).max()
+        self.assertEqual(b, 9)
+
+    def test_max_selector(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -13, 7]
+        b = Queryable(a).max(abs)
+        self.assertEqual(b, 13)
+
+    def test_max_empty(self):
+        self.assertRaises(ValueError, lambda: Queryable([]).max())
+
+    def test_sum(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -8, 7]
+        b = Queryable(a).sum()
+        self.assertEqual(b, 26)
+
+    def test_sum_selector(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -13, 7]
+        b = Queryable(a).sum(abs)
+        self.assertEqual(b, 53)
+
+    def test_sum_empty(self):
+        b = Queryable([]).sum()
+        self.assertEqual(b, 0)
+
+    def test_average(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -8, 3]
+        b = Queryable(a).average()
+        self.assertEqual(b, 2)
+
+    def test_average_selector(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -15, 7]
+        b = Queryable(a).average(abs)
+        self.assertEqual(b, 5)
+
+    def test_average_empty(self):
+        self.assertRaises(ValueError, lambda: Queryable([]).average())
+
+    def test_contains_positive(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -15, 7]
+        b = Queryable(a).contains(2)
+        self.assertTrue(b)
+
+    def test_contains_negative(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -15, 7]
+        b = Queryable(a).contains(6)
+        self.assertFalse(b)
+
+    def test_contains_empty(self):
+        b = Queryable([]).contains(7)
+        self.assertFalse(b)
+
+    def test_default_if_empty_empty(self):
+        b = Queryable([]).default_if_empty(5).to_list()
+        self.assertEqual(b, [5])
+
+    def test_default_if_empty_non_empty(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -15, 7]
+        b = Queryable(a).default_if_empty(42).to_list()
+        self.assertEqual(b, a)
+
+    def test_default_if_empty_infinite(self):
+        b = Queryable(infinite()).default_if_empty(42).take(5).to_list()
+        self.assertEqual(b, [0, 1, 2, 3, 4])
+
+    def test_distinct(self):
+        a = [5, 7, -3, 2, 1, 5, 3, 2, 1, -15, 7]
+        b = Queryable(a).distinct().to_list()
+        c = [5, 7, -3, 2, 1, 3, -15]
+        self.assertEqual(b, c)
+
+    def test_distinct_selector(self):
+        a = [5, 7, -3, 2, 1, 5, 3, 2, 1, -15, 7]
+        b = Queryable(a).distinct(abs).to_list()
+        c = [5, 7, -3, 2, 1, -15]
+        self.assertEqual(b, c)
+
+    def test_distinct_empty(self):
+        b = Queryable([]).distinct().to_list()
+        self.assertEqual(b, [])
+
+    def test_distinct_infinite(self):
+        b = Queryable(infinite()).distinct().take(5).to_list()
+        c = [0, 1, 2, 3, 4]
+        self.assertEqual(b, c)
+
+    def test_empty_singleton(self):
+        self.assertTrue(Queryable.empty() is Queryable.empty())
+
+    def test_empty_count(self):
+        self.assertEqual(Queryable.empty().count(), 0)
+
+        
 
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence
