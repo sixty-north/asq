@@ -5,17 +5,8 @@ queryable.py A module for LINQ-like facility in Python.
 import heapq
 import itertools
 import functools
-import sys
 
-try:
-    from collections import OrderedDict
-except ImportError:
-    try:
-        from ordereddict import OrderedDict
-    except ImportError:
-        sys.stderr.write('Could not import OrderedDict. For Python versions earlier than 2.7 install the')
-        sys.stderr.write('ordereddict module from the Python Package Index with easy_install ordereddict.')
-        sys.exit(1)
+from .portability import (imap, ifilter, OrderedDict)
 
 default = object()
 
@@ -130,13 +121,16 @@ class Queryable(object):
             source sequence.
 
         Raises:
-            ValueError: If this Queryable has been closed.
+               ValueError: If this Queryable has been closed.
             TypeError: If selector is not callable.
         '''
         if self.closed():
             raise ValueError("Attempt to call select() on a closed Queryable.")
 
-        return self._create(map(selector, iter(self)))
+        if selector is identity:
+            return self
+
+        return self._create(imap(selector, self))
 
 
     def select_with_index(self, selector):
@@ -209,7 +203,7 @@ class Queryable(object):
 
         sequences = (self._create(item).select(projector) for item in iter(self))
         chained_sequence = itertools.chain.from_iterable(sequences)
-        return self._create(map(selector, chained_sequence))
+        return self._create(imap(selector, chained_sequence))
         
     def select_many_with_index(self, projector=lambda i,x:iter(x), selector=identity):
         '''Projects each element of a sequence to an intermediate new sequence, incorporating the index of the element,
@@ -252,7 +246,7 @@ class Queryable(object):
 
         sequences = self.select_with_index(projector)
         chained_sequence = itertools.chain.from_iterable(sequences)
-        return self._create(map(selector, chained_sequence))
+        return self._create(imap(selector, chained_sequence))
 
     def select_many_with_correspondence(self, projector=iter, selector=lambda x, y: y):
         '''Projects each element of a sequence to an intermediate new sequence, and flattens the resulting sequence,
@@ -325,7 +319,7 @@ class Queryable(object):
                     The selected value derived from the element value
 
         Returns:
-            A Lookup containing Groupings.
+            A sequence of Groupings.
 
         Raises:
             ValueError: If the Queryable is closed()
@@ -333,14 +327,18 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call select_with_index() on a closed Queryable.")
 
-        # TODO: Defer execution somehow
-        return self.to_lookup(selector)
+        return self._create(self._generate_group_by_result(selector))
+
+    def _generate_group_by_result(self, selector):
+        lookup = self.to_lookup(selector)
+        for grouping in lookup:
+            yield grouping
 
     def where(self, predicate):
         if self.closed():
             raise ValueError("Attempt to call where() on a closed Queryable.")
 
-        return self._create(filter(predicate, iter(self)))
+        return self._create(ifilter(predicate, self))
 
     def of_type(self, type):
         if self.closed():
@@ -522,6 +520,9 @@ class Queryable(object):
         This method is evaluated immediately.
         '''
 
+        if self.closed():
+            raise ValueError("Attempt to call element_at() on a closed Queryable.")
+
         # Attempt to use len()
         try:
             return len(self._iterable)
@@ -536,43 +537,183 @@ class Queryable(object):
 
         return index + 1
 
-    def any(self, predicate=identity):
-        return any(self.select(predicate))
+    def any(self, predicate=None):
+        '''Determine if the source sequence contains any elements which satisfy the predicate.
+
+        Only enough of the sequence to satisfy the predicate once is consumed. Execution is immediate.
+
+        Args:
+            predicate: An optional single argument function used to test each element. If omitted,
+                or None, this method returns True if their is at least one element in the source.
+
+        Returns:
+            True if the sequence contains at least one element which satisfies the predicate,
+                otherwise False.
+
+        Raises:
+            ValueError: If the Queryable is closed()
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call any() on a closed Queryable.")
+
+        if predicate is None:
+            predicate = lambda x: True
+            
+        for item in self.select(predicate):
+            if item:
+                return True
+        return False
 
     def all(self, predicate=identity):
+        '''Determine if all elements in the source sequence satisfy a condition.
+
+        All of the source sequence will be consumed. Execution is imediate.
+
+        Args:
+            predicate: An optional single argument function used to test each elements. If omitted,
+                the identity function is used resulting in the elements being tested directly.
+
+        Returns:
+            True if all elements in the sequence meet the predicate condition, otherwise False.
+
+        Raises:
+            ValueError: If the Queryable is closed()
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call all() on a closed Queryable.")
+
         return all(self.select(predicate))
 
-    def min(self, func=identity):
-        return min(self.select(func))
+    def min(self, selector=identity):
+        '''Return the minimum value in a sequence.
+
+        All of the source sequence will be consumed. Execution is immediate.
+
+        Args:
+            selector: An optional single argument function which will be used to project
+                the elements of the sequence. If omitted, the identity function is used.
+
+        Returns:
+            The minimum value of the projected sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+            ValueError: If the sequence is empty.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call min() on a closed Queryable.")
+
+        return min(self.select(selector))
 
     def max(self, func=identity):
+        '''Return the maximum value in a sequence.
+
+        All of the source sequence will be consumed. Execution is immediate.
+
+        Args:
+            selector: An optional single argument function which will be used to project
+                the elements of the sequence. If omitted, the identity function is used.
+
+        Returns:
+            The maximum value of the projected sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+            ValueError: If the sequence is empty.
+        '''
+
+        if self.closed():
+            raise ValueError("Attempt to call max() on a closed Queryable.")
+
         return max(self.select(func))
 
     def sum(self, func=identity):
+        '''Return the arithmetic sum of the values in the sequence..
+
+        All of the source sequence will be consumed. Execution is immediate.
+
+        Args:
+            selector: An optional single argument function which will be used to project
+                the elements of the sequence. If omitted, the identity function is used.
+
+        Returns:
+            The total value of the projected sequence, or zero for an empty sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+        '''
+
+        if self.closed():
+            raise ValueError("Attempt to call sum() on a closed Queryable.")
+
         return sum(self.select(func))
 
     def average(self, func=identity):
+        '''Return the arithmetic mean of the values in the sequence..
+
+        All of the source sequence will be consumed. Execution is immediate.
+
+        Args:
+            selector: An optional single argument function which will be used to project
+                the elements of the sequence. If omitted, the identity function is used.
+
+        Returns:
+            The mean value of the projected sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+            ValueError: I the source sequence is empty.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call average() on a closed Queryable.")
+
         total = 0
-        for index, item in enumerate(self):
-            total += func(item)
-        return total / index
+        count = 0
+        for item in self.select(func):
+            total += item
+            count += 1
+        if count == 0:
+            raise ValueError("Cannot compute average() of an empty sequence.")
+        return total / count
 
     def contains(self, value):
+        '''Determines whether the sequence contains a particular value.
+
+        Execution is immediate. Depending on the type of the sequence, all or none of the
+        sequence may be consumed by this operation.
+
+        Args:
+            value: The value to test for membership of the sequence
+
+        Returns:
+            True if value is in the sequence, otherwise False.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call contains() on a closed Queryable.")
+
         # Test that this works with objects supporting only __contains__, __getitem__ and __iter__
         return value in self._iterable
 
     def default_if_empty(self, default):
+        if self.closed():
+            raise ValueError("Attempt to call default_if_empty() on a closed Queryable.")
+
         # Try to get an element from the iterator, if we succeed, the sequence
         # is non-empty. We store the extracted value in a generator and chain
         # it to the tail of the sequence in order to recreate the original
         # sequence.
         try:
-            head = next(iter(self))
+            items = iter(self)
+            head = next(items)
 
             def head_generator():
                 yield head
 
-            return self._create(itertools.chain(head_generator(), self))
+            return self._create(itertools.chain(head_generator(), items))
 
         except StopIteration:
             # Return a sequence containing a single instance of the default val
@@ -580,6 +721,8 @@ class Queryable(object):
             return self._create(single)
 
     def distinct(self, func=identity):
+        if self.closed():
+            raise ValueError("Attempt to call distinct() on a closed Queryable.")
 
         def distinct_result():
             seen = set()
@@ -592,10 +735,22 @@ class Queryable(object):
 
         return self._create(distinct_result())
 
-    def empty(self):
-        return self._create(tuple())
+    def _generate_distinct_result(self, selector=identity):
+        seen = set()
+        for item in self:
+            t_item = selector(item)
+            if t_item in seen:
+                continue
+            seen.add(t_item)
+            yield item
+
+    @staticmethod
+    def empty():
+        return _empty
 
     def difference(self, second_iterable, func=identity):
+        if self.closed():
+            raise ValueError("Attempt to call difference() on a closed Queryable.")
 
         def difference_result():
             second_set = set(func(x) for x in second_iterable)
@@ -607,6 +762,8 @@ class Queryable(object):
         return self._create(difference_result())
 
     def intersect(self, second_iterable, func=identity):
+        if self.closed():
+            raise ValueError("Attempt to call intersect() on a closed Queryable.")
 
         def intersect_result():
             second_set = set(func(x) for x in second_iterable)
@@ -617,6 +774,9 @@ class Queryable(object):
         return self._create(intersect_result())
 
     def union(self, second_iterable, func=identity):
+        if self.closed():
+            raise ValueError("Attempt to call union() on a closed Queryable.")
+
         return self._create(itertools.chain(self, second_iterable)).distinct(func)
 
     def join(self, inner_iterable, outer_key_func=identity, inner_key_func=identity,
@@ -844,7 +1004,6 @@ class Lookup(Queryable):
     def _generate_apply_result_selector(self, selector):
         for grouping in self:
             yield selector(grouping.key, grouping)
-        
 
 class Grouping(Queryable):
 
@@ -864,7 +1023,7 @@ class Grouping(Queryable):
 
 # TODO: Should we use a class factory to generate the parallel equivalents of these?
 
-
+_empty = Queryable(tuple())
 
 
 
