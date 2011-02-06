@@ -6,7 +6,7 @@ import heapq
 import itertools
 import functools
 
-from .portability import (imap, ifilter, OrderedDict)
+from .portability import (imap, ifilter, irange, OrderedDict)
 
 default = object()
 
@@ -14,6 +14,13 @@ def identity(x):
     '''The identity function.'''
     return x
 
+def is_iterable(obj):
+    try:
+        iter(obj)
+        return True
+    except TypeError:
+        return False
+        
 def asq(iterable):
     '''Create a Queryable object from any iterable.
 
@@ -25,6 +32,9 @@ def asq(iterable):
 
     Returns:
         An instance of Queryable.
+
+    Raises:
+        TypeError: If iterable is not actually iterable
     '''
     return Queryable(iterable)
 
@@ -41,12 +51,11 @@ class Queryable(object):
             iterable: Any object supporting the iterator protocol.
             
         Raises:
-            ValueError: if iterable is None
             TypeError: if iterable does not support the iterator protocol.
 
         '''
-        if iterable is None:
-            raise ValueError("Cannot create Queryable from None type.")
+        if not is_iterable(iterable):
+            raise TypeError("Cannot construct Queryable from non-iterable {type}".format(type=str(type(iterable))[7: -2]))
 
         self._iterable = iterable
 
@@ -377,6 +386,8 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call take() on a closed Queryable.")
 
+        count = max(0, count)
+
         return self._create(itertools.islice(self, count))
 
     def take_while(self, predicate):
@@ -423,7 +434,25 @@ class Queryable(object):
         Raises:
             ValueError: If the Queryable is closed()
         '''
+        count = max(0, count)
+
+        if count == 0:
+            return self
+
+        # Try an optimised version
+        if hasattr(self._iterable, "__getitem__"):
+            try:
+                stop = len(self._iterable)
+                return self._create(self._generate_optimized_skip_result(count, stop))
+            except TypeError:
+                pass
+
+        # Fall back to the unoptimized version
         return self._create(self._generate_skip_result(count))
+
+    def _generate_optimized_skip_result(self, count, stop):
+        for i in irange(count, stop):
+            yield self._iterable[i]
 
     def _generate_skip_result(self, count):
         for i, item in enumerate(self):
@@ -459,7 +488,7 @@ class Queryable(object):
     def reverse(self):
         '''Returns the sequence reversed.
 
-        Execution is deferred.
+        Execution is deferred, but the whole source sequence is consumed once execution commences.
 
         Returns:
             The source sequence in reverse order.
@@ -699,6 +728,17 @@ class Queryable(object):
         return value in self._iterable
 
     def default_if_empty(self, default):
+        '''If the source sequence is empty return a single element sequence containing the
+        supplied default value, otherwise return the source sequence unchanged.
+
+        Args:
+            default: The element to be returned if the source sequence is empty.
+
+        Returns:
+            The source sequence, or if the source sequence is empty an sequence containing a
+            single element with the supplied default value.
+        '''
+
         if self.closed():
             raise ValueError("Attempt to call default_if_empty() on a closed Queryable.")
 
@@ -720,22 +760,27 @@ class Queryable(object):
             single = (default,)
             return self._create(single)
 
-    def distinct(self, func=identity):
+    def distinct(self, selector=identity):
+        '''Eliminate duplicate elements from a sequence.
+
+        Args:
+            selector: An optional single argument function the result of which is the value compared for
+                uniqueness against elements already consumed. If omitted, the element value itself
+                is compared for uniqueness.
+
+        Returns:
+            Unique elements of the source sequence as determined by the selector function.  Note
+            that t is unprojected elements that are returned, even if a selector was provided.
+
+        Raises:
+            ValueError: If the Queryable is closed.
+        '''
         if self.closed():
             raise ValueError("Attempt to call distinct() on a closed Queryable.")
 
-        def distinct_result():
-            seen = set()
-            for item in self:
-                t_item = func(item)
-                if t_item in seen:
-                    continue
-                seen.add(t_item)
-                yield item
+        return self._create(self._generate_distinct_result(selector))
 
-        return self._create(distinct_result())
-
-    def _generate_distinct_result(self, selector=identity):
+    def _generate_distinct_result(self, selector):
         seen = set()
         for item in self:
             t_item = selector(item)
@@ -746,51 +791,136 @@ class Queryable(object):
 
     @staticmethod
     def empty():
+        '''Returns an empty queryable.
+
+        The same empty instance will be returned each time.
+        '''
         return _empty
 
-    def difference(self, second_iterable, func=identity):
+    def difference(self, second_iterable, selector=identity):
+        '''Returns those elements which are in the source sequence which are not in the
+        second_iterable.
+
+        This method is equivalent to the Except() LINQ operator, renamed to a valid
+        Python identifier.
+
+        Execution is deferred, but as soon as execution commences the entirety of the second_iterable
+        is consumed; therefore, although the source sequence may be infinite the second_iterable must be finite.
+
+        Args:
+            second_iterable: Elements from this sequence are excluded from the returned sequence. This sequence
+                will be consumed in its entirety, so must be finite.
+
+            selector: An optional single argument function which is used to project the elements
+                in the source and second_iterables prior to comparing them.
+
+        Returns:
+            A sequence containing all elements in the source sequence except those which are also members of the second
+            sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+            ValueError: If the second_iterable is None
+        '''
         if self.closed():
             raise ValueError("Attempt to call difference() on a closed Queryable.")
 
-        def difference_result():
-            second_set = set(func(x) for x in second_iterable)
-            for item in self:
-                if func(item) in second_set:
-                    continue
+        if not is_iterable(second_iterable):
+            raise TypeError("Cannot compute difference() with second_iterable of non-iterable {type}".format(
+                    type=str(type(second_iterable))[7: -2]))
+
+        return self._create(self._generate_difference_result(second_iterable, selector))
+
+    def _generate_difference_result(self, second_iterable, selector):
+        seen_elements = self._create(second_iterable).select(selector).to_set()
+        for item in self:
+            sitem = selector(item)
+            if selector(item) not in seen_elements:
+                seen_elements.add(sitem)
                 yield item
 
-        return self._create(difference_result())
+    def intersect(self, second_iterable, selector=identity):
+        '''Returns those elements which are both in the source sequence and in the
+        second_iterable.
 
-    def intersect(self, second_iterable, func=identity):
+        Execution is deferred.
+
+        Args:
+            second_iterable: Elements are returned if they are also in the sequence.
+
+            selector: An optional single argument function which is used to project the elements
+                in the source and second_iterables prior to comparing them.
+
+        Returns:
+            A sequence containing all elements in the source sequence  which are also members of the second
+            sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+            TypeError: If the second_iterable is not in fact iterable
+        '''
         if self.closed():
             raise ValueError("Attempt to call intersect() on a closed Queryable.")
 
-        def intersect_result():
-            second_set = set(func(x) for x in second_iterable)
-            for item in self:
-                if func(item) in second_set:
-                    yield item
+        if not is_iterable(second_iterable):
+            raise TypeError("Cannot compute intersect() with second_iterable of non-iterable {type}".format(
+                    type=str(type(second_iterable))[7: -2]))
 
-        return self._create(intersect_result())
+        return self._create(self._generate_intersect_result(second_iterable, selector))
 
-    def union(self, second_iterable, func=identity):
+    def _generate_intersect_result(self, second_iterable, selector):
+        second_set = self._create(second_iterable).select(selector).to_set()
+        for item in self:
+            sitem = selector(item)
+            if sitem in second_set:
+                second_set.remove(sitem)
+                yield item
+
+    def union(self, second_iterable, selector=identity):
+        '''Returns those elements which are either in the source sequence or in the
+        second_iterable.
+
+        Execution is deferred.
+
+        Args:
+            second_iterable: Elements from this sequence are returns if they are not also in the source sequence.
+
+            selector: An optional single argument function which is used to project the elements
+                in the source and second_iterables prior to comparing them.
+
+        Returns:
+            A sequence containing all elements in the source sequence and second sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+            ValueError: If the second_iterable is None
+        '''
         if self.closed():
             raise ValueError("Attempt to call union() on a closed Queryable.")
 
-        return self._create(itertools.chain(self, second_iterable)).distinct(func)
+        if not is_iterable(second_iterable):
+            raise TypeError("Cannot compute union() with second_iterable of non-iterable {type}".format(
+                    type=str(type(second_iterable))[7: -2]))
 
-    def join(self, inner_iterable, outer_key_func=identity, inner_key_func=identity,
+        return self._create(itertools.chain(self, second_iterable)).distinct(selector)
+
+    def join(self, inner_iterable, outer_selector=identity, inner_selector=identity,
              result_func=lambda outer, inner: (outer, inner)):
 
-        def join_result():
-            for outer_item in self:
-                outer_key = outer_key_func(outer_item)
-                for inner_item in inner_iterable:
-                    inner_key = inner_key_func(inner_item)
-                    if inner_key == outer_key:
-                        yield result_func(outer_item, inner_item)
+        if self.closed():
+            raise ValueError("Attempt to call join() on a closed Queryable.")
 
-        return self._create(join_result())
+        if inner_iterable is None:
+             raise ValueError("inner_iterable is None in call to join()")
+
+        return self._create(self._generate_join_result(inner_iterable, outer_selector,
+                                                       inner_selector, result_func))
+
+    def _generate_join_result(inner_iterable, outer_selector, inner_selector, result_func):
+        for outer_key in self.select(outer_selector):
+            for inner_key in self._create(inner_iterable).select(inner_selector):
+                if inner_key == outer_key:
+                    yield result_func(outer_item, inner_item)
 
     def first(self):
         return next(iter(self))
@@ -832,7 +962,7 @@ class Queryable(object):
 
     @staticmethod
     def range(self, start, count):
-        return self._create(range(start, start + count))
+        return self._create(irange(start, start + count))
 
     @staticmethod
     def repeat(self, element, count):
@@ -855,16 +985,28 @@ class Queryable(object):
 
     def to_list(self):
         # Maybe use with closable(self) construct to achieve this.
+        if isinstance(self._iterable, list):
+            return self._iterable
         lst = list(self)
         # Ideally we would close here. Why can't we - what is the problem?
         #self.close()
         return lst
 
     def to_tuple(self):
+        if isinstance(self._iterable, tuple):
+            return self._iterable
         tup = tuple(self)
         # Ideally we would close here
         #self.close()
         return tup
+
+    def to_set(self):
+        if isinstance(self._iterable, set):
+            return self._iterable
+        s = set(self)
+        # Ideally we would close here
+        #self.close()
+        return s
 
     def to_lookup(self, selector=identity):
         '''Returns a MultiDict object, using the provided selector to generate a key for each item.
@@ -876,7 +1018,6 @@ class Queryable(object):
         # Ideally we would close here
         #self.close()
         return lookup
-
 
     def as_parallel(self, pool=None):
         from .parallel_queryable import ParallelQueryable
