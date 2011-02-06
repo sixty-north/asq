@@ -28,6 +28,14 @@ except ImportError:
         sys.stderr.write('ordereddict module from the Python Package Index with easy_install ordereddict.')
         sys.exit(1)
 
+try:
+    # Python 2
+    irange = xrange
+except NameError:
+    #Python 3
+    irange = range
+
+    
 
 
   

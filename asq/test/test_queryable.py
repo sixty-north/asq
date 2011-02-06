@@ -35,6 +35,9 @@ class TracingGenerator(object):
 
 class TestQueryable(unittest.TestCase):
 
+    def test_non_iterable(self):
+        self.assertRaises(TypeError, lambda: Queryable(5))
+    
     def test_to_tuple(self):
         a = (27, 74, 18, 48, 57, 97, 76, 20, 91, 8, 80, 59, 20, 32, 58, 12, 74, 78, 4)
         b = Queryable(a).to_tuple()
@@ -184,6 +187,18 @@ class TestQueryable(unittest.TestCase):
         c = ['second', 'then', 'using', 'third', 'sort', 'letter']
         self.assertEqual(b, c)
 
+    def test_take_negative(self):
+        a = ['a', 'b', 'c']
+        b = Queryable(a).take(-1).to_list()
+        c = []
+        self.assertEqual(b, c)
+
+    def test_take_zero(self):
+        a = ['a', 'b', 'c']
+        b = Queryable(a).take(0).to_list()
+        c = []
+        self.assertEqual(b, c)
+
     def test_take_one(self):
         a = ['a', 'b', 'c']
         b = Queryable(a).take().to_list()
@@ -235,7 +250,19 @@ class TestQueryable(unittest.TestCase):
         # 3 is included here in the trace because it must have been consumed in order to test
         # whether it satisfies the predicate
         self.assertEqual(a.trace, [0, 1, 2, 3])
-        
+
+    def test_skip_negative(self):
+        a = ['a', 'b', 'c']
+        b = Queryable(a).skip(-1).to_list()
+        c = ['a', 'b', 'c']
+        self.assertEqual(b, c)
+
+    def test_skip_zero(self):
+        a = ['a', 'b', 'c']
+        b = Queryable(a).skip(0).to_list()
+        c = ['a', 'b', 'c']
+        self.assertEqual(b, c)
+
     def test_skip_one(self):
         a = ['a', 'b', 'c']
         b = Queryable(a).skip().to_list()
@@ -482,7 +509,153 @@ class TestQueryable(unittest.TestCase):
     def test_empty_count(self):
         self.assertEqual(Queryable.empty().count(), 0)
 
-        
+    def test_difference(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8]
+        b = [2, 4, 9, 11]
+        c = Queryable(a).difference(b).to_list()
+        d = [1, 3, 5, 6, 7, 8]
+        self.assertEqual(c, d)
+
+    def test_difference_non_iterable(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8]
+        b = None
+        self.assertRaises(TypeError, lambda: Queryable(a).difference(b))
+
+    def test_difference_disjoint(self):
+        a = [1, 2, 3, 4, 5]
+        b = [6, 7, 8, 9, 10]
+        c = Queryable(a).difference(b).to_list()
+        d = [1, 2, 3, 4, 5]
+        self.assertEqual(c, d)
+
+    def test_difference_selector(self):
+        a = [1, 2, 3, 4, -5, 6, 7, -8]
+        b = [-2, -4, 5, 8]
+        c = Queryable(a).difference(b, abs).to_list()
+        d = [1, 3, 6, 7]
+        self.assertEqual(c, d)
+
+    def test_difference_infinite(self):
+        b = [3, 7, 2, 9, 10]
+        c = Queryable(infinite()).difference(b).take(10).to_list()
+        d = [0, 1, 4, 5, 6, 8, 11, 12, 13, 14]
+        self.assertEqual(c, d)
+
+    def test_difference_deferred(self):
+        a = TracingGenerator()
+        self.assertEqual(a.trace, [])
+        b = [3, 7, 2, 9, 10]
+        c = Queryable(a).difference(b)
+        self.assertEqual(a.trace, [])
+        d = c.take(10).to_list()
+        e = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+        self.assertEqual(a.trace, e)
+
+    def test_difference_distinct(self):
+        a = [1, 1, 2, 4, 5, 3]
+        b = [2, 5, 5]
+        c = Queryable(a).difference(b).to_list()
+        d = [1, 4, 3]
+        self.assertEqual(c, d)
+
+    def test_intersect(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8]
+        b = [2, 4, 9, 11]
+        c = Queryable(a).intersect(b).to_list()
+        d = [2, 4]
+        self.assertEqual(c, d)
+
+    def test_intersect_non_iterable(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8]
+        b = None
+        self.assertRaises(TypeError, lambda: Queryable(a).intersect(b))
+
+    def test_intersect_disjoint(self):
+        a = [1, 2, 3, 4, 5]
+        b = [6, 7, 8, 9, 10]
+        c = Queryable(a).intersect(b).to_list()
+        d = []
+        self.assertEqual(c, d)
+
+    def test_intersect_selector(self):
+        a = [1, 2, 3, 4, -5, 6, 7, -8]
+        b = [-2, -4, 5, 8]
+        c = Queryable(a).intersect(b, abs).to_list()
+        d = [2, 4, -5, -8]
+        self.assertEqual(c, d)
+
+    def test_intersect_infinite(self):
+        b = [3, 7, 2, 9, 10]
+        c = Queryable(infinite()).intersect(b).take(5).to_list()
+        d = [2, 3, 7, 9, 10]
+        self.assertEqual(c, d)
+
+    def test_intersect_deferred(self):
+        a = TracingGenerator()
+        self.assertEqual(a.trace, [])
+        b = [3, 7, 2, 9, 10]
+        c = Queryable(a).intersect(b)
+        self.assertEqual(a.trace, [])
+        d = c.take(5).to_list()
+        e = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertEqual(a.trace, e)
+
+    def test_intersect_distinct(self):
+        a = [1, 1, 2, 2, 4, 5, 3]
+        b = [2, 5, 5]
+        c = Queryable(a).intersect(b).to_list()
+        d = [2, 5]
+        self.assertEqual(c, d)
+
+    def test_union(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8]
+        b = [2, 4, 9, 11]
+        c = Queryable(a).union(b).to_list()
+        d = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11]
+        self.assertEqual(c, d)
+
+    def test_union_non_iterable(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8]
+        b = None
+        self.assertRaises(TypeError, lambda: Queryable(a).union(b))
+
+    def test_union_disjoint(self):
+        a = [1, 2, 3, 4, 5]
+        b = [6, 7, 8, 9, 10]
+        c = Queryable(a).union(b).to_list()
+        d = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertEqual(c, d)
+
+    def test_union_selector(self):
+        a = [1, 2, 3, 4, -5, 6, 7, -8]
+        b = [-2, -4, 5, -9]
+        c = Queryable(a).union(b, abs).to_list()
+        d = [1, 2, 3, 4, -5, 6 , 7, -8, -9]
+        self.assertEqual(c, d)
+
+    def test_union_infinite(self):
+        b = [3, 7, 2, 9, 10]
+        c = Queryable(infinite()).union(b).take(5).to_list()
+        d = [0, 1, 2, 3, 4]
+        self.assertEqual(c, d)
+
+    def test_union_deferred(self):
+        a = TracingGenerator()
+        self.assertEqual(a.trace, [])
+        b = [3, 7, 2, 9, 10]
+        c = Queryable(a).union(b)
+        self.assertEqual(a.trace, [])
+        d = c.take(5).to_list()
+        e = [0, 1, 2, 3, 4]
+        self.assertEqual(a.trace, e)
+
+    def test_union_distinct(self):
+        a = [1, 1, 2, 2, 4, 5, 3]
+        b = [2, 5, 5]
+        c = Queryable(a).union(b).to_list()
+        d = [1, 2, 4, 5, 3]
+        self.assertEqual(c, d)
+
 
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence
