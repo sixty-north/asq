@@ -656,6 +656,51 @@ class TestQueryable(unittest.TestCase):
         d = [1, 2, 4, 5, 3]
         self.assertEqual(c, d)
 
+    # TODO: Join
+
+    def test_first(self):
+        a = [42, 45, 23, 12]
+        b = Queryable(a).first()
+        self.assertEqual(b, 42)
+
+    def test_first_empty(self):
+        self.assertRaises(ValueError, lambda: Queryable([]).first())
+
+    def test_first_infinite(self):
+        b = Queryable(infinite()).first()
+        self.assertEqual(b, 0)
+
+    def test_first_or_default(self):
+        a = [42, 45, 23, 12]
+        b = Queryable(a).first_or_default(37)
+        self.assertEqual(b, 42)
+
+    def test_first_or_default_empty(self):
+        a = []
+        b = Queryable(a).first_or_default(37)
+        self.assertEqual(b, 37)
+
+    def test_first_or_default_infinite(self):
+        b = Queryable(infinite()).first_or_default(37)
+        self.assertEqual(b, 0)
+
+    def test_last(self):
+        a = [42, 45, 23, 12]
+        b = Queryable(a).last()
+        self.assertEqual(b, 12)
+
+    def test_last_empty(self):
+        self.assertRaises(ValueError, lambda: Queryable([]).last())
+
+    def test_last_or_default(self):
+        a = [42, 45, 23, 12]
+        b = Queryable(a).last_or_default(37)
+        self.assertEqual(b, 12)
+
+    def test_last_or_default_empty(self):
+        a = []
+        b = Queryable(a).last_or_default(37)
+        self.assertEqual(b, 37)
 
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence
