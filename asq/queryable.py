@@ -6,7 +6,7 @@ import heapq
 import itertools
 import functools
 
-from .portability import (imap, ifilter, irange, OrderedDict)
+from .portability import (imap, ifilter, irange, fold, OrderedDict)
 
 default = object()
 
@@ -925,18 +925,27 @@ class Queryable(object):
                     yield result_func(outer_item, inner_item)
 
     def first(self):
+        if self.closed():
+            raise ValueError("Attempt to call first() on a closed Queryable.")
+
         try:
             return next(iter(self))
         except StopIteration:
             raise ValueError("Cannot return first() from an empty sequence.")
 
     def first_or_default(self, default):
+        if self.closed():
+            raise ValueError("Attempt to call first_or_default() on a closed Queryable.")
+
         try:
             return next(iter(self))
         except StopIteration:
             return default
 
     def last(self):
+        if self.closed():
+            raise ValueError("Attempt to call last() on a closed Queryable.")
+
         sentinel = object()
         result = sentinel
 
@@ -949,6 +958,9 @@ class Queryable(object):
         return result
 
     def last_or_default(self, default):
+        if self.closed():
+            raise ValueError("Attempt to call last_or_default() on a closed Queryable.")
+
         sentinel = object()
         result = sentinel
 
@@ -960,10 +972,21 @@ class Queryable(object):
 
         return result
 
-    def aggregate(self, func, seed=default):
+    def aggregate(self, func, seed=default, result_selector=identity):
+        '''
+        Raises:
+            ValueError: If called on an empty sequence with no seed value.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call aggregate() on a closed Queryable.")
+
         if seed is default:
-            return functools.reduce(func, iter(self))
-        return functools.reduce(func, iter(self), seed)
+            try:
+                return result_selector(fold(func, self))
+            except TypeError as e:
+                if 'empty sequence' in str(e):
+                    raise ValueError("Cannot aggregate() empty sequence with no seed value")
+        return result_selector(fold(func, self, seed))
 
     @staticmethod
     def range(self, start, count):

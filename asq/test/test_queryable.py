@@ -1,8 +1,7 @@
 '''
 test_queryable.py Unit tests for asq.queryable.Queryable
 '''
-import math
-
+import operator
 import unittest
 
 from asq.queryable import Queryable, Lookup, Grouping
@@ -656,6 +655,11 @@ class TestQueryable(unittest.TestCase):
         d = [1, 2, 4, 5, 3]
         self.assertEqual(c, d)
 
+    def test_union_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.union([1, 2, 3]))
+
     # TODO: Join
 
     def test_first(self):
@@ -669,6 +673,11 @@ class TestQueryable(unittest.TestCase):
     def test_first_infinite(self):
         b = Queryable(infinite()).first()
         self.assertEqual(b, 0)
+
+    def test_first_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.first())
 
     def test_first_or_default(self):
         a = [42, 45, 23, 12]
@@ -684,6 +693,11 @@ class TestQueryable(unittest.TestCase):
         b = Queryable(infinite()).first_or_default(37)
         self.assertEqual(b, 0)
 
+    def test_first_or_default_closed(self):
+        b = Queryable([])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.first_or_default(37))
+
     def test_last(self):
         a = [42, 45, 23, 12]
         b = Queryable(a).last()
@@ -691,6 +705,11 @@ class TestQueryable(unittest.TestCase):
 
     def test_last_empty(self):
         self.assertRaises(ValueError, lambda: Queryable([]).last())
+
+    def test_last_closed(self):
+        b = Queryable([])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.last())
 
     def test_last_or_default(self):
         a = [42, 45, 23, 12]
@@ -701,6 +720,43 @@ class TestQueryable(unittest.TestCase):
         a = []
         b = Queryable(a).last_or_default(37)
         self.assertEqual(b, 37)
+
+    def test_last_or_default_closed(self):
+        b = Queryable([])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.last_or_default(37))
+
+    def test_aggregate(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        b = Queryable(a).aggregate(operator.add)
+        self.assertEqual(b, 55)
+
+    def test_aggregate_seed(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        b = Queryable(a).aggregate(operator.add, 5)
+        self.assertEqual(b, 60)
+
+    def test_aggregate_result_selector(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        b = Queryable(a).aggregate(operator.add, result_selector=lambda x: x*2)
+        self.assertEqual(b, 110)
+
+    def test_aggregate_seed_result_selector(self):
+        a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        b = Queryable(a).aggregate(operator.add, 5, lambda x: x*2)
+        self.assertEqual(b, 120)
+
+    def test_aggregate_empty(self):
+        self.assertRaises(ValueError, lambda: Queryable([]).aggregate(operator.add))
+
+    def test_aggregate_empty_seed(self):
+        b = Queryable([]).aggregate(operator.add, 67)
+        self.assertEqual(b, 67)
+
+    def test_aggregate_closed(self):
+        b = Queryable([])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.aggregate(operator.add, 72))
 
     # TODO: Test each function with an empty sequence
     # TODO: Test each function with an infinite sequence

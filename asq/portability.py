@@ -35,6 +35,16 @@ except NameError:
     #Python 3
     irange = range
 
+
+try:
+    # Python 2
+    fold = reduce
+except NameError:
+    import functools
+    fold = functools.reduce
+    
+
+
     
 
 
