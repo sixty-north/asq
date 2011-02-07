@@ -910,8 +910,10 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call join() on a closed Queryable.")
 
-        if inner_iterable is None:
-             raise ValueError("inner_iterable is None in call to join()")
+        if not is_iterable(second_iterable):
+            raise TypeError("Cannot compute union() with second_iterable of non-iterable {type}".format(
+                    type=str(type(second_iterable))[7: -2]))
+
 
         return self._create(self._generate_join_result(inner_iterable, outer_selector,
                                                        inner_selector, result_func))
@@ -923,7 +925,10 @@ class Queryable(object):
                     yield result_func(outer_item, inner_item)
 
     def first(self):
-        return next(iter(self))
+        try:
+            return next(iter(self))
+        except StopIteration:
+            raise ValueError("Cannot return first() from an empty sequence.")
 
     def first_or_default(self, default):
         try:
@@ -939,7 +944,7 @@ class Queryable(object):
             result = item
 
         if result is sentinel:
-            raise StopIteration()
+            raise ValueError("Cannot return last() from an empty sequence.")
 
         return result
 
