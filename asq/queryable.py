@@ -4,9 +4,8 @@ queryable.py A module for LINQ-like facility in Python.
 
 import heapq
 import itertools
-import functools
 
-from .portability import (imap, ifilter, irange, fold, OrderedDict)
+from .portability import (imap, ifilter, irange, izip, fold, OrderedDict)
 
 default = object()
 
@@ -988,28 +987,22 @@ class Queryable(object):
                     raise ValueError("Cannot aggregate() empty sequence with no seed value")
         return result_selector(fold(func, self, seed))
 
-    @staticmethod
-    def range(self, start, count):
-        return self._create(irange(start, start + count))
+    @classmethod
+    def range(cls, start, count):
+        if count < 0:
+            raise ValueError("range() count cannot be negative")
+        return cls(irange(start, start + count))
 
-    @staticmethod
-    def repeat(self, element, count):
-        return self._create(itertools.repeat(element, count))
+    @classmethod
+    def repeat(cls, element, count):
+        if count < 0:
+            raise ValueError("repeat() count cannot be negative")
+        return cls(itertools.repeat(element, count))
 
     def zip(self, second_iterable, func=lambda x,y: (x,y)):
         if self.closed():
             raise ValueError("Attempt to call zip() on a closed Queryable.")
-        return self._create(self._generate_zip_result(second_iterable, func))
-
-    def _generate_zip_result(self, second_iterable, func):
-        second_iterator = iter(second_iterable)
-        try:
-            while True:
-                x = next(iter(self))
-                y = next(second_iterator)
-                yield func(x, y)
-        except StopIteration:
-            pass
+        return self._create(func(*t) for t in izip(self, second_iterable))
 
     def to_list(self):
         # Maybe use with closable(self) construct to achieve this.
