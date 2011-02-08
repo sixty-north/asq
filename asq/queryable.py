@@ -909,7 +909,7 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call join() on a closed Queryable.")
 
-        if not is_iterable(second_iterable):
+        if not is_iterable(inner_iterable):
             raise TypeError("Cannot compute union() with second_iterable of non-iterable {type}".format(
                     type=str(type(second_iterable))[7: -2]))
 
@@ -917,11 +917,11 @@ class Queryable(object):
         return self._create(self._generate_join_result(inner_iterable, outer_selector,
                                                        inner_selector, result_func))
 
-    def _generate_join_result(inner_iterable, outer_selector, inner_selector, result_func):
+    def _generate_join_result(self, inner_iterable, outer_selector, inner_selector, result_func):
         for outer_key in self.select(outer_selector):
             for inner_key in self._create(inner_iterable).select(inner_selector):
                 if inner_key == outer_key:
-                    yield result_func(outer_item, inner_item)
+                    yield result_func(outer_key, inner_key)
 
     def first(self):
         if self.closed():
@@ -1146,7 +1146,17 @@ class Lookup(Queryable):
         super(Lookup, self).__init__(Grouping(self._dict, key) for key in self._dict)
 
     def __getitem__(self, key):
-        '''The sequence corresponding to a given key.'''
+        '''The sequence corresponding to a given key.
+
+        Args:
+            key: The key of the group to be returned.
+
+        Returns:
+            The Grouping corresponding to the supplied key.
+
+        Raises:
+            KeyError: If there is no Grouping corresponding to key.
+        '''
         return Grouping(self._dict, key)
 
     def __len__(self):
@@ -1157,8 +1167,12 @@ class Lookup(Queryable):
         return key in self._dict
 
     def __repr__(self):
-        # TODO: Display in a format that would be consumable by the constructor
-        return 'Lookup({d})'.format(d=self._dict)
+        return 'Lookup({d})'.format(d=list(self._generate_repr_result()))
+
+    def _generate_repr_result(self):
+        for key in self._dict:
+            for value in self._dict[key]:
+                yield (key, value)
 
     def apply_result_selector(self, selector=lambda key, sequence: sequence):
         return self._create(self._generate_apply_result_selector(selector))
