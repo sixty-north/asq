@@ -188,7 +188,7 @@ class Queryable(object):
                 Returns:
                     An iterable derived from the element value
 
-            selector: An optional unary functon mapping the elements in the flattened intermediate sequence to
+            selector: An optional unary function mapping the elements in the flattened intermediate sequence to
                 corresponding elements of the result sequence. If no selector function is provided, the identity
                 function is used.  The selector function argument and return values are,
 
@@ -209,9 +209,11 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call select_many() on a closed Queryable.")
 
-        sequences = (self._create(item).select(projector) for item in iter(self))
+        sequences = self.select(projector)
+        #sequences = (self._create(item).select(projector) for item in self)
         chained_sequence = itertools.chain.from_iterable(sequences)
-        return self._create(imap(selector, chained_sequence))
+        #return self._create(imap(selector, chained_sequence))
+        return self._create(chained_sequence).select(selector)
         
     def select_many_with_index(self, projector=lambda i,x:iter(x), selector=identity):
         '''Projects each element of a sequence to an intermediate new sequence, incorporating the index of the element,
@@ -863,7 +865,7 @@ class Queryable(object):
 
         if not is_iterable(second_iterable):
             raise TypeError("Cannot compute intersect() with second_iterable of non-iterable {type}".format(
-                    type=str(type(second_iterable))[7: -2]))
+                    type=str(type(second_iterable))[7: -1]))
 
         return self._create(self._generate_intersect_result(second_iterable, selector))
 
@@ -899,29 +901,29 @@ class Queryable(object):
 
         if not is_iterable(second_iterable):
             raise TypeError("Cannot compute union() with second_iterable of non-iterable {type}".format(
-                    type=str(type(second_iterable))[7: -2]))
+                    type=str(type(second_iterable))[7: -1]))
 
         return self._create(itertools.chain(self, second_iterable)).distinct(selector)
 
-    def join(self, inner_iterable, outer_selector=identity, inner_selector=identity,
-             result_func=lambda outer, inner: (outer, inner)):
+    def join(self, inner_iterable, outer_key_selector=identity, inner_key_selector=identity,
+             result_selector=lambda outer, inner: (outer, inner)):
 
         if self.closed():
             raise ValueError("Attempt to call join() on a closed Queryable.")
 
         if not is_iterable(inner_iterable):
-            raise TypeError("Cannot compute union() with second_iterable of non-iterable {type}".format(
-                    type=str(type(second_iterable))[7: -2]))
+            raise TypeError("Cannot compute join() with inner_iterable of non-iterable {type}".format(
+                    type=str(type(inner_iterable))[7: -1]))
 
+        return self._create(self._generate_join_result(inner_iterable, outer_key_selector,
+                                                       inner_key_selector, result_selector))
 
-        return self._create(self._generate_join_result(inner_iterable, outer_selector,
-                                                       inner_selector, result_func))
-
-    def _generate_join_result(self, inner_iterable, outer_selector, inner_selector, result_func):
-        for outer_key in self.select(outer_selector):
-            for inner_key in self._create(inner_iterable).select(inner_selector):
-                if inner_key == outer_key:
-                    yield result_func(outer_key, inner_key)
+    def _generate_join_result(self, inner_iterable, outer_key_selector, inner_key_selector, result_selector):
+        lookup = self._create(inner_iterable).to_lookup(inner_key_selector)
+        result = self.select_many_with_correspondence(lambda outer_element: lookup[outer_key_selector(outer_element)],
+                                                      result_selector)
+        for item in result:
+            yield item
 
     def first(self):
         if self.closed():
@@ -1146,16 +1148,14 @@ class Lookup(Queryable):
         super(Lookup, self).__init__(Grouping(self._dict, key) for key in self._dict)
 
     def __getitem__(self, key):
-        '''The sequence corresponding to a given key.
+        '''The sequence corresponding to a given key, or an empty sequence if
+           there are no values corresponding to that key.
 
         Args:
             key: The key of the group to be returned.
 
         Returns:
             The Grouping corresponding to the supplied key.
-
-        Raises:
-            KeyError: If there is no Grouping corresponding to key.
         '''
         return Grouping(self._dict, key)
 
@@ -1185,7 +1185,7 @@ class Grouping(Queryable):
 
     def __init__(self, ordereddict, key):
         self._key = key
-        sequence = ordereddict[key]
+        sequence = ordereddict[key] if key in ordereddict else self.empty()
         super(Grouping, self).__init__(sequence)
 
     key = property(lambda self: self._key)
@@ -1195,7 +1195,7 @@ class Grouping(Queryable):
 
     def __repr__(self):
         # TODO: Display in a format that would be consumable by the constructor
-        return 'Grouping(key={k})'.format(k=self._key)
+        return 'Grouping(key={k})'.format(k=repr(self._key))
 
 # TODO: Should we use a class factory to generate the parallel equivalents of these?
 
