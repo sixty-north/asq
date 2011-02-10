@@ -305,6 +305,7 @@ class Queryable(object):
         for item in self:
             intermediate_sequence = projector(item)
             for intermediate_item in intermediate_sequence:
+                # Use select() here too?
                 value = selector(item, intermediate_item)
                 yield value
 
@@ -925,6 +926,25 @@ class Queryable(object):
         for item in result:
             yield item
 
+    def group_join(self, inner_iterable, outer_key_selector=identity, inner_key_selector=identity,
+             result_selector=lambda outer, inner: (outer, inner)):
+
+        if self.closed():
+            raise ValueError("Attempt to call group_join() on a closed Queryable.")
+
+        if not is_iterable(inner_iterable):
+            raise TypeError("Cannot compute group_join() with inner_iterable of non-iterable {type}".format(
+                    type=str(type(inner_iterable))[7: -1]))
+
+        return self._create(self._generate_group_join_result(inner_iterable, outer_key_selector,
+                                                       inner_key_selector, result_selector))
+
+    def _generate_group_join_result(self, inner_iterable, outer_key_selector, inner_key_selector, result_selector):
+        lookup = self._create(inner_iterable).to_lookup(inner_key_selector)
+        for outer_element in self:
+            outer_key = outer_key_selector(outer_element)
+            yield result_selector(outer_element, lookup[outer_key])
+
     def first(self):
         if self.closed():
             raise ValueError("Attempt to call first() on a closed Queryable.")
@@ -1041,6 +1061,16 @@ class Queryable(object):
         # Ideally we would close here
         #self.close()
         return lookup
+
+    # TODO: to_dictionary()
+
+    # TODO: sequence_equal()
+
+    # TODO: single()
+
+    # TODO: single_or_default()
+
+    # TODO: cast
 
     def as_parallel(self, pool=None):
         from .parallel_queryable import ParallelQueryable
