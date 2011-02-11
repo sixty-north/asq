@@ -18,6 +18,23 @@ class TestFirst(unittest.TestCase):
         b = Queryable(infinite()).first()
         self.assertEqual(b, 0)
 
+    def test_first_predicate(self):
+        a = [37, 54, 23, 12]
+        b = Queryable(a).first(lambda x: x >= 50)
+        self.assertEqual(b, 54)
+
+    def test_first_predicate_empty(self):
+        self.assertRaises(ValueError, lambda: Queryable([]).first(lambda x: x >= 50))
+        
+    def test_first_predicate_missing(self):
+        a = [37, 42, 23, 12]
+        self.assertRaises(ValueError, lambda: Queryable(a).first(lambda x: x >= 50))
+
+    def test_first_predicate_infinite(self):
+        a = infinite()
+        b = Queryable(a).first(lambda x: x >= 50)
+        self.assertEqual(b, 50)
+
     def test_first_closed(self):
         b = Queryable([1])
         b.close()
