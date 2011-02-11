@@ -19,7 +19,7 @@ class TestFirst(unittest.TestCase):
         self.assertEqual(b, 0)
 
     def test_first_predicate(self):
-        a = [37, 54, 23, 12]
+        a = [37, 54, 57, 23, 12]
         b = Queryable(a).first(lambda x: x >= 50)
         self.assertEqual(b, 54)
 

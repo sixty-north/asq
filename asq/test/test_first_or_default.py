@@ -20,6 +20,21 @@ class TestFirstOrDefault(unittest.TestCase):
         b = Queryable(infinite()).first_or_default(37)
         self.assertEqual(b, 0)
 
+    def test_first_or_default_predicate(self):
+        a = [37, 54, 23, 12]
+        b = Queryable(a).first_or_default(78, lambda x: x >= 50)
+        self.assertEqual(b, 54)
+
+    def test_first_or_default_predicate_empty(self):
+        a = []
+        b = Queryable([]).first_or_default(56, lambda x: x >= 50)
+        self.assertEqual(b, 56)
+
+    def test_first_predicate_missing(self):
+        a = [37, 42, 23, 12]
+        b = Queryable(a).first_or_default(98, lambda x: x >= 50)
+        self.assertEqual(b, 98)
+
     def test_first_or_default_closed(self):
         b = Queryable([])
         b.close()

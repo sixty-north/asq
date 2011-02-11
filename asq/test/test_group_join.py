@@ -18,7 +18,7 @@ class TestGroupJoin(unittest.TestCase):
         self.assertEqual(c[1][0], 2)
         self.assertEqual(c[1][1].key, 2)
         self.assertEqual(len(c[1][1]), 1)
-        self.assertIn(2, c[1][1])
+        self.assertTrue(2 in c[1][1])
 
 
     def test_group_join_selectors(self):
@@ -50,7 +50,7 @@ class TestGroupJoin(unittest.TestCase):
         self.assertEqual(c[2][0], 2)
         self.assertEqual(c[2][1].key, 2)
         self.assertEqual(len(c[2][1]), 1)
-        self.assertIn(2, c[2][1])
+        self.assertTrue(2 in c[2][1])
         
 
     def test_group_join_is_deferred(self):

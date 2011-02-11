@@ -13,6 +13,18 @@ class TestLast(unittest.TestCase):
     def test_last_empty(self):
         self.assertRaises(ValueError, lambda: Queryable([]).last())
 
+    def test_last_predicate(self):
+        a = [37, 54, 57, 23, 12]
+        b = Queryable(a).last(lambda x: x >= 50)
+        self.assertEqual(b, 57)
+
+    def test_last_predicate_empty(self):
+        self.assertRaises(ValueError, lambda: Queryable([]).last(lambda x: x >= 50))
+
+    def test_last_predicate_missing(self):
+        a = [37, 42, 23, 12]
+        self.assertRaises(ValueError, lambda: Queryable(a).first(lambda x: x >= 50))
+
     def test_last_closed(self):
         b = Queryable([])
         b.close()
