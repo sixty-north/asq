@@ -946,26 +946,42 @@ class Queryable(object):
             outer_key = outer_key_selector(outer_element)
             yield result_selector(outer_element, lookup[outer_key])
 
-    def first(self):
-        # TODO: predicate
+    def first(self, predicate=None):
         if self.closed():
             raise ValueError("Attempt to call first() on a closed Queryable.")
 
+        return self._first() if predicate is None else self._first_predicate(predicate)
+
+    def _first(self):
         try:
             return next(iter(self))
         except StopIteration:
             raise ValueError("Cannot return first() from an empty sequence.")
 
-    def first_or_default(self, default):
-        # TODO: predicate
+    def _first_predicate(self, predicate):
+        for item in self:
+            if predicate(item):
+                return item
+        raise ValueError("No elements matching predicate in call to first()")
+
+    def first_or_default(self, default, predicate=None):
         if self.closed():
             raise ValueError("Attempt to call first_or_default() on a closed Queryable.")
 
+        return self._first_or_default(default) if predicate is None else self._first_or_default_predicate(default, predicate)
+
+    def _first_or_default(self, default):
         try:
             return next(iter(self))
         except StopIteration:
             return default
 
+    def _first_or_default_predicate(self, default, predicate):
+        for item in self:
+            if predicate(item):
+                return item
+        return default
+    
     def single(self, predicate=None):
         if self.closed():
             raise ValueError("Attempt to call single() on a closed Queryable.")
