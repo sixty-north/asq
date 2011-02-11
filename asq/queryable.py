@@ -968,6 +968,13 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call last() on a closed Queryable.")
 
+        # Attempt an optimised version
+        try:
+            count = len(self._iterable)
+            return self._iterable[count - 1]
+        except:
+            pass
+
         sentinel = object()
         result = sentinel
 
@@ -982,6 +989,15 @@ class Queryable(object):
     def last_or_default(self, default):
         if self.closed():
             raise ValueError("Attempt to call last_or_default() on a closed Queryable.")
+
+        # Attempt an optimised version
+        try:
+            count = len(self._iterable)
+            if count == 0:
+                return default
+            return self._iterable[count - 1]
+        except:
+            pass
 
         sentinel = object()
         result = sentinel
