@@ -502,6 +502,14 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call reverse() on a closed Queryable.")
 
+        # Attempt an optimised version
+        try:
+            r = reversed(self._iterable)
+            return self._create(r)
+        except TypeError:
+            pass
+
+        # Fall through to a sequential version
         return self._create(self._generate_reverse_result())
 
     def _generate_reverse_result(self):
@@ -1049,11 +1057,13 @@ class Queryable(object):
         return result
 
 
-    def last(self):
-        # TODO: predicate
+    def last(self, predicate=None):
         if self.closed():
             raise ValueError("Attempt to call last() on a closed Queryable.")
 
+        return self._last() if predicate is None else self._last_predicate(predicate)
+
+    def _last(self):
         # Attempt an optimised version
         try:
             count = len(self._iterable)
@@ -1072,11 +1082,35 @@ class Queryable(object):
 
         return result
 
-    def last_or_default(self, default):
-        # TODO: predicate
+    def _last_predicate(self, predicate):
+        # Attempt an optimised version
+        try:
+            r = reversed(self._iterable)
+            self._create(r).first(predicate)
+        except TypeError:
+            pass
+
+        # Fall through to the sequential version
+        sentinel = object()
+        result = sentinel
+
+        for item in self:
+            if predicate(item):
+                result = item
+
+        if result is sentinel:
+            raise ValueError("No item matching predicate in call to last()")
+
+        return result
+
+
+    def last_or_default(self, default, predicate=None):
         if self.closed():
             raise ValueError("Attempt to call last_or_default() on a closed Queryable.")
 
+        return self._last_or_default(default) if predicate is None else self._last_or_default_predicate(default, predicate)
+
+    def _last_or_default(self, default):
         # Attempt an optimised version
         try:
             count = len(self._iterable)
@@ -1086,6 +1120,7 @@ class Queryable(object):
         except:
             pass
 
+        # Fall through to the sequential version
         sentinel = object()
         result = sentinel
 
@@ -1096,6 +1131,27 @@ class Queryable(object):
             return default
 
         return result
+
+    def _last_or_default_predicate(self, default, predicate):
+        try:
+            r = reversed(self._iterable)
+            return self._create(r).first_or_default(default, predicate)
+        except TypeError:
+            # Fall through to the sequential version
+            pass
+        
+        sentinel = object()
+        result = sentinel
+
+        for item in iter(self):
+            if predicate(item):
+                result = item
+
+        if result is sentinel:
+            return default
+
+        return result
+
 
     def aggregate(self, func, seed=default, result_selector=identity):
         '''
@@ -1199,12 +1255,6 @@ class Queryable(object):
                 return False
         return True
 
-    # TODO: single()
-
-    # TODO: single_or_default()
-
-    # TODO: cast
-
     def as_parallel(self, pool=None):
         from .parallel_queryable import ParallelQueryable
         return ParallelQueryable(self, pool)
@@ -1226,6 +1276,9 @@ class Queryable(object):
 
     def __str__(self):
         return repr(self)
+
+    # TODO: def __reversed__(self):
+
 
     def __repr__(self):
         # Must be careful not to consume the iterable here
