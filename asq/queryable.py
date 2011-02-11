@@ -947,6 +947,7 @@ class Queryable(object):
             yield result_selector(outer_element, lookup[outer_key])
 
     def first(self):
+        # TODO: predicate
         if self.closed():
             raise ValueError("Attempt to call first() on a closed Queryable.")
 
@@ -956,6 +957,7 @@ class Queryable(object):
             raise ValueError("Cannot return first() from an empty sequence.")
 
     def first_or_default(self, default):
+        # TODO: predicate
         if self.closed():
             raise ValueError("Attempt to call first_or_default() on a closed Queryable.")
 
@@ -964,7 +966,75 @@ class Queryable(object):
         except StopIteration:
             return default
 
+    def single(self, predicate=None):
+        if self.closed():
+            raise ValueError("Attempt to call single() on a closed Queryable.")
+
+        return self._single() if predicate is None else self._single_predicate(predicate)
+
+    def _single(self):
+        p = iter(self)
+
+        try:
+            result = next(p)
+        except StopIteration:
+            raise ValueError("Cannot return single() from an empty sequence.")
+
+        try:
+            next(p)
+        except StopIteration:
+            return result
+
+        raise ValueError("Sequence for single() contains multiple elements")
+    
+    def _single_predicate(self, predicate):
+        found = False
+        for item in self:
+            if predicate(item):
+                if found == True:
+                    raise ValueError("Sequence contains more than one value matching singe() predicate")
+                result = item
+                found = True
+        if found == False:
+            raise ValueError("Sequence for single() contains no items matching the predicate")
+        return result
+
+    def single_or_default(self, default, predicate=None):
+        if self.closed():
+            raise ValueError("Attempt to call single() on a closed Queryable.")
+
+        return self._single_or_default(default) if predicate is None else self._single_or_default_predicate(default, predicate)
+
+    def _single_or_default(self, default):
+        p = iter(self)
+
+        try:
+            result = next(p)
+        except StopIteration:
+            return default
+
+        try:
+            next(p)
+        except StopIteration:
+            return result
+
+        raise ValueError("Sequence for single() contains multiple elements")
+
+
+    def _single_or_default_predicate(self, default, predicate):
+        found = False
+        result = default
+        for item in self:
+            if predicate(item):
+                if found == True:
+                    raise ValueError("Sequence contains more than one value matching singe() predicate")
+                result = item
+                found = True
+        return result
+
+
     def last(self):
+        # TODO: predicate
         if self.closed():
             raise ValueError("Attempt to call last() on a closed Queryable.")
 
@@ -987,6 +1057,7 @@ class Queryable(object):
         return result
 
     def last_or_default(self, default):
+        # TODO: predicate
         if self.closed():
             raise ValueError("Attempt to call last_or_default() on a closed Queryable.")
 
