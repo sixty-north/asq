@@ -4,8 +4,9 @@ queryable.py A module for LINQ-like facility in Python.
 
 import heapq
 import itertools
+import operator
 
-from .portability import (imap, ifilter, irange, izip, fold, OrderedDict)
+from .portability import (imap, ifilter, irange, izip, izip_longest, fold, OrderedDict)
 
 default = object()
 
@@ -1052,7 +1053,7 @@ class Queryable(object):
         return s
 
     def to_lookup(self, selector=identity):
-        '''Returns a MultiDict object, using the provided selector to generate a key for each item.
+        '''Returns a Lookup object, using the provided selector to generate a key for each item.
 
         Execution is immediate.
         '''
@@ -1062,9 +1063,38 @@ class Queryable(object):
         #self.close()
         return lookup
 
-    # TODO: to_dictionary()
+    def to_dictionary(self, key_selector=identity, element_selector=identity):
+        '''Build a dictionary from the source sequence.
 
-    # TODO: sequence_equal()
+        Raises:
+            ValueError: If duplicate keys are in the projected source sequence.
+        '''
+        dictionary = {}
+        for key, value in self.select(lambda x: (key_selector(x), element_selector(x))):
+            if key in dictionary:
+                raise ValueError("Duplicate key value {key} in sequence during to_dictionary()".format(key=repr(key)))
+            dictionary[key] = value
+        return dictionary
+
+    def sequence_equal(self, second_iterable, equality_comparer=operator.eq):
+        if not is_iterable(second_iterable):
+            raise TypeError("Cannot compute sequence_equal() with second_iterable of non-iterable {type}".format(
+                    type=str(type(second_iterable))[7: -1]))
+
+        # Try to check the lengths directly as an optimization
+        try:
+            if len(self._iterable) != len(second_iterable):
+                return False
+        except TypeError:
+            pass
+
+        sentinel = object()
+        for first, second in izip_longest(self, second_iterable, fillvalue=sentinel):
+            if first is sentinel or second is sentinel:
+                return False
+            if not equality_comparer(first, second):
+                return False
+        return True
 
     # TODO: single()
 
