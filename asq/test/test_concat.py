@@ -26,4 +26,8 @@ class TestConcat(unittest.TestCase):
         self.assertEqual(a.trace, [0])
         self.assertEqual(b.trace, [])
 
+    def test_concat_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.concat([2]))
   

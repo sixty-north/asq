@@ -20,4 +20,5 @@ class TestRange(unittest.TestCase):
     def test_range_negative_count(self):
         self.assertRaises(ValueError, lambda: Queryable.range(0, -1))
 
-  
+    def test_range_instance(self):
+        Queryable([1, 2, 3]).range(3, 5)

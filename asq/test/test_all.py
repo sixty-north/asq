@@ -19,3 +19,8 @@ class TestAll(unittest.TestCase):
         a = []
         b = Queryable(a).all()
         self.assertTrue(b)
+
+    def test_all_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.all())

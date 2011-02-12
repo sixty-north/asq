@@ -55,4 +55,9 @@ class TestIntersect(unittest.TestCase):
         d = [2, 5]
         self.assertEqual(c, d)
 
-  
+    def test_intersect_closed(self):
+        a = [1, 1, 2, 2, 4, 5, 3]
+        b = [2, 5, 5]
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.intersect(b))

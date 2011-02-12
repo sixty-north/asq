@@ -21,3 +21,8 @@ class TestElementAt(unittest.TestCase):
     def test_element_at_infinite(self):
         b = Queryable(infinite()).element_at(5)
         self.assertEqual(b, 5)
+
+    def test_element_at_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.element_at(0))

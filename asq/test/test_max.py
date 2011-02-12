@@ -18,4 +18,7 @@ class TestMax(unittest.TestCase):
     def test_max_empty(self):
         self.assertRaises(ValueError, lambda: Queryable([]).max())
 
-  
+    def test_max_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.max())

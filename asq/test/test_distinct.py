@@ -26,3 +26,8 @@ class TestDistinct(unittest.TestCase):
         b = Queryable(infinite()).distinct().take(5).to_list()
         c = [0, 1, 2, 3, 4]
         self.assertEqual(b, c)
+
+    def test_distinct_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.distinct())

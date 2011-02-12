@@ -37,3 +37,10 @@ class TestSingleOrDefault(unittest.TestCase):
     def test_single_or_default_predicate_multiple(self):
         a = ["Aardvark", "Cat", "Dog", "Elephant", "Dolphin"]
         self.assertRaises(ValueError, lambda: Queryable(a).single_or_default('Animal', lambda x: x.startswith('D')))
+
+    def test_single_or_default_closed(self):
+        a = [5]
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.single_or_default(7))
+    

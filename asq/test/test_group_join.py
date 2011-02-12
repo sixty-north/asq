@@ -61,3 +61,5 @@ class TestGroupJoin(unittest.TestCase):
         self.assertEqual(a.trace, [])
         d = c.take(3).to_list()
 
+a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
+             'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']
