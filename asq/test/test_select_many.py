@@ -14,3 +14,8 @@ class TestSelectMany(unittest.TestCase):
         b = Queryable(a).select_many(lambda x : x, lambda y: chr(ord(y)+1)).to_list()
         c = ['g', 'p', 'y', 'l', 'b', 'o', 'h', 'b', 's', 'p', 'p', 'c', 'j', 't', 'p', 'o', 'c', 'f', 'b', 's']
         self.assertEqual(b, c)
+
+    def test_select_many_closed(self):
+        b = Queryable([1, 2, 4, 8])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.select_many(lambda x: x * 2))

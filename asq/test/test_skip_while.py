@@ -27,4 +27,8 @@ class TestSkipWhile(unittest.TestCase):
         # whether it satisfies the predicate
         self.assertEqual(a.trace, [0, 1, 2, 3, 4, 5])
 
-  
+    def test_skip_while_closed(self):
+        a = [1, 2, 3, 4]
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.skip_while(lambda x : x < 2))

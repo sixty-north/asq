@@ -19,3 +19,10 @@ class TestGroupBy(unittest.TestCase):
         self.assertEqual(g1.to_list(), ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis'])
         self.assertEqual(g2.to_list(), ['Bouvardia'])
         self.assertEqual(g3.to_list(), ['Carnations', 'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum'])
+
+    def test_first_closed(self):
+        a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
+             'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.group_by(lambda x: x[0]))

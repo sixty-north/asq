@@ -29,4 +29,7 @@ class TestCount(unittest.TestCase):
         b = Queryable(seq()).count()
         self.assertEqual(b, 3)
 
-  
+    def test_count_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.count())

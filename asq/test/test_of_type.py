@@ -14,3 +14,7 @@ class TestOfType(unittest.TestCase):
         e = ['one', 'four', 'five', 'seven', 'ten']
         self.assertEqual(d, e)
 
+    def test_max_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.of_type(str))

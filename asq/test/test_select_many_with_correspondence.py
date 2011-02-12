@@ -10,4 +10,8 @@ class TestSelectManyWithCorrespondence(unittest.TestCase):
              ('Bob', 'b'), ('Chris', 'C'), ('Chris', 'h'), ('Chris', 'r'), ('Chris', 'i'), ('Chris', 's')]
         self.assertEqual(b, c)
 
-        
+    def test_select_many_with_correspondence_closed(self):
+        a = ['Alice', 'Bob', 'Chris']
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.select_many_with_correspondence(list, lambda x, y: (x, y)))

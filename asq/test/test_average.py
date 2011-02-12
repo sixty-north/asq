@@ -17,3 +17,8 @@ class TestAverage(unittest.TestCase):
 
     def test_average_empty(self):
         self.assertRaises(ValueError, lambda: Queryable([]).average())
+
+    def test_average_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.average())

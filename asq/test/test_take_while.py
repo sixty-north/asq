@@ -27,4 +27,9 @@ class TestTakeWhile(unittest.TestCase):
         # whether it satisfies the predicate
         self.assertEqual(a.trace, [0, 1, 2, 3])
 
-  
+    def take_while_closed(self):
+        a = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.take_while(lambda x: x < 'e'))
+    

@@ -1,0 +1,19 @@
+Test coverage
+=============
+
+Each test suite for the methods of Queryable should have tests for the following
+
+Mandatory
+---------
+
+ test_x_closed : Check that ValueError is raised if the queryable is closed.
+
+For methods accepting iterables
+-------------------------------
+
+ test_x_iterable : Eagerly check that the iterable is in fact iterable
+
+For methods accepting callables
+-------------------------------
+
+ test_x_is_callable : Eagerly check that the callable is in fact callable

@@ -16,4 +16,7 @@ class TestRepeat(unittest.TestCase):
     def test_repeat_negative_count(self):
         self.assertRaises(ValueError, lambda: Queryable.repeat(0, -1))
 
-  
+    def test_range_instance(self):
+        Queryable([1, 2, 3]).repeat(3, 5)
+
+        

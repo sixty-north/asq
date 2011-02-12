@@ -48,3 +48,9 @@ class TestTake(unittest.TestCase):
         self.assertEqual(a.trace, [])
         c = b.to_list()
         self.assertEqual(a.trace, [0])
+
+    def test_take_closed(self):
+        a = ['a', 'b', 'c']
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.take(1))

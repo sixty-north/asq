@@ -211,9 +211,7 @@ class Queryable(object):
             raise ValueError("Attempt to call select_many() on a closed Queryable.")
 
         sequences = self.select(projector)
-        #sequences = (self._create(item).select(projector) for item in self)
         chained_sequence = itertools.chain.from_iterable(sequences)
-        #return self._create(imap(selector, chained_sequence))
         return self._create(chained_sequence).select(selector)
         
     def select_many_with_index(self, projector=lambda i,x:iter(x), selector=identity):
@@ -437,6 +435,9 @@ class Queryable(object):
         Raises:
             ValueError: If the Queryable is closed()
         '''
+        if self.closed():
+            raise ValueError("Attempt to call skip() on a closed Queryable.")
+
         count = max(0, count)
 
         if count == 0:
@@ -843,7 +844,7 @@ class Queryable(object):
         return self._create(self._generate_difference_result(second_iterable, selector))
 
     def _generate_difference_result(self, second_iterable, selector):
-        seen_elements = self._create(second_iterable).select(selector).to_set()
+        seen_elements = self._create(second_iterable).select(selector).distinct().to_set()
         for item in self:
             sitem = selector(item)
             if selector(item) not in seen_elements:
@@ -880,7 +881,7 @@ class Queryable(object):
         return self._create(self._generate_intersect_result(second_iterable, selector))
 
     def _generate_intersect_result(self, second_iterable, selector):
-        second_set = self._create(second_iterable).select(selector).to_set()
+        second_set = self._create(second_iterable).select(selector).distinct().to_set()
         for item in self:
             sitem = selector(item)
             if sitem in second_set:
@@ -1204,32 +1205,43 @@ class Queryable(object):
         return tup
 
     def to_set(self):
+        '''Build a dictionary from the source sequence.
+
+        Raises:
+            ValueError: If duplicate keys are in the projected source sequence.
+            ValueError: If the Queryable is closed()
+        '''
+
         if isinstance(self._iterable, set):
             return self._iterable
-        s = set(self)
+        s = set()
+        for item in self:
+            if item in s:
+                raise ValueError("Duplicate item value {item} in sequence during to_dictionary()".format(item=repr(item)))
+            s.add(item)
         # Ideally we would close here
         #self.close()
         return s
 
-    def to_lookup(self, selector=identity):
+    def to_lookup(self, key_selector=identity, value_selector=identity):
         '''Returns a Lookup object, using the provided selector to generate a key for each item.
 
         Execution is immediate.
         '''
-        key_value_pairs = self.select(lambda item: (selector(item), item))
+        key_value_pairs = self.select(lambda item: (key_selector(item), value_selector(item)))
         lookup = Lookup(key_value_pairs)
         # Ideally we would close here
         #self.close()
         return lookup
 
-    def to_dictionary(self, key_selector=identity, element_selector=identity):
+    def to_dictionary(self, key_selector=identity, value_selector=identity):
         '''Build a dictionary from the source sequence.
 
         Raises:
             ValueError: If duplicate keys are in the projected source sequence.
         '''
         dictionary = {}
-        for key, value in self.select(lambda x: (key_selector(x), element_selector(x))):
+        for key, value in self.select(lambda x: (key_selector(x), value_selector(x))):
             if key in dictionary:
                 raise ValueError("Duplicate key value {key} in sequence during to_dictionary()".format(key=repr(key)))
             dictionary[key] = value
@@ -1416,8 +1428,3 @@ class Grouping(Queryable):
 # TODO: Should we use a class factory to generate the parallel equivalents of these?
 
 _empty = Queryable(tuple())
-
-
-
-
-

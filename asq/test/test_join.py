@@ -42,3 +42,5 @@ class TestJoin(unittest.TestCase):
         d = c.take(3).to_list()
         e = [(2, 2), (3, 3), (4, 4)]
         self.assertEqual(d, e)
+
+

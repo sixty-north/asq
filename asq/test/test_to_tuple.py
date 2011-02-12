@@ -14,4 +14,8 @@ class TestToTuple(unittest.TestCase):
         b = Queryable(a).to_tuple()
         self.assertTrue(a is b)
 
-    
+    def test_to_tuple_closed(self):
+        a = [27, 74, 18, 48, 57, 97, 76, 20, 91, 8, 80, 59, 20, 32, 58, 12, 74, 78, 4]
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.to_tuple())

@@ -55,4 +55,8 @@ class TestDifference(unittest.TestCase):
         d = [1, 4, 3]
         self.assertEqual(c, d)
 
-  
+    def test_difference_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.difference([2, 5]))
+        

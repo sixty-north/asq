@@ -1,5 +1,6 @@
 import unittest
 from asq.queryable import Queryable
+from asq.test.test_queryable import infinite
 
 __author__ = 'rjs'
 
@@ -12,3 +13,16 @@ class TestReverse(unittest.TestCase):
         b = Queryable(a).reverse().to_list()
         c = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
         self.assertEqual(b, c)
+
+    def test_reverse_non_sequence(self):
+        a = infinite()
+        b = Queryable(a).take(10).reverse().to_list()
+        c = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+        self.assertEqual(b, c)
+
+    def test_reverse_closed(self):
+        b = Queryable([1, 2, 4, 8])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.reverse())
+
+    

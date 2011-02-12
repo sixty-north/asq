@@ -21,5 +21,10 @@ class TestContains(unittest.TestCase):
         b = Queryable([]).contains(7)
         self.assertFalse(b)
 
+    def test_contains_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.contains(5))
+
 
   

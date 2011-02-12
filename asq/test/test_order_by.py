@@ -23,6 +23,12 @@ class TestOrderBy(unittest.TestCase):
         c = ['by', 'Sort', 'words', 'length']
         self.assertEqual(b, c)
 
+    def test_order_by_closed(self):
+        a = ['Sort', 'words', 'by', 'length']
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.order_by(len))
+
     def test_then_by(self):
         a = ['sort', 'these', 'words', 'by', 'length', 'and', 'then', 'lexicographically']
         b = Queryable(a).order_by(len).then_by().to_list()

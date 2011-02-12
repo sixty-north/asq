@@ -18,3 +18,8 @@ class TestDefaultIfEmpty(unittest.TestCase):
     def test_default_if_empty_infinite(self):
         b = Queryable(infinite()).default_if_empty(42).take(5).to_list()
         self.assertEqual(b, [0, 1, 2, 3, 4])
+
+    def test_default_if_empty_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.default_if_empty(5))

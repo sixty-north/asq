@@ -17,3 +17,8 @@ class TestMin(unittest.TestCase):
 
     def test_min_empty(self):
         self.assertRaises(ValueError, lambda: Queryable([]).min())
+
+    def test_min_closed(self):
+        b = Queryable([1])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.min())

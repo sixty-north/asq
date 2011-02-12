@@ -18,3 +18,10 @@ class TestSum(unittest.TestCase):
     def test_sum_empty(self):
         b = Queryable([]).sum()
         self.assertEqual(b, 0)
+
+    def test_sum_closed(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -8, 7]
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.sum())
+    

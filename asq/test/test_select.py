@@ -21,3 +21,8 @@ class TestSelect(unittest.TestCase):
         b = Queryable(a).select_with_index(lambda x, y: x*y).to_list()
         c = [0, 74, 36, 144, 228, 485, 456, 140, 728, 72, 800, 649, 240, 416, 812, 180, 1184, 1326, 72]
         self.assertEqual(b, c)
+
+    def test_select_closed(self):
+        b = Queryable([1, 2, 4, 8])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.select(lambda x: x * 2))

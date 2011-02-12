@@ -31,3 +31,9 @@ class TestSingle(unittest.TestCase):
         a = ["Aardvark", "Cat", "Dog", "Elephant", "Dolphin"]
         self.assertRaises(ValueError, lambda: Queryable(a).single(lambda x: x.startswith('D')))
 
+    def test_single_closed(self):
+        a = [5]
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.single())
+
