@@ -23,6 +23,10 @@ class TestOrderBy(unittest.TestCase):
         c = ['by', 'Sort', 'words', 'length']
         self.assertEqual(b, c)
 
+    def test_order_by_not_callable(self):
+        a = ['Sort', 'words', 'by', 'length']
+        self.assertRaises(TypeError, lambda: Queryable(a).order_by("not callable"))
+
     def test_order_by_closed(self):
         a = ['Sort', 'words', 'by', 'length']
         b = Queryable(a)
@@ -41,6 +45,11 @@ class TestOrderBy(unittest.TestCase):
         c = ['second', 'then', 'third', 'using', 'sort', 'letter']
         self.assertEqual(b, c)
 
+    def test_then_by_not_callable(self):
+        a = ['sort', 'using', 'third', 'letter', 'then', 'second']
+        b = Queryable(a).order_by(lambda x: x[2])
+        self.assertRaises(TypeError, lambda: b.then_by("not callable"))
+
     def test_order_by_descending(self):
         a = [1, 9, 7, 2, 5, 4, 6, 3, 8, 10]
         b = Queryable(a).order_by_descending().to_list()
@@ -53,6 +62,10 @@ class TestOrderBy(unittest.TestCase):
         c = ['length', 'words', 'Sort', 'by']
         self.assertEqual(b, c)
 
+    def test_order_by_descending_not_callable(self):
+        a = ['Sort', 'words', 'by', 'length']
+        self.assertRaises(TypeError, lambda: Queryable(a).order_by_descending("not callable"))
+
     def test_then_by_descending(self):
         a = ['sort', 'these', 'words', 'by', 'length', 'and', 'then', 'lexicographically']
         b = Queryable(a).order_by(len).then_by_descending().to_list()
@@ -64,3 +77,8 @@ class TestOrderBy(unittest.TestCase):
         b = Queryable(a).order_by(lambda x: x[2]).then_by_descending(lambda y: y[1]).to_list()
         c = ['second', 'then', 'using', 'third', 'sort', 'letter']
         self.assertEqual(b, c)
+
+    def test_then_by_descending_not_callable(self):
+        a = ['sort', 'using', 'third', 'letter', 'then', 'second']
+        b = Queryable(a).order_by(lambda x: x[2])
+        self.assertRaises(TypeError, lambda: b.then_by_descending("not callable"))

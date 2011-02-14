@@ -23,6 +23,10 @@ class TestSingle(unittest.TestCase):
         b = Queryable(a).single(lambda x: x.startswith('D'))
         self.assertEqual(b, "Dog")
 
+    def test_single_predicate_not_callable(self):
+        a = ["Aardvark", "Cat", "Dog", "Elephant"]
+        self.assertRaises(TypeError, lambda: Queryable(a).single("not callable"))
+
     def test_single_predicate_empty(self):
         a = []
         self.assertRaises(ValueError, lambda: Queryable(a).single(lambda x: x.startswith('D')))

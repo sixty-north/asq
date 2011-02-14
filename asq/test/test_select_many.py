@@ -1,5 +1,6 @@
 import unittest
 from asq.queryable import Queryable
+from asq.test.test_queryable import infinite, TracingGenerator
 
 class TestSelectMany(unittest.TestCase):
 
@@ -15,6 +16,28 @@ class TestSelectMany(unittest.TestCase):
         c = ['g', 'p', 'y', 'l', 'b', 'o', 'h', 'b', 's', 'p', 'p', 'c', 'j', 't', 'p', 'o', 'c', 'f', 'b', 's']
         self.assertEqual(b, c)
 
+    def test_select_many_projector_not_callable(self):
+        a = ['fox', 'kangaroo', 'bison', 'bear']
+        self.assertRaises(TypeError, lambda: Queryable(a).select_many("not callable", lambda y: chr(ord(y)+1)))
+
+    def test_select_many_infinite(self):
+        a = infinite()
+        b = Queryable(a).select_many(lambda x: [x] * x).take(10).to_list()
+        c = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4]
+        self.assertEqual(b, c)
+
+    def test_select_many_deferred(self):
+        a = TracingGenerator()
+        self.assertEqual(a.trace, [])
+        b = Queryable(a).select_many(lambda x: [x] * x)
+        self.assertEqual(a.trace, [])
+        b.take(10).to_list()
+        self.assertEqual(a.trace, [0, 1, 2, 3, 4])
+        
+    def test_select_many_selector_not_callable(self):
+        a = ['fox', 'kangaroo', 'bison', 'bear']
+        self.assertRaises(TypeError, lambda: Queryable(a).select_many(lambda x : x, "not callable"))
+            
     def test_select_many_closed(self):
         b = Queryable([1, 2, 4, 8])
         b.close()

@@ -25,6 +25,10 @@ class TestToDictionary(unittest.TestCase):
              'E': 'Ecological'}
         self.assertEqual(b, c)
 
+    def test_to_dictionary_key_selector_not_callable(self):
+        a = ['Aardvark', 'Balloon', 'Carrot', 'Daisy', 'Ecological']
+        self.assertRaises(TypeError, lambda: Queryable(a).to_dictionary("not callable"))
+
     def test_to_dictionary_value_selector(self):
         a = ['Aardvark', 'Balloon', 'Carrot', 'Daisy', 'Ecological']
         b = Queryable(a).to_dictionary(value_selector=len)
@@ -34,6 +38,10 @@ class TestToDictionary(unittest.TestCase):
              'Daisy': 5,
              'Ecological': 10}
         self.assertEqual(b, c)
+
+    def test_to_dictionary_value_selector_not_callable(self):
+        a = ['Aardvark', 'Balloon', 'Carrot', 'Daisy', 'Ecological']
+        self.assertRaises(TypeError, lambda:Queryable(a).to_dictionary(value_selector="not callable"))
 
     def test_to_dictionary_duplicate_keys(self):
         a = ['Aardvark', 'Balloon', 'Baboon', 'Carrot', 'Daisy', 'Ecological']

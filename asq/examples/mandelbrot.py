@@ -63,7 +63,6 @@ def mandelbrot():
             .select(lambda c: ((c * 7) % 255, (c * 5) % 255, (c * 11) % 255) if c != MaxIterations else (0, 0, 0))
 
     data = query.to_list()
-    #print(data)
 
     image = Image.new("RGB", (ImageWidth, ImageHeight))
     image.putdata(data)

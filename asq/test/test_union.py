@@ -32,6 +32,11 @@ class TestUnion(unittest.TestCase):
         d = [1, 2, 3, 4, -5, 6 , 7, -8, -9]
         self.assertEqual(c, d)
 
+    def test_union_selector_not_callable(self):
+        a = [1, 2, 3, 4, -5, 6, 7, -8]
+        b = [-2, -4, 5, -9]
+        self.assertRaises(TypeError, lambda: Queryable(a).union(b, "not callable"))
+
     def test_union_infinite(self):
         b = [3, 7, 2, 9, 10]
         c = Queryable(infinite()).union(b).take(5).to_list()

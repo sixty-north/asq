@@ -34,6 +34,24 @@ class TestGroupJoin(unittest.TestCase):
         b = None
         self.assertRaises(TypeError, lambda: Queryable(a).group_join(b))
 
+    def test_group_join_outer_selector_not_callable(self):
+        a = [1, 2, 3]
+        b = ['a', 'I', 'to', 'of', 'be', 'are', 'one', 'cat', 'dog']
+        self.assertRaises(TypeError, lambda: Queryable(a).group_join(b, "not callable", lambda inner: len(inner),
+                              lambda outer, inner: str(outer) + ':' + ','.join(inner)))
+
+    def test_group_join_inner_selector_not_callable(self):
+        a = [1, 2, 3]
+        b = ['a', 'I', 'to', 'of', 'be', 'are', 'one', 'cat', 'dog']
+        self.assertRaises(TypeError, lambda: Queryable(a).group_join(b, lambda outer: outer, "not callable",
+                              lambda outer, inner: str(outer) + ':' + ','.join(inner)))
+
+    def test_group_join_result_selector_not_callable(self):
+        a = [1, 2, 3]
+        b = ['a', 'I', 'to', 'of', 'be', 'are', 'one', 'cat', 'dog']
+        self.assertRaises(TypeError, lambda: Queryable(a).group_join(b, lambda outer: outer, lambda inner: len(inner),
+                              "not callable"))
+                
     def test_group_join_infinite(self):
         a = infinite()
         b = [2, 3, 5]

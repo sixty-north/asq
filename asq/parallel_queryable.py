@@ -25,7 +25,6 @@ class ParallelQueryable(Queryable):
 
         self._pool = pool
         self._chunksize = chunksize
-        print("ParallelQueryable")
 
     def _create(self, iterable):
         return ParallelQueryable(iterable, self._pool, self._chunksize)

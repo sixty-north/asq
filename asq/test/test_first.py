@@ -30,6 +30,10 @@ class TestFirst(unittest.TestCase):
         a = [37, 42, 23, 12]
         self.assertRaises(ValueError, lambda: Queryable(a).first(lambda x: x >= 50))
 
+    def test_first_predicate_not_callable(self):
+        a = [37, 54, 57, 23, 12]
+        self.assertRaises(TypeError, lambda: Queryable(a).first("not callable"))
+
     def test_first_predicate_infinite(self):
         a = infinite()
         b = Queryable(a).first(lambda x: x >= 50)

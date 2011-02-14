@@ -12,6 +12,10 @@ class TestSkipWhile(unittest.TestCase):
         c = ['e', 'f', 'g']
         self.assertEqual(b, c)
 
+    def test_skip_while_not_callable(self):
+        a = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        self.assertRaises(TypeError, lambda: Queryable(a).skip_while("not callable"))
+
     def test_skip_while_from_infinite(self):
         b = Queryable(infinite()).skip_while(lambda x: x < 5).take(3).to_list()
         c = [5, 6, 7]
