@@ -20,6 +20,11 @@ class TestGroupBy(unittest.TestCase):
         self.assertEqual(g2.to_list(), ['Bouvardia'])
         self.assertEqual(g3.to_list(), ['Carnations', 'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum'])
 
+    def test_group_by_selector_not_callable(self):
+        a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
+             'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']
+        self.assertRaises(TypeError, lambda: Queryable(a).group_by("not callable"))
+
     def test_first_closed(self):
         a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
              'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']

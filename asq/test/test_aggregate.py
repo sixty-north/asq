@@ -33,6 +33,12 @@ class TestAggregate(unittest.TestCase):
         b = Queryable([]).aggregate(operator.add, 67)
         self.assertEqual(b, 67)
 
+    def test_aggregate_func_callable(self):
+        self.assertRaises(TypeError, lambda: Queryable([1, 2, 3]).aggregate("not callable"))
+
+    def test_aggregate_result_selector_callable(self):
+        self.assertRaises(TypeError, lambda: Queryable([1, 2, 3]).aggregate(operator.add, 0, "not callable"))
+
     def test_aggregate_closed(self):
         b = Queryable([])
         b.close()

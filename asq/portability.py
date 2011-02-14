@@ -57,6 +57,13 @@ except NameError:
     import functools
     fold = functools.reduce
     
+try:
+    # Python 2
+    is_callable = callable
+except NameError:
+    from collections import Callable
+    def is_callable(x):
+        return isinstance(x, Callable)
 
 
     

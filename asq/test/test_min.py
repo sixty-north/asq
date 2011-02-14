@@ -15,6 +15,10 @@ class TestMin(unittest.TestCase):
         b = Queryable(a).min(abs)
         self.assertEqual(b, 1)
 
+    def test_min_selector_not_callable(self):
+        a = [5, 7, -3, 2, 1, 9, 3, 2, 1, -13, 7]
+        self.assertRaises(TypeError, lambda: Queryable(a).min("not callable"))
+
     def test_min_empty(self):
         self.assertRaises(ValueError, lambda: Queryable([]).min())
 

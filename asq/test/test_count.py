@@ -29,6 +29,15 @@ class TestCount(unittest.TestCase):
         b = Queryable(seq()).count()
         self.assertEqual(b, 3)
 
+    def test_count_predicate(self):
+        a = [1, 78, 45, 34, 98, 54, 53]
+        b = Queryable(a).count(lambda x: x > 50)
+        self.assertEqual(b, 4)
+
+    def test_count_predicate_non_callable(self):
+        a = [1, 78, 45, 34, 98, 54, 53]
+        self.assertRaises(TypeError, lambda: Queryable(a).count("not callable"))
+        
     def test_count_closed(self):
         b = Queryable([1])
         b.close()

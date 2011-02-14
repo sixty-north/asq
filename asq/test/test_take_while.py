@@ -17,6 +17,10 @@ class TestTakeWhile(unittest.TestCase):
         c = [0, 1, 2, 3, 4]
         self.assertEqual(b, c)
 
+    def test_take_while_not_callable(self):
+        a = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        self.assertRaises(TypeError, lambda: Queryable(a).take_while("not callable"))
+
     def test_take_while_is_deferred(self):
         a = TracingGenerator()
         self.assertEqual(a.trace, [])

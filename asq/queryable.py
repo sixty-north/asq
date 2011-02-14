@@ -6,7 +6,8 @@ import heapq
 import itertools
 import operator
 
-from .portability import (imap, ifilter, irange, izip, izip_longest, fold, OrderedDict)
+from .portability import (imap, ifilter, irange, izip, izip_longest,
+                          fold, is_callable,OrderedDict)
 
 default = object()
 
@@ -20,7 +21,14 @@ def is_iterable(obj):
         return True
     except TypeError:
         return False
-        
+
+def is_type(obj):
+    try:
+        isinstance(None, obj)
+        return True
+    except TypeError:
+        return False
+    
 def asq(iterable):
     '''Create a Queryable object from any iterable.
 
@@ -130,11 +138,14 @@ class Queryable(object):
             source sequence.
 
         Raises:
-               ValueError: If this Queryable has been closed.
+            ValueError: If this Queryable has been closed.
             TypeError: If selector is not callable.
         '''
         if self.closed():
             raise ValueError("Attempt to call select() on a closed Queryable.")
+
+        if not is_callable(selector):
+            raise TypeError("select() parameter selector={selector} is not callable".format(selector=repr(selector)))
 
         if selector is identity:
             return self
@@ -142,7 +153,7 @@ class Queryable(object):
         return self._create(imap(selector, self))
 
 
-    def select_with_index(self, selector):
+    def select_with_index(self, selector=lambda i, x: (i, x)):
         '''Transforms each element of a sequence into a new form, incorporating the index of the element.
 
         Each element is transformed through a selector function which accepts the element value and its zero-based index
@@ -150,7 +161,9 @@ class Queryable(object):
 
         Args:
             selector: A two argument function mapping the index of a value in the source sequence and the element value
-                itself to the corresponding value in the generated sequence. The two arguments of the selector function
+                itself to the corresponding value in the generated sequence. The default selector produces a 2-tuple
+                containing the index and the element, giving this function simular behaviour to the built-in
+                enumerable(). The two arguments of the selector function
                 (which can have any names) and its return value are,
 
                 Args:
@@ -171,7 +184,14 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call select_with_index() on a closed Queryable.")
 
+        if not is_callable(selector):
+            raise TypeError("select_with_index() parameter selector={selector} is not callable".format(selector=repr(selector)))
+
         return self._create(itertools.starmap(selector, enumerate(iter(self))))
+
+    # public static IEnumerable<TResult> SelectMany<TSource, TResult>(
+    #      this IEnumerable<TSource> source,
+    #      Func<TSource, IEnumerable<TResult>> selector)
 
     def select_many(self, projector, selector=identity):
         '''Projects each element of a sequence to an intermediate new sequence, flattens the resulting sequence into one
@@ -210,17 +230,26 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call select_many() on a closed Queryable.")
 
+        if not is_callable(projector):
+            raise TypeError("select_many() parameter projector={projector} is not callable".format(
+                    projector=repr(projector)))
+
+        if not is_callable(selector):
+            raise TypeError("select_many() parameter selector={selector} is not callable".format(
+                    selector=repr(selector)))
+
         sequences = self.select(projector)
         chained_sequence = itertools.chain.from_iterable(sequences)
         return self._create(chained_sequence).select(selector)
         
-    def select_many_with_index(self, projector=lambda i,x:iter(x), selector=identity):
+    def select_many_with_index(self, collection_selector=lambda index, source_element: (index, source_element),
+                               result_selector=lambda source_element, collection_element: collection_element):
         '''Projects each element of a sequence to an intermediate new sequence, incorporating the index of the element,
         flattens the resulting sequence into one sequence and optionally transforms the flattened sequence using a
         selector function.
 
         Args:
-            projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no
+            projector: A binary function mapping each element of the source sequence into an intermediate sequence. If no
                 projection function is provided, the intermediate sequence will consist of the single corresponding
                 element from the source sequence. The projector function argument (which can have any name) and return
                 values are,
@@ -232,12 +261,15 @@ class Queryable(object):
                 Returns:
                     An iterable derived from the element value
 
-            selector: An optional unary function mapping the elements in the flattened intermediate sequence to
-                corresponding elements of the result sequence. If no selector function is provided, the identity
-                function is used.  The selector function argument and return values are,
+            result_selector: An optional binary function mapping the elements in the flattened intermediate sequence
+                with their corresonding source elements to
+                 elements of the result sequence. If no result_selector function is provided, the element
+                 of the flattened intermediate sequence are returned untransfromed.
 
                 Args:
-                    element: The value of the intermediate element from the concatenated sequences arising from the
+                    source_elements: TODO
+
+                    collection_element: The value of the intermediate element from the concatenated sequences arising from the
                         projector function.
 
                 Returns:
@@ -253,31 +285,35 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call select_many_with_index() on a closed Queryable.")
 
-        sequences = self.select_with_index(projector)
-        chained_sequence = itertools.chain.from_iterable(sequences)
-        return self._create(imap(selector, chained_sequence))
+        if not is_callable(collection_selector):
+            raise TypeError("select_many_with_correspondence() parameter projector={projector} is not callable".format(
+                    projector=repr(collection_selector)))
 
-    def select_many_with_correspondence(self, projector=iter, selector=lambda x, y: y):
+        if not is_callable(result_selector):
+            raise TypeError("select_many_with_correspondence() parameter selector={selector} is not callable".format(
+                    selector=repr(result_selector)))
+
+        return self._create(self._generate_select_many_with_index(collection_selector, result_selector))
+
+    def _generate_select_many_with_index(self, collection_selector, result_selector):
+        for index, source_element in enumerate(self):
+            collection = collection_selector(index, source_element)
+            for collection_element in collection:
+                value = result_selector(source_element, collection_element)
+                yield value
+
+    def select_many_with_correspondence(self, collection_selector=identity,
+                                        result_selector=lambda source_element, collection_element: (source_element, collection_element)):
         '''Projects each element of a sequence to an intermediate new sequence, and flattens the resulting sequence,
         into one sequence and uses a selector function to incorporate the corresponding source for each item in the
         result sequence.
 
         Args:
-            projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no
+            collection_selector: A unary function mapping each element of the source sequence into an intermediate sequence. If no
                 projection function is provided, the intermediate sequence will consist of the single corresponding
-                element from the source sequence. The projector function argument (which can have any name) and return
-                values are,
+                element from the source sequence.
 
-                Args:    for item in self:
-                intermediate_sequence = projector(item)
-                for intermediate_item in intermediate_sequence:
-                    yield selector(item, intermediate_item)
-                    source_element: The value of the element
-
-                Returns:
-                    An iterable derived from the element value
-
-            selector: An optional binary function mapping the elements in the flattened intermediate sequence to
+            result_selector: An optional binary function mapping the elements in the flattened intermediate sequence to
                 corresponding elements of the result sequence. If no selector function is provided, the identity
                 function is used.  The selector function argument and return values are,
 
@@ -298,14 +334,21 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call select_many_with_correspondence() on a closed Queryable.")
 
-        return self._create(self._generate_select_many_with_correspondence(projector, selector))
+        if not is_callable(collection_selector):
+            raise TypeError("select_many_with_correspondence() parameter projector={projector} is not callable".format(
+                    projector=repr(collection_selector)))
 
-    def _generate_select_many_with_correspondence(self, projector, selector):
-        for item in self:
-            intermediate_sequence = projector(item)
+        if not is_callable(result_selector):
+            raise TypeError("select_many_with_correspondence() parameter selector={selector} is not callable".format(
+                    selector=repr(result_selector)))
+
+        return self._create(self._generate_select_many_with_correspondence(collection_selector, result_selector))
+
+    def _generate_select_many_with_correspondence(self, collection_selector, result_selector):
+        for source_element in self:
+            intermediate_sequence = collection_selector(source_element)
             for intermediate_item in intermediate_sequence:
-                # Use select() here too?
-                value = selector(item, intermediate_item)
+                value = result_selector(source_element, intermediate_item)
                 yield value
 
     def group_by(self, selector=identity):
@@ -337,6 +380,9 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call select_with_index() on a closed Queryable.")
 
+        if not is_callable(selector):
+            raise TypeError("group_by() parameter selector={selector} is not callable".format(selector=repr(selector)))
+
         return self._create(self._generate_group_by_result(selector))
 
     def _generate_group_by_result(self, selector):
@@ -348,25 +394,41 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call where() on a closed Queryable.")
 
+        if not is_callable(predicate):
+            raise TypeError("where() parameter predicate={predicate} is not callable".format(predicate=repr(predicate)))
+
         return self._create(ifilter(predicate, self))
 
     def of_type(self, type):
+        '''
+        Args:
+            type: A type or tuple of types.
+        '''
         if self.closed():
             raise ValueError("Attempt to call of_type() on a closed Queryable.")
 
+        if not is_type(type):
+            raise TypeError("of_type() parameter type={type} is not a type".format(type=type))
+
         return self.where(lambda x: isinstance(x, type))
 
-    def order_by(self, func=identity):
+    def order_by(self, key_selector=identity):
         if self.closed():
             raise ValueError("Attempt to call order_by() on a closed Queryable.")
 
-        return self._create_ordered(iter(self), -1, func)
+        if not is_callable(key_selector):
+            raise TypeError("order_by() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
 
-    def order_by_descending(self, func=identity):
+        return self._create_ordered(iter(self), -1, key_selector)
+
+    def order_by_descending(self, key_selector=identity):
         if self.closed():
             raise ValueError("Attempt to call order_by_descending() on a closed Queryable.")
 
-        return self._create_ordered(iter(self), +1, func)
+        if not is_callable(key_selector):
+            raise TypeError("order_by_descending() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
+
+        return self._create_ordered(iter(self), +1, key_selector)
 
     def take(self, count=1):
         '''Returns a specified number of contiguous elements from the start of a sequence.
@@ -407,9 +469,11 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call take_while() on a closed Queryable.")
 
-        # Cannot use itertools.takewhile here because it is not lazy
-        #return self._create(itertools.takewhile(predicate, self))
+        if not is_callable(predicate):
+            raise TypeError("take_while() parameter predicate={predicate} is not callable".format(
+                    predicate=repr(predicate)))
 
+        # Cannot use itertools.takewhile here because it is not lazy
         return self._create(self._generate_take_while_result(predicate))
 
     def _generate_take_while_result(self, predicate):
@@ -477,17 +541,26 @@ class Queryable(object):
 
         Raises:
             ValueError: If the Queryable is closed()
+            TypeError: If predicate is not callable.
         '''
         if self.closed():
             raise ValueError("Attempt to call take_while() on a closed Queryable.")
 
+        if not is_callable(predicate):
+            raise TypeError("skip_while() parameter predicate={predicate} is not callable".format(
+                    predicate=repr(predicate)))
+
         return self._create(itertools.dropwhile(predicate, self))
         
-    def concat(self, iterable):
+    def concat(self, second_iterable):
         if self.closed():
             raise ValueError("Attempt to call concat() on a closed Queryable.")
 
-        return self._create(itertools.chain(self, iterable))
+        if not is_iterable(second_iterable):
+            raise TypeError("Cannot compute concat() with second_iterable of non-iterable {type}".format(
+                    type=str(type(second_iterable))[7: -1]))
+
+        return self._create(itertools.chain(self, second_iterable))
 
     def reverse(self):
         '''Returns the sequence reversed.
@@ -555,7 +628,7 @@ class Queryable(object):
         raise IndexError("element_at(index) out of range.")
             
 
-    def count(self):
+    def count(self, predicate=None):
         '''Return the number of elements in the iterable.
 
         This method is evaluated immediately.
@@ -564,6 +637,9 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call element_at() on a closed Queryable.")
 
+        return self._count() if predicate is None else self._count_predicate(predicate)
+
+    def _count(self):
         # Attempt to use len()
         try:
             return len(self._iterable)
@@ -578,6 +654,12 @@ class Queryable(object):
 
         return index + 1
 
+    def _count_predicate(self, predicate):
+        if not is_callable(predicate):
+            raise TypeError("count() parameter predicate={predicate} is not callable".format(predicate=repr(predicate)))
+
+        return self.where(predicate).count()
+    
     def any(self, predicate=None):
         '''Determine if the source sequence contains any elements which satisfy the predicate.
 
@@ -599,29 +681,36 @@ class Queryable(object):
 
         if predicate is None:
             predicate = lambda x: True
-            
+
+        if not is_callable(predicate):
+            raise TypeError("any() parameter predicate={predicate} is not callable".format(predicate=repr(predicate)))
+
         for item in self.select(predicate):
             if item:
                 return True
         return False
 
-    def all(self, predicate=identity):
+    def all(self, predicate=bool):
         '''Determine if all elements in the source sequence satisfy a condition.
 
-        All of the source sequence will be consumed. Execution is imediate.
+        All of the source sequence will be consumed. Execution is immediate.
 
         Args:
             predicate: An optional single argument function used to test each elements. If omitted,
-                the identity function is used resulting in the elements being tested directly.
+                the bool() function is used resulting in the elements being tested directly.
 
         Returns:
             True if all elements in the sequence meet the predicate condition, otherwise False.
 
         Raises:
             ValueError: If the Queryable is closed()
+            TypeError: If predicate is not callable.
         '''
         if self.closed():
             raise ValueError("Attempt to call all() on a closed Queryable.")
+
+        if not is_callable(predicate):
+            raise TypeError("all() parameter predicate={predicate} is not callable".format(predicate=repr(predicate)))
 
         return all(self.select(predicate))
 
@@ -644,9 +733,13 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call min() on a closed Queryable.")
 
+        if not is_callable(selector):
+            raise TypeError("min() parameter selector={selector} is not callable".format(
+                    selector=repr(selector)))
+
         return min(self.select(selector))
 
-    def max(self, func=identity):
+    def max(self, selector=identity):
         '''Return the maximum value in a sequence.
 
         All of the source sequence will be consumed. Execution is immediate.
@@ -666,9 +759,13 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call max() on a closed Queryable.")
 
-        return max(self.select(func))
+        if not is_callable(selector):
+            raise TypeError("max() parameter selector={selector} is not callable".format(
+                    selector=repr(selector)))
+                        
+        return max(self.select(selector))
 
-    def sum(self, func=identity):
+    def sum(self, selector=identity):
         '''Return the arithmetic sum of the values in the sequence..
 
         All of the source sequence will be consumed. Execution is immediate.
@@ -687,9 +784,13 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call sum() on a closed Queryable.")
 
-        return sum(self.select(func))
+        if not is_callable(selector):
+            raise TypeError("sum() parameter selector={selector} is not callable".format(
+                    selector=repr(selector)))
 
-    def average(self, func=identity):
+        return sum(self.select(selector))
+
+    def average(self, selector=identity):
         '''Return the arithmetic mean of the values in the sequence..
 
         All of the source sequence will be consumed. Execution is immediate.
@@ -708,16 +809,19 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call average() on a closed Queryable.")
 
+        if not is_callable(selector):
+            raise TypeError("average() parameter selector={selector} is not callable".format(selector=repr(selector)))
+
         total = 0
         count = 0
-        for item in self.select(func):
+        for item in self.select(selector):
             total += item
             count += 1
         if count == 0:
             raise ValueError("Cannot compute average() of an empty sequence.")
         return total / count
 
-    def contains(self, value):
+    def contains(self, value, equality_comparer=operator.eq):
         '''Determines whether the sequence contains a particular value.
 
         Execution is immediate. Depending on the type of the sequence, all or none of the
@@ -736,8 +840,19 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call contains() on a closed Queryable.")
 
+        if not is_callable(equality_comparer):
+            raise TypeError("contains() parameter equality_comparer={equality_comparer} is not callable".format(
+                    equality_comparer=repr(equality_comparer)))
+
         # Test that this works with objects supporting only __contains__, __getitem__ and __iter__
-        return value in self._iterable
+
+        if equality_comparer is operator.eq:
+            return value in self._iterable
+
+        for item in self:
+            if equality_comparer(value, item):
+                return True
+        return False
 
     def default_if_empty(self, default):
         '''If the source sequence is empty return a single element sequence containing the
@@ -790,6 +905,10 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call distinct() on a closed Queryable.")
 
+        if not is_callable(selector):
+            raise TypeError("distinct() parameter selector={selector} is not callable".format(
+                    selector=repr(selector)))
+
         return self._create(self._generate_distinct_result(selector))
 
     def _generate_distinct_result(self, selector):
@@ -823,8 +942,8 @@ class Queryable(object):
             second_iterable: Elements from this sequence are excluded from the returned sequence. This sequence
                 will be consumed in its entirety, so must be finite.
 
-            selector: An optional single argument function which is used to project the elements
-                in the source and second_iterables prior to comparing them.
+            selector: A single argument funtion with selects from the elements the of both sequences
+                the values which will be compared for equality.
 
         Returns:
             A sequence containing all elements in the source sequence except those which are also members of the second
@@ -840,6 +959,10 @@ class Queryable(object):
         if not is_iterable(second_iterable):
             raise TypeError("Cannot compute difference() with second_iterable of non-iterable {type}".format(
                     type=str(type(second_iterable))[7: -2]))
+
+        if not is_callable(selector):
+            raise TypeError("difference() parameter selector={selector} is not callable".format(
+                    selector=repr(selector)))
 
         return self._create(self._generate_difference_result(second_iterable, selector))
 
@@ -877,6 +1000,10 @@ class Queryable(object):
         if not is_iterable(second_iterable):
             raise TypeError("Cannot compute intersect() with second_iterable of non-iterable {type}".format(
                     type=str(type(second_iterable))[7: -1]))
+
+        if not is_callable(selector):
+            raise TypeError("intersect() parameter selector={selector} is not callable".format(
+                    selector=repr(selector)))
 
         return self._create(self._generate_intersect_result(second_iterable, selector))
 
@@ -926,6 +1053,18 @@ class Queryable(object):
             raise TypeError("Cannot compute join() with inner_iterable of non-iterable {type}".format(
                     type=str(type(inner_iterable))[7: -1]))
 
+        if not is_callable(outer_key_selector):
+            raise TypeError("join() parameter outer_key_selector={outer_key_selector} is not callable".format(
+                    outer_key_selector=repr(outer_key_selector)))
+
+        if not is_callable(inner_key_selector):
+            raise TypeError("join() parameter inner_key_selector={inner_key_selector} is not callable".format(
+                    inner_key_selector=repr(inner_key_selector)))
+
+        if not is_callable(result_selector):
+            raise TypeError("join() parameter result_selector={result_selector} is not callable".format(
+                    result_selector=repr(result_selector)))
+
         return self._create(self._generate_join_result(inner_iterable, outer_key_selector,
                                                        inner_key_selector, result_selector))
 
@@ -945,6 +1084,18 @@ class Queryable(object):
         if not is_iterable(inner_iterable):
             raise TypeError("Cannot compute group_join() with inner_iterable of non-iterable {type}".format(
                     type=str(type(inner_iterable))[7: -1]))
+
+        if not is_callable(outer_key_selector):
+            raise TypeError("group_by() parameter outer_key_selector={outer_key_selector} is not callable".format(
+                    outer_key_selector=repr(outer_key_selector)))
+
+        if not is_callable(inner_key_selector):
+            raise TypeError("group_by() parameter inner_key_selector={inner_key_selector} is not callable".format(
+                    inner_key_selector=repr(inner_key_selector)))
+
+        if not is_callable(result_selector):
+            raise TypeError("group_by() parameter result_selector={result_selector} is not callable".format(
+                    result_selector=repr(result_selector)))
 
         return self._create(self._generate_group_join_result(inner_iterable, outer_key_selector,
                                                        inner_key_selector, result_selector))
@@ -1158,9 +1309,17 @@ class Queryable(object):
         '''
         Raises:
             ValueError: If called on an empty sequence with no seed value.
+            TypeError: If func is not callable
+            TypeError: If result_selector is not callable
         '''
         if self.closed():
             raise ValueError("Attempt to call aggregate() on a closed Queryable.")
+
+        if not is_callable(func):
+            raise TypeError("aggregate() parameter func={func} is not callable".format(func=repr(func)))
+
+        if not is_callable(result_selector):
+            raise TypeError("aggregate() parameter result_selector={result_selector} is not callable".format(result_selector=repr(result_selector)))
 
         if seed is default:
             try:
@@ -1183,6 +1342,10 @@ class Queryable(object):
         return cls(itertools.repeat(element, count))
 
     def zip(self, second_iterable, func=lambda x,y: (x,y)):
+        if not is_callable(func):
+            raise TypeError("zip() parameter func={func} is not callable".format(
+                    func=repr(func)))
+
         if self.closed():
             raise ValueError("Attempt to call zip() on a closed Queryable.")
         return self._create(func(*t) for t in izip(self, second_iterable))
@@ -1228,6 +1391,14 @@ class Queryable(object):
 
         Execution is immediate.
         '''
+        if not is_callable(key_selector):
+            raise TypeError("to_dictionary() parameter key_selector={key_selector} is not callable".format(
+                    key_selector=repr(key_selector)))
+
+        if not is_callable(value_selector):
+            raise TypeError("to_dictionary() parameter value_selector={value_selector} is not callable".format(
+                    value_selector=repr(value_selector)))
+
         key_value_pairs = self.select(lambda item: (key_selector(item), value_selector(item)))
         lookup = Lookup(key_value_pairs)
         # Ideally we would close here
@@ -1240,6 +1411,14 @@ class Queryable(object):
         Raises:
             ValueError: If duplicate keys are in the projected source sequence.
         '''
+        if not is_callable(key_selector):
+            raise TypeError("to_dictionary() parameter key_selector={key_selector} is not callable".format(
+                    key_selector=repr(key_selector)))
+
+        if not is_callable(value_selector):
+            raise TypeError("to_dictionary() parameter value_selector={value_selector} is not callable".format(
+                    value_selector=repr(value_selector)))
+
         dictionary = {}
         for key, value in self.select(lambda x: (key_selector(x), value_selector(x))):
             if key in dictionary:
@@ -1251,6 +1430,10 @@ class Queryable(object):
         if not is_iterable(second_iterable):
             raise TypeError("Cannot compute sequence_equal() with second_iterable of non-iterable {type}".format(
                     type=str(type(second_iterable))[7: -1]))
+
+        if not is_callable(equality_comparer):
+            raise TypeError("aggregate() parameter equality_comparer={equality_comparer} is not callable".format(
+                    equality_comparer=repr(equality_comparer)))
 
         # Try to check the lengths directly as an optimization
         try:
@@ -1314,12 +1497,18 @@ class OrderedQueryable(Queryable):
         super(OrderedQueryable, self).__init__(iterable)
         self._funcs = [ (order, func) ]
 
-    def then_by(self, func=identity):
-        self._funcs.append( (-1, func) )
+    def then_by(self, key_selector=identity):
+        if not is_callable(key_selector):
+            raise TypeError("then_by() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
+
+        self._funcs.append( (-1, key_selector) )
         return self
 
-    def then_by_descending(self, func=identity):
-        self._funcs.append( (+1, func) )
+    def then_by_descending(self, key_selector=identity):
+        if not is_callable(key_selector):
+            raise TypeError("then_by_descending() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
+
+        self._funcs.append( (+1, key_selector) )
         return self
         
     def __iter__(self):

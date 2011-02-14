@@ -26,6 +26,10 @@ class TestConcat(unittest.TestCase):
         self.assertEqual(a.trace, [0])
         self.assertEqual(b.trace, [])
 
+    def test_concat_non_iterable(self):
+        a = [1, 2, 3, 4, 5]
+        self.assertRaises(TypeError, lambda: Queryable(a).concat(7))
+
     def test_concat_closed(self):
         b = Queryable([1])
         b.close()

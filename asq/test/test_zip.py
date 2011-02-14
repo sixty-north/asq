@@ -18,6 +18,11 @@ class TestZip(unittest.TestCase):
         c = Queryable(a).zip(b, lambda x, y: int(str(x) + str(y))).to_list()
         self.assertEqual(c, [(14), (25), (36)])
 
+    def test_zip_not_callable(self):
+        a = [1, 2, 3]
+        b = [4, 5, 6]
+        self.assertRaises(TypeError, lambda: Queryable(a).zip(b, "not callable"))
+
     def test_zip_shorter_longer(self):
         a = [1, 2]
         b = [4, 5, 6]

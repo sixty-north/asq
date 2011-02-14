@@ -18,6 +18,10 @@ class TestDistinct(unittest.TestCase):
         c = [5, 7, -3, 2, 1, -15]
         self.assertEqual(b, c)
 
+    def test_distinct_selector_non_callable(self):
+        a = [5, 7, -3, 2, 1, 5, 3, 2, 1, -15, 7]
+        self.assertRaises(TypeError, lambda: Queryable(a).distinct("not callable"))
+
     def test_distinct_empty(self):
         b = Queryable([]).distinct().to_list()
         self.assertEqual(b, [])

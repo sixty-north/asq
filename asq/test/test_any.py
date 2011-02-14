@@ -33,6 +33,9 @@ class TestAny(unittest.TestCase):
     def test_any_infinite_predicate(self):
         b = Queryable(infinite()).any(lambda x: x == 1000)
 
+    def test_any_predicate_not_callable(self):
+        self.assertRaises(TypeError, lambda: Queryable([True]).any("not callable"))
+
     def test_any_closed(self):
         b = Queryable([1])
         b.close()

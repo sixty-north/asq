@@ -35,6 +35,10 @@ class TestFirstOrDefault(unittest.TestCase):
         b = Queryable(a).first_or_default(98, lambda x: x >= 50)
         self.assertEqual(b, 98)
 
+    def test_first_predicate_not_callable(self):
+        a = [37, 42, 23, 12]
+        self.assertRaises(TypeError, lambda: Queryable(a).first_or_default(98, "not callable"))
+        
     def test_first_or_default_closed(self):
         b = Queryable([])
         b.close()

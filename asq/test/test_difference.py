@@ -32,6 +32,11 @@ class TestDifference(unittest.TestCase):
         d = [1, 3, 6, 7]
         self.assertEqual(c, d)
 
+    def test_difference_selector_non_callable(self):
+        a = [1, 2, 3, 4, -5, 6, 7, -8]
+        b = [-2, -4, 5, 8]
+        self.assertRaises(TypeError, lambda: Queryable(a).difference(b, "not callable"))
+
     def test_difference_infinite(self):
         b = [3, 7, 2, 9, 10]
         c = Queryable(infinite()).difference(b).take(10).to_list()

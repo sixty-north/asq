@@ -65,6 +65,23 @@ class TestSequenceEqual(unittest.TestCase):
         c = Queryable(a).sequence_equal(b)
         self.assertFalse(c)
 
+    def test_sequence_equal_equality_comparer_positive(self):
+        a = [1, 2, -3, 4, 16, 32]
+        b = (-1, 2, 3, -4, 16, -32)
+        c = Queryable(a).sequence_equal(b, lambda lhs, rhs: abs(lhs) == abs(rhs))
+        self.assertTrue(c)
+
+    def test_sequence_equal_equality_comparer_negative(self):
+        a = [1, 2, -3, 4, 16, 32]
+        b = (-1, 2, 3, -5, 16, -32)
+        c = Queryable(a).sequence_equal(b, lambda lhs, rhs: abs(lhs) == abs(rhs))
+        self.assertFalse(c)
+
+    def test_sequence_equal_equality_comparer_not_callable(self):
+        a = [1, 2, 3, 4, 16, 32]
+        b = (1, 2, 3, 4, 16, 32)
+        self.assertRaises(TypeError, lambda: Queryable(a).sequence_equal(b, "not callable"))
+        
     def test_sequence_equal_closed(self):
         a = [1, 2, 3, 4, 16, 32]
         b = (1, 2, 3, 4, 16, 32)

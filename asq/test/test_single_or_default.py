@@ -29,6 +29,10 @@ class TestSingleOrDefault(unittest.TestCase):
         b = Queryable(a).single_or_default('Animal', lambda x: x.startswith('D'))
         self.assertEqual(b, "Animal")
 
+    def test_single_or_default_predicate_not_callable(self):
+        a = ["Aardvark", "Cat", "Elephant"]
+        self.assertRaises(TypeError, lambda: Queryable(a).single_or_default('Animal', "not callable"))
+
     def test_single_or_default_predicate_empty(self):
         a = []
         b = Queryable(a).single_or_default('foo', lambda x: x.startswith('D'))

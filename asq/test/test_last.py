@@ -25,6 +25,10 @@ class TestLast(unittest.TestCase):
         a = [37, 42, 23, 12]
         self.assertRaises(ValueError, lambda: Queryable(a).first(lambda x: x >= 50))
 
+    def test_last_predicate_not_callable(self):
+        a = [37, 54, 57, 23, 12]
+        self.assertRaises(TypeError, lambda: Queryable(a).last("not callable"))
+        
     def test_last_closed(self):
         b = Queryable([])
         b.close()
