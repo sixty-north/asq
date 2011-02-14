@@ -625,7 +625,7 @@ class Queryable(object):
         for i, item in enumerate(self):
             if i == index:
                 return item
-        raise IndexError("element_at(index) out of range.")
+        raise ValueError("element_at(index) out of range.")
             
 
     def count(self, predicate=None):
@@ -1219,8 +1219,10 @@ class Queryable(object):
         # Attempt an optimised version
         try:
             count = len(self._iterable)
+            if count < 1:
+                raise ValueError("Cannot return last() from an empty sequence.")
             return self._iterable[count - 1]
-        except:
+        except TypeError:
             pass
 
         sentinel = object()
@@ -1342,15 +1344,20 @@ class Queryable(object):
         return cls(itertools.repeat(element, count))
 
     def zip(self, second_iterable, func=lambda x,y: (x,y)):
+        if self.closed():
+            raise ValueError("Attempt to call zip() on a closed Queryable.")
+
         if not is_callable(func):
             raise TypeError("zip() parameter func={func} is not callable".format(
                     func=repr(func)))
 
-        if self.closed():
-            raise ValueError("Attempt to call zip() on a closed Queryable.")
+
         return self._create(func(*t) for t in izip(self, second_iterable))
 
     def to_list(self):
+        if self.closed():
+            raise ValueError("Attempt to call to_list() on a closed Queryable.")
+
         # Maybe use with closable(self) construct to achieve this.
         if isinstance(self._iterable, list):
             return self._iterable
@@ -1360,6 +1367,9 @@ class Queryable(object):
         return lst
 
     def to_tuple(self):
+        if self.closed():
+            raise ValueError("Attempt to call to_tuple() on a closed Queryable.")
+
         if isinstance(self._iterable, tuple):
             return self._iterable
         tup = tuple(self)
@@ -1374,6 +1384,8 @@ class Queryable(object):
             ValueError: If duplicate keys are in the projected source sequence.
             ValueError: If the Queryable is closed()
         '''
+        if self.closed():
+            raise ValueError("Attempt to call to_set() on a closed Queryable.")
 
         if isinstance(self._iterable, set):
             return self._iterable
@@ -1391,6 +1403,9 @@ class Queryable(object):
 
         Execution is immediate.
         '''
+        if self.closed():
+            raise ValueError("Attempt to call to_lookup() on a closed Queryable.")
+
         if not is_callable(key_selector):
             raise TypeError("to_dictionary() parameter key_selector={key_selector} is not callable".format(
                     key_selector=repr(key_selector)))
@@ -1411,6 +1426,9 @@ class Queryable(object):
         Raises:
             ValueError: If duplicate keys are in the projected source sequence.
         '''
+        if self.closed():
+            raise ValueError("Attempt to call to_dictionary() on a closed Queryable.")
+
         if not is_callable(key_selector):
             raise TypeError("to_dictionary() parameter key_selector={key_selector} is not callable".format(
                     key_selector=repr(key_selector)))
@@ -1427,6 +1445,9 @@ class Queryable(object):
         return dictionary
 
     def sequence_equal(self, second_iterable, equality_comparer=operator.eq):
+        if self.closed():
+            raise ValueError("Attempt to call to_tuple() on a closed Queryable.")
+
         if not is_iterable(second_iterable):
             raise TypeError("Cannot compute sequence_equal() with second_iterable of non-iterable {type}".format(
                     type=str(type(second_iterable))[7: -1]))
@@ -1460,7 +1481,7 @@ class Queryable(object):
     #       the iterable or changing the state of the object. Call count() instead.
     #       see http://stackoverflow.com/questions/3723337/listy-behavior-is-wrong-on-first-call
     #       for more details.
-    #       This is problematic if a Queryable is realized using the list() constructor, which calls
+    #       This is problematic if a Queryable is consumed using the list() constructor, which calls
     #       __len__ prior to constructing the list as an efficiency optimisation.
 
     def __contains__(self, item):
@@ -1472,8 +1493,8 @@ class Queryable(object):
     def __str__(self):
         return repr(self)
 
-    # TODO: def __reversed__(self):
-
+    def __reversed__(self):
+        return self.reverse()
 
     def __repr__(self):
         # Must be careful not to consume the iterable here
@@ -1498,6 +1519,9 @@ class OrderedQueryable(Queryable):
         self._funcs = [ (order, func) ]
 
     def then_by(self, key_selector=identity):
+        if self.closed():
+            raise ValueError("Attempt to call to_tuple() on a closed Queryable.")
+
         if not is_callable(key_selector):
             raise TypeError("then_by() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
 
@@ -1505,6 +1529,9 @@ class OrderedQueryable(Queryable):
         return self
 
     def then_by_descending(self, key_selector=identity):
+        if self.closed():
+            raise ValueError("Attempt to call to_tuple() on a closed Queryable.")
+
         if not is_callable(key_selector):
             raise TypeError("then_by_descending() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
 
@@ -1536,13 +1563,11 @@ class OrderedQueryable(Queryable):
             def less(lhs, rhs):
                 for direction, lhs_element, rhs_element in zip(directions, lhs, rhs):
                     cmp = (lhs_element > rhs_element) - (rhs_element > lhs_element)
-                    if cmp == 0:
-                        continue
                     if cmp == direction:
                         return True
                     if cmp == -direction:
                         return False
-                return False
+
             SortingTuple.__lt__ = less
 
         # Uniform ascending sort - decorate, sort, undecorate using tuple element

@@ -23,12 +23,9 @@ class TestOfType(unittest.TestCase):
         e = ['one', 2, 3, 'four', 'five', 6, 'seven', 8, 9, 'ten']
         self.assertEqual(d, e)
 
-
     def test_of_type_not_type(self):
         a = ['one', 2, 3, 'four', 'five', 6, 'seven', 8, 9, 'ten']
         self.assertRaises(TypeError, lambda: Queryable(a).of_type(7))
-
-
 
     def test_of_type_closed(self):
         b = Queryable([1])

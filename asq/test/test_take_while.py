@@ -4,6 +4,7 @@ from asq.test.test_queryable import TracingGenerator, infinite
 
 __author__ = 'rjs'
 
+
 class TestTakeWhile(unittest.TestCase):
 
     def test_take_while(self):
@@ -31,9 +32,10 @@ class TestTakeWhile(unittest.TestCase):
         # whether it satisfies the predicate
         self.assertEqual(a.trace, [0, 1, 2, 3])
 
-    def take_while_closed(self):
+    def test_take_while_closed(self):
         a = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
         b = Queryable(a)
         b.close()
         self.assertRaises(ValueError, lambda: b.take_while(lambda x: x < 'e'))
+
     
