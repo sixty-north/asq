@@ -88,7 +88,6 @@ class TestSequenceEqual(unittest.TestCase):
         c = Queryable(a)
         c.close()
         self.assertRaises(ValueError, lambda: c.sequence_equal(b))
-        self.assertTrue(c)
 
 
 

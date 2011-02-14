@@ -50,6 +50,12 @@ class TestOrderBy(unittest.TestCase):
         b = Queryable(a).order_by(lambda x: x[2])
         self.assertRaises(TypeError, lambda: b.then_by("not callable"))
 
+    def test_then_by_closed(self):
+        a = ['sort', 'using', 'third', 'letter', 'then', 'second']
+        b = Queryable(a).order_by(lambda x: x[2])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.then_by(lambda x: x[1]))
+
     def test_order_by_descending(self):
         a = [1, 9, 7, 2, 5, 4, 6, 3, 8, 10]
         b = Queryable(a).order_by_descending().to_list()
@@ -65,6 +71,12 @@ class TestOrderBy(unittest.TestCase):
     def test_order_by_descending_not_callable(self):
         a = ['Sort', 'words', 'by', 'length']
         self.assertRaises(TypeError, lambda: Queryable(a).order_by_descending("not callable"))
+
+    def test_order_by_descending_closed(self):
+        a = ['Sort', 'words', 'by', 'length']
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.order_by_descending(len))
 
     def test_then_by_descending(self):
         a = ['sort', 'these', 'words', 'by', 'length', 'and', 'then', 'lexicographically']
@@ -82,3 +94,9 @@ class TestOrderBy(unittest.TestCase):
         a = ['sort', 'using', 'third', 'letter', 'then', 'second']
         b = Queryable(a).order_by(lambda x: x[2])
         self.assertRaises(TypeError, lambda: b.then_by_descending("not callable"))
+
+    def test_then_by_descending_closed(self):
+        a = ['sort', 'using', 'third', 'letter', 'then', 'second']
+        b = Queryable(a).order_by(lambda x: x[2])
+        b.close()
+        self.assertRaises(ValueError, lambda: b.then_by_descending(lambda x: x[1]))
