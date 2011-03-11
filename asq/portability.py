@@ -58,9 +58,10 @@ except NameError:
     fold = functools.reduce
     
 try:
-    # Python 2
+    # Python 2.x and Python 3.2+
     is_callable = callable
 except NameError:
+    # Python 3.0 and Python 3.1
     from collections import Callable
     def is_callable(x):
         return isinstance(x, Callable)

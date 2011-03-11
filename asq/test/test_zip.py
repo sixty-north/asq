@@ -66,4 +66,9 @@ class TestZip(unittest.TestCase):
         a = Queryable([1, 2, 3])
         a.close()
         self.assertRaises(ValueError, lambda: a.zip([4, 5, 6]))
+
+    def test_zip_non_iterable(self):
+        a = [1, 2, 3]
+        b = 5
+        self.assertRaises(TypeError, lambda: Queryable(a).zip(b))
         

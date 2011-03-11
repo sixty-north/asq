@@ -36,9 +36,6 @@ class TestQueryable(unittest.TestCase):
     def test_non_iterable(self):
         self.assertRaises(TypeError, lambda: Queryable(5))
 
-    # TODO: Test each function with an empty sequence
-    # TODO: Test each function with an infinite sequence
-
 def inc_chr(y):
     return chr(ord(y)+1)
 

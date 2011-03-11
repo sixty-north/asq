@@ -3,6 +3,11 @@ import itertools
 import functools
 import multiprocessing
 
+# Temporary warning
+import sys
+sys.stderr.write("Warning: The asq parallel query functionality should be "
+                 "considered to be alpha quality.")
+
 from .queryable import (Queryable, identity, default)
 
 def star(func_and_args):
@@ -208,6 +213,7 @@ class OrderedParallelQueryable(ParallelQueryable):
 
     def __iter__(self):
         partitions = realize_partitions(self._iter())
+        # TODO: Ensure that the sort is stable
         # TODO: Try using functools.partial and respond to
         # http://techguyinmidtown.com/2009/01/23/hack-for-functoolspartial-and-multiprocessing/
         # Actually, maybe functools.partial is pickleable in Python 3

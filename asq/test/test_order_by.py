@@ -1,7 +1,18 @@
+import itertools
 import unittest
 from asq.queryable import Queryable
 
 __author__ = 'rjs'
+
+def index_by_identity(sequence, obj):
+    '''Returns the index of the instance in the sequence. Comparison is by
+    object identity rather than object value. Raises ValueError if there is
+    no such item.
+    '''
+    for index, item in enumerate(sequence):
+        if item is obj:
+            return index
+    raise ValueError("index_by_identity(lst, x): x not in lst")
 
 class TestOrderBy(unittest.TestCase):
 
@@ -100,3 +111,4 @@ class TestOrderBy(unittest.TestCase):
         b = Queryable(a).order_by(lambda x: x[2])
         b.close()
         self.assertRaises(ValueError, lambda: b.then_by_descending(lambda x: x[1]))
+
