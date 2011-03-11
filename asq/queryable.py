@@ -1860,11 +1860,10 @@ class Queryable(object):
     def _last_or_default(self, default):
         # Attempt an optimised version
         try:
-            count = len(self._iterable)
-            if count == 0:
-                return default
-            return self._iterable[count - 1]
-        except:
+            return self._iterable[-1]
+        except IndexError:
+            return default
+        except TypeError:
             pass
 
         # Fall through to the sequential version
