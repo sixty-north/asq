@@ -2195,7 +2195,7 @@ class OrderedQueryable(Queryable):
 
         # A tuple subclass on which we will redefine the __lt__ operator
         # so we can use heapq for complex sorts
-        class SortingTuple(tuple):
+        class MultiKey(tuple):
             pass
             
         # Determine which sorting algorithms to use
@@ -2208,12 +2208,9 @@ class OrderedQueryable(Queryable):
             # Uniform descending sort - swap the comparison operators
             def less(lhs, rhs):
                 return lhs > rhs
-            SortingTuple.__lt__ = less
+            MultiKey.__lt__ = less
         else:
-            # TODO: We could use some runtime code generation here to compile a custom
-            #       comparison operator
-            # Mixed ascending/descending sort
-
+            # TODO: We could use some runtime code generation here to compile a custom comparison operator
             def less(lhs, rhs):
                 for direction, lhs_element, rhs_element in zip(directions, lhs, rhs):
                     cmp = (lhs_element > rhs_element) - (rhs_element > lhs_element)
@@ -2222,15 +2219,16 @@ class OrderedQueryable(Queryable):
                     if cmp == -direction:
                         return False
 
-            SortingTuple.__lt__ = less
+            MultiKey.__lt__ = less
 
         # Uniform ascending sort - decorate, sort, undecorate using tuple element
-        # TODO: This is not a stable sort - incorporate the source element index
-        #       as the final key to ensure that the order is preserved
-        lst = [(SortingTuple(func(item) for _, func in self._funcs), item) for item in self._iterable]
+        def create_key(index, item):
+            return MultiKey(func(item) for _, func in self._funcs)
+
+        lst = [(create_key(index, item), index, item) for index, item in enumerate(self._iterable)]
         heapq.heapify(lst)
         while lst:
-            key, item = heapq.heappop(lst)
+            key, index, item = heapq.heappop(lst)
             yield item
 
 class Lookup(Queryable):
@@ -2294,7 +2292,5 @@ class Grouping(Queryable):
 
     def __repr__(self):
         return 'Grouping(key={k})'.format(k=repr(self._key))
-
-# TODO: Should we use a class factory to generate the parallel equivalents of these?
 
 _empty = Queryable(tuple())
