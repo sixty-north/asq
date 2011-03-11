@@ -14,6 +14,11 @@ def index_by_identity(sequence, obj):
             return index
     raise ValueError("index_by_identity(lst, x): x not in lst")
 
+def sgn(i):
+    if i < 0: return -1
+    elif i > 0: return +1
+    return 0
+
 class TestOrderBy(unittest.TestCase):
 
     def test_order_by(self):
@@ -43,6 +48,47 @@ class TestOrderBy(unittest.TestCase):
         b = Queryable(a)
         b.close()
         self.assertRaises(ValueError, lambda: b.order_by(len))
+
+
+
+    def test_order_by_stability(self):
+        a = [1, 2, 3]
+        b = [1, 2, 3]
+        c = [4, 5, 6]
+        d = [4, 5, 6]
+        e = [7, 5, 4]
+        f = [7, 5, 4]
+        self.assertTrue(a is not b)
+        self.assertTrue(c is not d)
+        self.assertTrue(e is not f)
+        s = [a, b, c, d, e, f]
+        for pre_perm in itertools.permutations(s):
+            pre_index_a = index_by_identity(pre_perm, a)
+            pre_index_b = index_by_identity(pre_perm, b)
+            pre_index_c = index_by_identity(pre_perm, c)
+            pre_index_d = index_by_identity(pre_perm, d)
+            pre_index_e = index_by_identity(pre_perm, e)
+            pre_index_f = index_by_identity(pre_perm, f)
+            pre_order_a_b = sgn(pre_index_a - pre_index_b)
+            pre_order_c_d = sgn(pre_index_c - pre_index_d)
+            pre_order_e_f = sgn(pre_index_e - pre_index_f)
+            
+            post_perm = Queryable(pre_perm).order_by().to_list()
+            
+            post_index_a = index_by_identity(post_perm, a)
+            post_index_b = index_by_identity(post_perm, b)
+            post_index_c = index_by_identity(post_perm, c)
+            post_index_d = index_by_identity(post_perm, d)
+            post_index_e = index_by_identity(post_perm, e)
+            post_index_f = index_by_identity(post_perm, f)
+            post_order_a_b = sgn(post_index_a - post_index_b)
+            post_order_c_d = sgn(post_index_c - post_index_d)
+            post_order_e_f = sgn(post_index_e - post_index_f)
+
+            self.assertEqual(pre_order_a_b, post_order_a_b)
+            self.assertEqual(pre_order_c_d, post_order_c_d)
+            self.assertEqual(pre_order_e_f, post_order_e_f)
+
 
     def test_then_by(self):
         a = ['sort', 'these', 'words', 'by', 'length', 'and', 'then', 'lexicographically']
