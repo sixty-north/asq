@@ -697,7 +697,7 @@ class Queryable(object):
         return self._create(itertools.islice(self, count))
 
     def take_while(self, predicate):
-        '''Returns elements fro m the start while the predicate is True.
+        '''Returns elements from the start while the predicate is True.
 
         Note: This method uses deferred execution.
 
