@@ -2,6 +2,8 @@
 queryable.py A module for LINQ-like facility in Python.
 '''
 
+from __future__ import print_function
+
 import heapq
 import itertools
 import operator
@@ -2192,34 +2194,68 @@ class OrderedQueryable(Queryable):
         
     def __iter__(self):
 
-
-        # A tuple subclass on which we will redefine the __lt__ operator
-        # so we can use heapq for complex sorts
-        class MultiKey(tuple):
-            pass
-            
         # Determine which sorting algorithms to use
         directions = [direction for direction, _ in self._funcs]
         direction_total = sum(directions)
         if direction_total == -len(self._funcs):
             # Uniform ascending sort - do nothing
-            pass
-        elif direction_total == len(self._funcs):
-            # Uniform descending sort - swap the comparison operators
-            def less(lhs, rhs):
-                return lhs > rhs
-            MultiKey.__lt__ = less
-        else:
-            # TODO: We could use some runtime code generation here to compile a custom comparison operator
-            def less(lhs, rhs):
-                for direction, lhs_element, rhs_element in zip(directions, lhs, rhs):
-                    cmp = (lhs_element > rhs_element) - (rhs_element > lhs_element)
-                    if cmp == direction:
-                        return True
-                    if cmp == -direction:
-                        return False
+            MultiKey = tuple
 
-            MultiKey.__lt__ = less
+        elif direction_total == len(self._funcs):
+            # Uniform descending sort - invert sense of operators
+            class MultiKey(object):
+                def __init__(self, t):
+                    self.t = tuple(t)
+
+                def __lt__(lhs, rhs):
+                    # Uniform descending sort - swap the comparison operators
+                    return lhs.t > rhs.t
+
+                def __gt__(lhs, rhs):
+                    # Uniform descending sort - swap the comparison operators
+                    return lhs.t < rhs.t
+
+                def __eq__(lhs, rhs):
+                    return lhs.t == rhs.t
+
+                def __ne__(lhs, rhs):
+                    return lhs.t != rhs.t
+
+                def __le__(lhs, rhs):
+                    return lhs.t >= rhs.t
+
+                def __ge__(lhs, rhs):
+                    return lhs.t <= rhs.t
+        else:
+            # Mixed ascending/descending sort - override all operators
+            class MultiKey(object):
+                def __init__(self, t):
+                    self.t = tuple(t)
+
+                # TODO: We could use some runtime code generation here to compile a custom comparison operator
+                def __lt__(lhs, rhs):
+                    for direction, lhs_element, rhs_element in zip(directions, lhs.t, rhs.t):
+                        cmp = (lhs_element > rhs_element) - (rhs_element > lhs_element)
+                        if cmp == direction:
+                            return True
+                        if cmp == -direction:
+                            return False
+                    return False
+
+                def __eq__(lhs, rhs):
+                    return lhs.t == rhs.t
+                
+                def __ne__(lhs, rhs):
+                    return lhs.t != rhs.t
+                
+                def __gt__(lhs, rhs):
+                    return rhs < lhs
+                
+                def __ge__(lhs, rhs):
+                    return not lhs < rhs
+                
+                def __le__(lhs, rhs):
+                    return not rhs < lhs
 
         # Uniform ascending sort - decorate, sort, undecorate using tuple element
         def create_key(index, item):
