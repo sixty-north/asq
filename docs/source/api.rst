@@ -1,29 +1,20 @@
-.. _api:
+API Documentation for asq
+*************************
 
+.. automodule:: asq
+
+
+asq
 ===
-API
-===
-
-You can find some basic API information here.
-
-Serial asq
-----------
-
-In this section we cover some basics about `asq`'s serial
-API which performs query operations in a single thread or process.
 
 .. automodule:: asq.queryable
    :members:
-   :undoc-members:
+
 
 Parallel asq
-------------
+============
 
-In this section we cover some basics about `asq`'s parallel
-API which performs query operations across multiple threads or processes.
+Parallel asq uses Python's multiprocessing library to distribute the effort
 
 .. automodule:: asq.parallel_queryable
    :members:
-   :undoc-members:
-   
-
