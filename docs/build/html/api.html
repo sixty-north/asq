@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API &mdash; asq v0.5 documentation</title>
+    <title>API Documentation for asq &mdash; asq 0.9 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5',
+        VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="asq v0.5 documentation" href="index.html" />
+    <link rel="top" title="asq 0.9 documentation" href="index.html" />
     <link rel="prev" title="Welcome to asq’s documentation!" href="index.html" /> 
   </head>
   <body>
@@ -38,7 +41,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to asq’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">asq v0.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">asq 0.9 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,559 +50,1813 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="api">
-<span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
-<p>You can find some basic API information here.</p>
-<div class="section" id="serial-asq">
-<h2>Serial asq<a class="headerlink" href="#serial-asq" title="Permalink to this headline">¶</a></h2>
-<p>In this section we cover some basics about <cite>asq</cite>&#8216;s serial
-API which performs query operations in a single thread or process.</p>
-<span class="target" id="module-asq.queryable"></span><p>queryable.py A module for LINQ-like facility in Python.</p>
+  <div class="section" id="module-asq">
+<span id="api-documentation-for-asq"></span><h1>API Documentation for asq<a class="headerlink" href="#module-asq" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-asq.queryable">
+<span id="asq"></span><h2>asq<a class="headerlink" href="#module-asq.queryable" title="Permalink to this headline">¶</a></h2>
+<p>A module for a LINQ-like facility in Python.</p>
+<dl class="class">
+<dt id="asq.queryable.Lookup">
+<em class="property">class </em><tt class="descclassname">asq.queryable.</tt><tt class="descname">Lookup</tt><big>(</big><em>key_value_pairs</em>, <em>equality_comparer=&lt;built-in function eq&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only ordered dictionary for which there can be multiple value for
+each key.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="asq.queryable.OrderedQueryable">
 <em class="property">class </em><tt class="descclassname">asq.queryable.</tt><tt class="descname">OrderedQueryable</tt><big>(</big><em>iterable</em>, <em>order</em>, <em>func</em><big>)</big><a class="headerlink" href="#asq.queryable.OrderedQueryable" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="asq.queryable.OrderedQueryable.then_by">
-<tt class="descname">then_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.OrderedQueryable.then_by" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.queryable.OrderedQueryable.then_by_descending">
-<tt class="descname">then_by_descending</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.OrderedQueryable.then_by_descending" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>A Queryable representing an ordered iterable.</p>
+<p>The sorting implemented by this class in that a partial sort is performed so
+you don&#8217;t pay for sorting results which are never enumerated.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="asq.queryable.Queryable">
 <em class="property">class </em><tt class="descclassname">asq.queryable.</tt><tt class="descname">Queryable</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>Queries over iterables executed serially.</p>
+<p>Queryable objects are constructed from iterables.</p>
+<dl class="method">
 <dt id="asq.queryable.Queryable.aggregate">
-<tt class="descname">aggregate</tt><big>(</big><em>func</em>, <em>seed=&lt;object object at 0x403a8a98&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.aggregate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">aggregate</tt><big>(</big><em>reducer</em>, <em>seed=&lt;object object at 0xa393548&gt;</em>, <em>result_selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.aggregate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a function over a sequence to produce a single result.</p>
+<p>Apply a binary function cumulatively to the elements of the source
+sequence so as to reduce the iterable to a single value.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>reducer</strong> &#8211; A binary function the first positional argument of which
+is an accumulated value and the second is the update value from
+the source sequence. The return value should be the new
+accumulated value after the update value has been incorporated.</li>
+<li><strong>seed</strong> &#8211; An optional value used to initialise the accumulator before
+iteration over the source sequence. If seed is omitted the
+and the source sequence contains only one item, then that item
+is returned.</li>
+<li><strong>result_selector</strong> &#8211; An optional unary function applied to the final
+accumulator value to produce the result. If omitted, defaults
+to the identity function.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If called on an empty sequence with no seed value.</li>
+<li>TypeError - If reducer is not callable</li>
+<li>TypeError - If result_selector is not callable</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.all">
-<tt class="descname">all</tt><big>(</big><em>predicate=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">all</tt><big>(</big><em>predicate=&lt;type 'bool'&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if all elements in the source sequence satisfy a condition.</p>
+<p>All of the source sequence will be consumed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>predicate</strong> &#8211; An optional single argument function used to test each
+elements. If omitted, the bool() function is used resulting in
+the elements being tested directly.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if all elements in the sequence meet the predicate condition,
+otherwise False.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed()</li>
+<li>TypeError - If predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.any">
-<tt class="descname">any</tt><big>(</big><em>predicate=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.any" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.queryable.Queryable.as_parallel">
-<tt class="descname">as_parallel</tt><big>(</big><em>pool=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.as_parallel" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">any</tt><big>(</big><em>predicate=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.any" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if the source sequence contains any elements which satisfy
+the predicate.</p>
+<p>Only enough of the sequence to satisfy the predicate once is consumed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>predicate</strong> &#8211; An optional single argument function used to test each
+element. If omitted, or None, this method returns True if there
+is at least one element in the source.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the sequence contains at least one element which satisfies
+the predicate, otherwise False.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">ValueError - If the Queryable is closed()</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.average">
-<tt class="descname">average</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.average" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">average</tt><big>(</big><em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the arithmetic mean of the values in the sequence..</p>
+<p>All of the source sequence will be consumed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>selector</strong> &#8211; An optional single argument function which will be used
+to project the elements of the sequence. If omitted, the
+identity function is used.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The arithmetic mean value of the projected sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable has been closed.</li>
+<li>ValueError - I the source sequence is empty.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.close">
 <tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.close" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Closes the queryable.</p>
+<p>The Queryable should not be used following a call to close. This method
+is idempotent. Other calls to a Queryable following close() will raise
+ValueError.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.closed">
+<tt class="descname">closed</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether the Queryable has been closed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if closed, otherwise False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.concat">
-<tt class="descname">concat</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.concat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">concat</tt><big>(</big><em>second_iterable</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.concat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates two sequences.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>second_iterable</strong> &#8211; The sequence to concatenate on to the sequence.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over the concatenated sequences.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed().</li>
+<li>TypeError - If second_iterable is not in fact iterable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.contains">
-<tt class="descname">contains</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.contains" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">contains</tt><big>(</big><em>value</em>, <em>equality_comparer=&lt;built-in function eq&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the sequence contains a particular value.</p>
+<p>Execution is immediate. Depending on the type of the sequence, all or
+none of the sequence may be consumed by this operation.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; The value to test for membership of the sequence</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if value is in the sequence, otherwise False.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">ValueError - If the Queryable has been closed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.count">
-<tt class="descname">count</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">count</tt><big>(</big><em>predicate=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of elements (which match an optional predicate).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>predicate</strong> &#8211; An optional unary predicate function used to identify
+elements which will be counted. The single positional argument
+of the function is the element value. The function should
+return True or False.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The number of elements in the sequence if the predicate is None
+(the default), or if the predicate is supplied the number of
+elements for which the predicate evaluates to True.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed().</li>
+<li>TypeError - If predicate is neither None nor a callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.default_if_empty">
 <tt class="descname">default_if_empty</tt><big>(</big><em>default</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.default_if_empty" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>If the source sequence is empty return a single element sequence
+containing the supplied default value, otherwise return the source
+sequence unchanged.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>default</strong> &#8211; The element to be returned if the source sequence is empty.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The source sequence, or if the source sequence is empty an sequence
+containing a single element with the supplied default value.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">ValueError - If the Queryable has been closed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.difference">
-<tt class="descname">difference</tt><big>(</big><em>second_iterable</em>, <em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.difference" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">difference</tt><big>(</big><em>second_iterable</em>, <em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns those elements which are in the source sequence which are not
+in the second_iterable.</p>
+<p>This method is equivalent to the Except() LINQ operator, renamed to a
+valid Python identifier.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution, but as soon as execution</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>second_iterable</strong> &#8211; Elements from this sequence are excluded from the
+returned sequence. This sequence will be consumed in its
+entirety, so must be finite.</li>
+<li><strong>selector</strong> &#8211; A optional single argument function with selects from the
+elements the of both sequences the values which will be
+compared for equality. If omitted the identity function will
+be used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A sequence containing all elements in the source sequence except
+those which are also members of the second sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable has been closed.</li>
+<li>TypeError - If the second_iterable is not in fact iterable.</li>
+<li>TypeError - If the selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.distinct">
-<tt class="descname">distinct</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.distinct" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">distinct</tt><big>(</big><em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.distinct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Eliminate duplicate elements from a sequence.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>selector</strong> &#8211; An optional single argument function the result of which
+is the value compared for uniqueness against elements already
+consumed. If omitted, the element value itself is compared for
+uniqueness.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Unique elements of the source sequence as determined by the
+selector function.  Note that it is unprojected elements that are
+returned, even if a selector was provided.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>TypeError - If the selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.element_at">
 <tt class="descname">element_at</tt><big>(</big><em>index</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.element_at" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.queryable.Queryable.empty">
-<tt class="descname">empty</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.empty" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the element at ordinal index.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>index</strong> &#8211; The index of the element to be returned.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The element at ordinal index in the source sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed().</li>
+<li>ValueError - If index is out of range.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.first">
-<tt class="descname">first</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.first" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">first</tt><big>(</big><em>predicate=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.first" title="Permalink to this definition">¶</a></dt>
+<dd><p>The first element in a sequence (optionally satisfying a predicate).</p>
+<p>If the predicate is omitted or is None this query returns the first
+element in the sequence; otherwise, it returns the first element in
+the sequence for which the predicate evaluates to True. Exceptions are
+raised if there is no such element.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>predicate</strong> &#8211; An optional unary predicate function, the only argument
+to which is the element. The return value should be True for
+matching elements, otherwise False.  If the predicate is
+omitted or None the first element of the source sequence will
+be returned.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The first element of the sequence if predicate is None, otherwise
+the first element for which the predicate returns True.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>ValueError - If the source sequence is empty.</li>
+<li>ValueError - If there are no elements matching the predicate.</li>
+<li>TypeError - If the predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.first_or_default">
-<tt class="descname">first_or_default</tt><big>(</big><em>default</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.first_or_default" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">first_or_default</tt><big>(</big><em>default</em>, <em>predicate=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.first_or_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>The first element (optionally satisfying a predicate) or a default.</p>
+<p>If the predicate is omitted or is None this query returns the first
+element in the sequence; otherwise, it returns the first element in
+the sequence for which the predicate evaluates to True. If there is no
+such element the value of the default argument is returned.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>default</strong> &#8211; The value which will be returned if either the sequence is
+empty or there are no elements matching the predicate.</li>
+<li><strong>predicate</strong> &#8211; An optional unary predicate function, the only argument
+to which is the element. The return value should be True for
+matching elements, otherwise False.  If the predicate is
+omitted or None the first element of the source sequence will
+be returned.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The first element of the sequence if predicate is None, otherwise
+the first element for which the predicate returns True. If there is
+no such element, the default argument is returned.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>TypeError - If the predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.group_by">
-<tt class="descname">group_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.group_by" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">group_by</tt><big>(</big><em>key_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>element_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>result_selector=&lt;function &lt;lambda&gt; at 0xa72841c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.group_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Groups the elements according to the value of a key extracted by a
+selector function.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method has different behaviour to itertools.groupby in the
+Python standard library because it aggregates all items with the
+same key, rather than returning groups of consecutive items of the
+same key.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution, but consumption of a single
+result will lead to evaluation of the whole source sequence.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key_selector</strong> &#8211; An optional unary function used to extract a key from
+each element in the source sequence. The default is the
+identity function.</li>
+<li><strong>element_selector</strong> &#8211; A optional unary function to map elements in the
+source sequence to elements in a resulting Grouping. The
+default is the identity function.</li>
+<li><strong>result_selector</strong> &#8211; An optional binary function to create a result
+from each group. The first positional argument is the key
+identifying the group. The second argument is a Grouping object
+containing the members of the group. The default is a function
+which simply returns the Grouping.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable sequence of elements of the where each element
+represents a group.  If the default result_selector is relied upon
+this is a Grouping object.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed().</li>
+<li>TypeError - If key_selector is not callable.</li>
+<li>TypeError - If element_selector is not callable.</li>
+<li>TypeError - If result_selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.group_join">
+<tt class="descname">group_join</tt><big>(</big><em>inner_iterable</em>, <em>outer_key_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>inner_key_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>result_selector=&lt;function &lt;lambda&gt; at 0xa728cdc&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.group_join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Match elements of two sequences using keys and group the results.</p>
+<p>The group_join() query produces a hierarchical result, with all of the
+inner elements in the result grouped against the matching outer
+element.</p>
+<p>The order of elements from outer is maintained. For each of these the
+order of elements from inner is also preserved.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inner_iterable</strong> &#8211; The sequence to join with the outer sequence.</li>
+<li><strong>outer_key_selector</strong> &#8211; An optional unary function to extract keys from
+elements of the outer (source) sequence. The first positional
+argument of the function should accept outer elements and the
+result value should be the key. If omitted, the identity
+function is used.</li>
+<li><strong>inner_key_selector</strong> &#8211; An optional  unary function to extract keys
+from elements of the inner_iterable. The first positional
+argument of the function should accept outer elements and the
+result value should be the key.  If omitted, the identity
+function is used.</li>
+<li><strong>result_selector</strong> &#8211; An optional binary function to create a result
+element from an outer element and the Grouping of matching
+inner elements. The first positional argument is the outer
+elements and the second in the Grouping of inner elements
+which match the outer element according to the key selectors
+used. If omitted, the result elements will be the Groupings
+directly.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over a sequence with one element for each group in the
+result as returned by the result_selector. If the default result
+selector is used, the result is a sequence of Grouping objects.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable has been closed.</li>
+<li>TypeError - If the inner_iterable is not in fact iterable.</li>
+<li>TypeError - If the outer_key_selector is not callable.</li>
+<li>TypeError - If the inner_key_selector is not callable.</li>
+<li>TypeError - If the result_selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.intersect">
-<tt class="descname">intersect</tt><big>(</big><em>second_iterable</em>, <em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.intersect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">intersect</tt><big>(</big><em>second_iterable</em>, <em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.intersect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns those elements which are both in the source sequence and in
+the second_iterable.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>second_iterable</strong> &#8211; Elements are returned if they are also in the
+sequence.</li>
+<li><strong>selector</strong> &#8211; An optional single argument function which is used to
+project the elements in the source and second_iterables prior
+to comparing them. If omitted the identity function will be
+used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A sequence containing all elements in the source sequence  which
+are also members of the second sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable has been closed.</li>
+<li>TypeError - If the second_iterable is not in fact iterable.</li>
+<li>TypeError - If the selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.join">
-<tt class="descname">join</tt><big>(</big><em>inner_iterable</em>, <em>outer_key_func=&lt;function identity at 0xad3464c&gt;</em>, <em>inner_key_func=&lt;function identity at 0xad3464c&gt;</em>, <em>result_func=&lt;function &lt;lambda&gt; at 0xad34fb4&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.join" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">join</tt><big>(</big><em>inner_iterable</em>, <em>outer_key_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>inner_key_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>result_selector=&lt;function &lt;lambda&gt; at 0xa728c34&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform an inner join with a second sequence using selected keys.</p>
+<p>The order of elements from outer is maintained. For each of these the
+order of elements from inner is also preserved.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inner_iterable</strong> &#8211; The sequence to join with the outer sequence.</li>
+<li><strong>outer_key_selector</strong> &#8211; An optional unary function to extract keys from
+elements of the outer (source) sequence. The first positional
+argument of the function should accept outer elements and the
+result value should be the key. If omitted, the identity
+function is used.</li>
+<li><strong>inner_key_selector</strong> &#8211; An optional  unary function to extract keys
+from elements of the inner_iterable. The first positional
+argument of the function should accept outer elements and the
+result value should be the key.  If omitted, the identity
+function is used.</li>
+<li><strong>result_selector</strong> &#8211; An optional binary function to create a result
+element from two matching elements of the outer and inner. If
+omitted the result elements will be a 2-tuple pair of the
+matching outer and inner elements.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable whose elements are the result of performing an inner-
+join on two sequences.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable has been closed.</li>
+<li>TypeError - If the inner_iterable is not in fact iterable.</li>
+<li>TypeError - If the outer_key_selector is not callable.</li>
+<li>TypeError - If the inner_key_selector is not callable.</li>
+<li>TypeError - If the result_selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.last">
-<tt class="descname">last</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.last" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">last</tt><big>(</big><em>predicate=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.last" title="Permalink to this definition">¶</a></dt>
+<dd><p>The last element in a sequence (optionally satisfying a predicate).</p>
+<p>If the predicate is omitted or is None this query returns the last
+element in the sequence; otherwise, it returns the last element in
+the sequence for which the predicate evaluates to True. Exceptions are
+raised if there is no such element.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>predicate</strong> &#8211; An optional unary predicate function, the only argument
+to which is the element. The return value should be True for
+matching elements, otherwise False.  If the predicate is
+omitted or None the last element of the source sequence will
+be returned.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The last element of the sequence if predicate is None, otherwise
+the last element for which the predicate returns True.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>ValueError - If the source sequence is empty.</li>
+<li>ValueError - If there are no elements matching the predicate.</li>
+<li>TypeError - If the predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.last_or_default">
-<tt class="descname">last_or_default</tt><big>(</big><em>default</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.last_or_default" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">last_or_default</tt><big>(</big><em>default</em>, <em>predicate=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.last_or_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>The last element (optionally satisfying a predicate) or a default.</p>
+<p>If the predicate is omitted or is None this query returns the last
+element in the sequence; otherwise, it returns the last element in
+the sequence for which the predicate evaluates to True. If there is no
+such element the value of the default argument is returned.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>default</strong> &#8211; The value which will be returned if either the sequence is
+empty or there are no elements matching the predicate.</li>
+<li><strong>predicate</strong> &#8211; An optional unary predicate function, the only argument
+to which is the element. The return value should be True for
+matching elements, otherwise False.  If the predicate is
+omitted or None the last element of the source sequence will
+be returned.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The last element of the sequence if predicate is None, otherwise
+the last element for which the predicate returns True. If there is
+no such element, the default argument is returned.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>TypeError - If the predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.max">
-<tt class="descname">max</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.max" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">max</tt><big>(</big><em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the maximum value in a sequence.</p>
+<p>All of the source sequence will be consumed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>selector</strong> &#8211; An optional single argument function which will be used
+to project the elements of the sequence. If omitted, the
+identity function is used.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The maximum value of the projected sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable has been closed.</li>
+<li>ValueError - If the sequence is empty.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.min">
-<tt class="descname">min</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.min" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">min</tt><big>(</big><em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the minimum value in a sequence.</p>
+<p>All of the source sequence will be consumed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>selector</strong> &#8211; An optional single argument function which will be used
+to project the elements of the sequence. If omitted, the
+identity function is used.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The minimum value of the projected sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable has been closed.</li>
+<li>ValueError - If the sequence is empty.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.of_type">
-<tt class="descname">of_type</tt><big>(</big><em>type</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.of_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">of_type</tt><big>(</big><em>classinfo</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.of_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters elements according to whether they are of a certain type.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>classinfo</strong> &#8211; If classinfo is neither a class object nor a type object
+it may be a tuple of class or type objects, or may recursively
+contain other such tuples (other sequence types are not
+accepted).</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over those elements of the source sequence for which
+the predicate is True.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>TypeError - If classinfo is not a class, type, or tuple of classes,</li>
+</ul>
+<p class="last">types, and such tuples.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.order_by">
-<tt class="descname">order_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.order_by" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">order_by</tt><big>(</big><em>key_selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.order_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts by a key in ascending order.</p>
+<p>Introduces a primary sorting order to the sequence. Additional sort
+criteria should be specified by subsequent calls to then_by() and
+then_by_descending().  Calling order_by() or order_by_descending() on
+the results of a call to order_by() will introduce a new primary
+ordering which will override any already established ordering.</p>
+<p>This method performs a stable sort. The order of two elements with the
+same key will be preserved.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key_selector</strong> &#8211; A unary function which extracts a key from each
+element using which the result will be ordered.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An OrderedQueryable over the sorted elements.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>TypeError - If the key_selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.order_by_descending">
-<tt class="descname">order_by_descending</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.order_by_descending" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.queryable.Queryable.range">
-<tt class="descname">range</tt><big>(</big><em>start</em>, <em>count</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.range" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.queryable.Queryable.repeat">
-<tt class="descname">repeat</tt><big>(</big><em>element</em>, <em>count</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.repeat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">order_by_descending</tt><big>(</big><em>key_selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.order_by_descending" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts by a key in descending order.</p>
+<p>Introduces a primary sorting order to the sequence. Additional sort
+criteria should be specified by subsequent calls to then_by() and
+then_by_descending().  Calling order_by() or order_by_descending() on
+the results of a call to order_by() will introduce a new primary
+ordering which will override any already established ordering.</p>
+<p>This method performs a stable sort. The order of two elements with the
+same key will be preserved.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key_selector</strong> &#8211; A unary function which extracts a key from each
+element using which the result will be ordered.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An OrderedQueryable over the sorted elements.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>TypeError - If the key_selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.reverse">
 <tt class="descname">reverse</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.reverse" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the sequence reversed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution, but the whole source
+sequence is consumed once execution commences.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The source sequence in reverse order.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body">ValueError - If the Queryable is closed().</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.select">
 <tt class="descname">select</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms each element of a sequence into a new form.</p>
-<p>Each element is transformed through a selector function to produce a value for each value in the source
-sequence. The generated sequence is lazily evaluated.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>selector: A unary function mapping a value in the source sequence to the corresponding value in the generated</dt>
-<dd><p class="first">generated sequence. The argument of the selector function
-(which can have any name) is,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd>element: The value of the element</dd>
-<dt>Returns:</dt>
-<dd>The selected value derived from the element value</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
-source sequence.</dd>
-</dl>
+<p>Each element is transformed through a selector function to produce a
+value for each value in the source sequence. The generated sequence is
+lazily evaluated.</p>
+<p>If the selector is identity the method will return self.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>selector</strong> &#8211; A unary function mapping a value in the source sequence
+to the corresponding value in the generated generated sequence.
+The single positional argument to the selector function is the
+element value.  The return value of the selector function
+should be the corresponding element of the result sequence.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over generated sequence whose elements are the result
+of invoking the selector function on each element of the source
+sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If this Queryable has been closed.</li>
+<li>TypeError - If selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.select_many">
-<tt class="descname">select_many</tt><big>(</big><em>projector</em>, <em>selector=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many" title="Permalink to this definition">¶</a></dt>
-<dd><p>Projects each element of a sequence to an intermediate new sequence, flattens the resulting sequence into one
-sequence and optionally transforms the flattened sequence using a selector function.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no</dt>
-<dd><p class="first">projection function is provided, the intermediate sequence will consist of the single corresponding
-element from the source sequence. The projector function argument (which can have any name) and return
-values are,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd>element: The value of the element</dd>
-<dt>Returns:</dt>
-<dd>An iterable derived from the element value</dd>
-</dl>
-</dd>
-<dt>selector: An optional unary functon mapping the elements in the flattened intermediate sequence to</dt>
-<dd><p class="first">corresponding elements of the result sequence. If no selector function is provided, the identity
-function is used.  The selector function argument and return values are,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>element: The value of the intermediate element from the concatenated sequences arising from the</dt>
-<dd>projector function.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>The selected value derived from the element value</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>A generated sequence whose elements are the result of projecting each element of the source sequence using
-projector function and then mapping each element through an optional selector function.</dd>
-</dl>
+<tt class="descname">select_many</tt><big>(</big><em>collection_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>result_selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects each element of a sequence to an intermediate new sequence,
+flattens the resulting sequences into one sequence and optionally
+transforms the flattened sequence using a selector function.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>collection_selector</strong> &#8211; A unary function mapping each element of the
+source iterable into an intermediate sequence. The single
+argument of the collection_selector is the value of an element
+from the source sequence. The return value should be an
+iterable derived from that element value. The default
+collection_selector, which is the identity function, assumes
+that each element of the source sequence is itself iterable.</li>
+<li><strong>result_selector</strong> &#8211; An optional unary function mapping the elements in
+the flattened intermediate sequence to corresponding elements
+of the result sequence. The single argument of the
+result_selector is the value of an element from the flattened
+intermediate sequence. The return value should be the
+corresponding value in the result sequence. The default
+result_selector is the identity function.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over a generated sequence whose elements are the result
+of applying the one-to-many collection_selector to each element of
+the source sequence, concatenating the results into an intermediate
+sequence, and then mapping each of those elements through the
+result_selector into the result sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first simple">
+<li>ValueError - If this Queryable has been closed.</li>
+<li>TypeError - If either collection_selector or result_selector are not</li>
+</ul>
+<p class="last">callable.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.select_many_with_correspondence">
-<tt class="descname">select_many_with_correspondence</tt><big>(</big><em>projector=&lt;function &lt;lambda&gt; at 0xad3495c&gt;</em>, <em>selector=&lt;function &lt;lambda&gt; at 0xad34994&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many_with_correspondence" title="Permalink to this definition">¶</a></dt>
-<dd><p>Projects each element of a sequence to an intermediate new sequence, and flattens the resulting sequence,
-into one sequence and uses a selector function to incorporate the corresponding source for each item in the
-result sequence.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no</dt>
-<dd><p class="first">projection function is provided, the intermediate sequence will consist of the single corresponding
-element from the source sequence. The projector function argument (which can have any name) and return
-values are,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd>source_element: The value of the element</dd>
-<dt>Returns:</dt>
-<dd>An iterable derived from the element value</dd>
-</dl>
-</dd>
-<dt>selector: An optional unary functon mapping the elements in the flattened intermediate sequence to</dt>
-<dd><p class="first">corresponding elements of the result sequence. If no selector function is provided, the identity
-function is used.  The selector function argument and return values are,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd><p class="first">source_element: The corresponding source element</p>
-<dl class="last docutils">
-<dt>element: The value of the intermediate element from the concatenated sequences arising from the</dt>
-<dd>projector function.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>The selected value derived from the element value</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
+<tt class="descname">select_many_with_correspondence</tt><big>(</big><em>collection_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>result_selector=&lt;function &lt;lambda&gt; at 0xa728374&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many_with_correspondence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects each element of a sequence to an intermediate new sequence,
+and flattens the resulting sequence, into one sequence and uses a
+selector function to incorporate the corresponding source for each item
+in the result sequence.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>collection_selector</strong> &#8211; A unary function mapping each element of the
+source iterable into an intermediate sequence. The single
+argument of the collection_selector is the value of an element
+from the source sequence. The return value should be an
+iterable derived from that element value. The default
+collection_selector, which is the identity function, assumes
+that each element of the source sequence is itself iterable.</li>
+<li><strong>result_selector</strong> &#8211; An optional binary function mapping the elements in the
+flattened intermediate sequence together with their
+corresponding source elements to elements of the result
+sequence. The two positional arguments of the result_selector
+are, first the source element corresponding to an element from
+the intermediate sequence, and second the actual element from
+the intermediate sequence. The return value should be the
+corresponding value in the result sequence. If no
+result_selector function is provided, the elements of the
+result sequence are 2-tuple pairs of the form (source_element,
+intermediate_element).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over a generated sequence whose elements are the result
+of applying the one-to-many collection_selector to each element of
+the source sequence, concatenating the results into an intermediate
+sequence, and then mapping each of those elements through the
+result_selector which incorporates the corresponding source element
+into the result sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If this Queryable has been closed.</li>
+<li>TypeError - If projector or selector are not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.select_many_with_index">
-<tt class="descname">select_many_with_index</tt><big>(</big><em>projector=&lt;function &lt;lambda&gt; at 0xad348ec&gt;</em>, <em>selector=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many_with_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Projects each element of a sequence to an intermediate new sequence, incorporating the index of the element,
-flattens the resulting sequence into one sequence and optionally transforms the flattened sequence using a
-selector function.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no</dt>
-<dd><p class="first">projection function is provided, the intermediate sequence will consist of the single corresponding
-element from the source sequence. The projector function argument (which can have any name) and return
-values are,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd>index: The index of the element in the source sequence
-element: The value of the element</dd>
-<dt>Returns:</dt>
-<dd>An iterable derived from the element value</dd>
-</dl>
-</dd>
-<dt>selector: An optional unary functon mapping the elements in the flattened intermediate sequence to</dt>
-<dd><p class="first">corresponding elements of the result sequence. If no selector function is provided, the identity
-function is used.  The selector function argument and return values are,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>element: The value of the intermediate element from the concatenated sequences arising from the</dt>
-<dd>projector function.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>The selected value derived from the element value</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>A generated sequence whose elements are the result of projecting each element of the source sequence using
-projector function and then mapping each element through an optional selector function.</dd>
-</dl>
+<tt class="descname">select_many_with_index</tt><big>(</big><em>collection_selector=&lt;function &lt;lambda&gt; at 0xa728294&gt;</em>, <em>result_selector=&lt;function &lt;lambda&gt; at 0xa7282cc&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_many_with_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects each element of a sequence to an intermediate new sequence,
+incorporating the index of the element, flattens the resulting sequence
+into one sequence and optionally transforms the flattened sequence
+using a selector function.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>collection_selector</strong> &#8211; A binary function mapping each element of the
+source sequence into an intermediate sequence, by incorporating
+its index in the source sequence. The two positional arguments
+to the function are the zero-based index of the source element
+and the value of the element.  The result of the function
+should be an iterable derived from the index and element value.
+If no collection_selector is provided, the elements of the
+intermediate  sequence will consist of tuples of (index,
+element) from the source sequence.</li>
+<li><strong>result_selector</strong> &#8211; An optional binary function mapping the elements in the
+flattened intermediate sequence together with their
+corresponding source elements to elements of the result
+sequence. The two positional arguments of the result_selector
+are, first the source element corresponding to an element from
+the intermediate sequence, and second the actual element from
+the intermediate sequence. The return value should be the
+corresponding value in the result sequence. If no
+result_selector function is provided, the elements of the
+flattened intermediate sequence are returned untransformed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over a generated sequence whose elements are the result
+of applying the one-to-many collection_selector to each element of
+the source sequence which incorporates both the index and value of
+the source element, concatenating the results into an intermediate
+sequence, and then mapping each of those elements through the
+result_selector into the result sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If this Queryable has been closed.</li>
+<li>TypeError - If projector [and selector] are not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.select_with_index">
-<tt class="descname">select_with_index</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_with_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms each element of a sequence into a new form, incorporating the index of the element.</p>
-<p>Each element is transformed through a selector function which accepts the element value and its zero-based index
-in the source sequence. The generated sequence is lazily evaluated.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>selector: A two argument function mapping the index of a value in the source sequence and the element value</dt>
-<dd><p class="first">itself to the corresponding value in the generated sequence. The two arguments of the selector function
-(which can have any names) and its return value are,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd>index: The zero-based index of the element
-element: The value of the element</dd>
-<dt>Returns:</dt>
-<dd>The selected value derived from the index and element</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
-source sequence</dd>
-</dl>
+<tt class="descname">select_with_index</tt><big>(</big><em>selector=&lt;function &lt;lambda&gt; at 0xa7281ec&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.select_with_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms each element of a sequence into a new form, incorporating
+the index of the element.</p>
+<p>Each element is transformed through a selector function which accepts
+the element value and its zero-based index in the source sequence. The
+generated sequence is lazily evaluated.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>selector</strong> &#8211; A binary function mapping the index of a value in
+the source sequence and the element value itself to the
+corresponding value in the generated sequence. The two
+positional arguments of the selector function are the zero-
+based index of the current element and the value of the current
+element. The return value should be the corresponding value in
+the result sequence. The default selector produces a 2-tuple
+containing the index and the element giving this function
+similar behaviour to the built-in enumerate().</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable whose elements are the result of invoking the selector
+function on each element of the source sequence</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If this Queryable has been closed.</li>
+<li>TypeError - If selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.sequence_equal">
+<tt class="descname">sequence_equal</tt><big>(</big><em>second_iterable</em>, <em>equality_comparer=&lt;built-in function eq&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.sequence_equal" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.single">
+<tt class="descname">single</tt><big>(</big><em>predicate=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.single" title="Permalink to this definition">¶</a></dt>
+<dd><p>The only element (which satisfies a condition).</p>
+<p>If the predicate is omitted or is None this query returns the only
+element in the sequence; otherwise, it returns the only element in
+the sequence for which the predicate evaluates to True. Exceptions are
+raised if there is either no such element or more than one such
+element.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>predicate</strong> &#8211; An optional unary predicate function, the only argument
+to which is the element. The return value should be True for
+matching elements, otherwise False.  If the predicate is
+omitted or None the only element of the source sequence will
+be returned.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The only element of the sequence if predicate is None, otherwise
+the only element for which the predicate returns True.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>ValueError - If, when predicate is None the source sequence contains</li>
+</ul>
+<p>more than one element.</p>
+<ul class="simple">
+<li>ValueError - If there are no elements matching the predicate or more</li>
+</ul>
+<p>then one element matching the predicate.</p>
+<ul class="last simple">
+<li>TypeError - If the predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.single_or_default">
+<tt class="descname">single_or_default</tt><big>(</big><em>default</em>, <em>predicate=None</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.single_or_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>The only element (which satisfies a condition) or a default.</p>
+<p>If the predicate is omitted or is None this query returns the only
+element in the sequence; otherwise, it returns the only element in
+the sequence for which the predicate evaluates to True. A default value
+is returned if there is no such element. An exception is raised if
+there is more than one such element.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>default</strong> &#8211; The value which will be returned if either the sequence is
+empty or there are no elements matching the predicate.</li>
+<li><strong>predicate</strong> &#8211; An optional unary predicate function, the only argument
+to which is the element. The return value should be True for
+matching elements, otherwise False.  If the predicate is
+omitted or None the only element of the source sequence will
+be returned.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The only element of the sequence if predicate is None, otherwise
+the only element for which the predicate returns True. If there are
+no such elements the default value will returned.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>ValueError - If, when predicate is None the source sequence contains</li>
+</ul>
+<p>more than one element.</p>
+<ul class="simple">
+<li>ValueError - If there is more then one element matching the</li>
+</ul>
+<p>predicate.</p>
+<ul class="last simple">
+<li>TypeError - If the predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.skip">
-<tt class="descname">skip</tt><big>(</big><em>n=1</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.skip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">skip</tt><big>(</big><em>count=1</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.skip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Skip the first count contiguous elements of the source sequence.</p>
+<p>If the source sequence contains fewer than count elements returns an
+empty sequence and does not raise an exception.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>count</strong> &#8211; The number of elements to skip from the beginning of the
+sequence. If omitted defaults to one. If count is less than one
+the result sequence will be empty.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A Queryable over the elements of source excluding the first count
+elements.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">ValueError - If the Queryable is closed().</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.skip_while">
 <tt class="descname">skip_while</tt><big>(</big><em>predicate</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.skip_while" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Omit elements from the start for which a predicate is True.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>predicate</strong> &#8211; A single argument predicate function.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over the sequence of elements beginning with the first
+element for which the predicate returns False.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed().</li>
+<li>TypeError - If predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.sum">
-<tt class="descname">sum</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.sum" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">sum</tt><big>(</big><em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the arithmetic sum of the values in the sequence..</p>
+<p>All of the source sequence will be consumed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>selector</strong> &#8211; An optional single argument function which will be used
+to project the elements of the sequence. If omitted, the
+identity function is used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The total value of the projected sequence, or zero for an empty
+sequence.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">ValueError - If the Queryable has been closed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.take">
-<tt class="descname">take</tt><big>(</big><em>n=1</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.take" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">take</tt><big>(</big><em>count=1</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.take" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a specified number of elements from the start of a sequence.</p>
+<p>If the source sequence contains fewer elements than requested only the
+available elements will be returned and no exception will be raised.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>count</strong> &#8211; An optional number of elements to take. The default is one.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A Queryable over the first count elements of the source sequence,
+or the all elements of elements in the source, whichever is fewer.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">ValueError - If the Queryable is closed()</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.take_while">
 <tt class="descname">take_while</tt><big>(</big><em>predicate</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.take_while" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns elements from the start while the predicate is True.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>predicate</strong> &#8211; A function returning True or False with which elements
+will be tested.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over the elements from the beginning of the source
+sequence for which predicate is True.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed()</li>
+<li>TypeError - If the predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.to_dictionary">
+<tt class="descname">to_dictionary</tt><big>(</big><em>key_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>value_selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.to_dictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a dictionary from the source sequence.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">ValueError - If duplicate keys are in the projected source sequence.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.to_list">
 <tt class="descname">to_list</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.to_list" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.to_lookup">
+<tt class="descname">to_lookup</tt><big>(</big><em>key_selector=&lt;function identity at 0xa806aac&gt;</em>, <em>value_selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.to_lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Lookup object, using the provided selector to generate a
+key for each item.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asq.queryable.Queryable.to_set">
+<tt class="descname">to_set</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.to_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a dictionary from the source sequence.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If duplicate keys are in the projected source sequence.</li>
+<li>ValueError - If the Queryable is closed()</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.to_tuple">
 <tt class="descname">to_tuple</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.to_tuple" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses immediate execution.</p>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.union">
-<tt class="descname">union</tt><big>(</big><em>second_iterable</em>, <em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.union" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">union</tt><big>(</big><em>second_iterable</em>, <em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.union" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns those elements which are either in the source sequence or in
+the second_iterable.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>second_iterable</strong> &#8211; Elements from this sequence are returns if they
+are not also in the source sequence.</li>
+<li><strong>selector</strong> &#8211; An optional single argument function which is used to
+project the elements in the source and second_iterables prior
+to comparing them. If omitted the identity function will be
+used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A sequence containing all elements in the source sequence and second
+sequence.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable has been closed.</li>
+<li>TypeError - If the second_iterable is not in fact iterable.</li>
+<li>TypeError - If the selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.where">
 <tt class="descname">where</tt><big>(</big><em>predicate</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.where" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Filters elements according to whether they match a predicate.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>predicate</strong> &#8211; A unary function which is applied to each element in the
+source sequence. Source elements for which the predicate
+returns True will be present in the result.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over those elements of the source sequence for which the
+predicate is True.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>TypeError - If the predicate is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="asq.queryable.Queryable.zip">
-<tt class="descname">zip</tt><big>(</big><em>second_iterable</em>, <em>func=&lt;function &lt;lambda&gt; at 0xad3b1ec&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.zip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">zip</tt><big>(</big><em>second_iterable</em>, <em>result_selector=&lt;function &lt;lambda&gt; at 0xa7291ec&gt;</em><big>)</big><a class="headerlink" href="#asq.queryable.Queryable.zip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Elementwise combination of two sequences.</p>
+<p>The source sequence and the second iterable are merged element-by-
+element using a function to combine them into the single corresponding
+element of the result sequence. The length of the result sequence is
+equal to the length of the shorter of the two input sequences.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>second_iterable</strong> &#8211; The second sequence to be combined with the source
+sequence.</li>
+<li><strong>result_selector</strong> &#8211; An optional binary function for combining
+corresponding elements of the source sequences into an
+element of the result sequence. The first and second positional
+arguments are the elements from the source sequences. The
+result should be the result sequence element. If omitted, the
+result sequence will consist of 2-tuple pairs of corresponding
+elements from the source sequences.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over the merged elements.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><ul class="first last simple">
+<li>ValueError - If the Queryable is closed.</li>
+<li>TypeError - If result_selector is not callable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="asq.queryable.asq">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">asq</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.queryable.asq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make an iterable queryable.</p>
+<p>Use this function as an entry-point to the asq system of chainable query
+methods.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Currently this factory only provides support for objects supporting</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>iterable</strong> &#8211; Any object supporting the iterator protocol.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An instance of Queryable.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">TypeError - If iterable is not actually iterable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="asq.queryable.empty">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">empty</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.queryable.empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>An empty Queryable.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The same empty instance will be returned each time.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Queryable over an empty sequence.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="asq.queryable.identity">
 <tt class="descclassname">asq.queryable.</tt><tt class="descname">identity</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#asq.queryable.identity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The identity function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> &#8211; A value that will be returned.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The argument x.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
-<dt id="asq.queryable.my_range">
-<tt class="descclassname">asq.queryable.</tt><tt class="descname">my_range</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#asq.queryable.my_range" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="asq.queryable.integers">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">integers</tt><big>(</big><em>start</em>, <em>count</em><big>)</big><a class="headerlink" href="#asq.queryable.integers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates in sequence the integral numbers within a range.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> &#8211; The first integer in the sequence.</li>
+<li><strong>count</strong> &#8211; The number of sequential integers to generate.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Queryable over the specified range of integers.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last">ValueError - If count is negative.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
-<dt id="asq.queryable.using">
-<tt class="descclassname">asq.queryable.</tt><tt class="descname">using</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.queryable.using" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="asq.queryable.is_iterable">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">is_iterable</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#asq.queryable.is_iterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if an object is iterable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> &#8211; The object to be tested for supporting iteration.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the object is iterable, otherwise False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="asq.queryable.is_type">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">is_type</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#asq.queryable.is_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if an object is a type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> &#8211; The object to be tested for being a type, or a tuple of types.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the object is a type or tuple of types, otherwise False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="asq.queryable.repeat">
+<tt class="descclassname">asq.queryable.</tt><tt class="descname">repeat</tt><big>(</big><em>element</em>, <em>count</em><big>)</big><a class="headerlink" href="#asq.queryable.repeat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a sequence with one repeated value.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method uses deferred execution.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>element</strong> &#8211; The value to be repeated.</li>
+<li><strong>count</strong> &#8211; The number of times to repeat the value.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last">ValueError - If the count is negative.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="parallel-asq">
 <h2>Parallel asq<a class="headerlink" href="#parallel-asq" title="Permalink to this headline">¶</a></h2>
-<p>In this section we cover some basics about <cite>asq</cite>&#8216;s parallel
-API which performs query operations across multiple threads or processes.</p>
+<p>Parallel asq uses Python&#8217;s multiprocessing library to distribute the effort</p>
 <span class="target" id="module-asq.parallel_queryable"></span><dl class="class">
-<dt id="asq.parallel_queryable.OrderedParallelQueryable">
-<em class="property">class </em><tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">OrderedParallelQueryable</tt><big>(</big><em>iterable</em>, <em>func=None</em>, <em>pool=None</em>, <em>chunksize=1</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="asq.parallel_queryable.OrderedParallelQueryable.as_unordered">
-<tt class="descname">as_unordered</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable.as_unordered" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.OrderedParallelQueryable.create">
-<tt class="descname">create</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable.create" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.OrderedParallelQueryable.select">
-<tt class="descname">select</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms each element of a sequence into a new form.</p>
-<p>Each element is transformed through a selector function to produce a value for each value in the source
-sequence. The generated sequence is lazily evaluated.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>selector: A unary function mapping a value in the source sequence to the corresponding value in the generated</dt>
-<dd><p class="first">generated sequence. The argument of the selector function
-(which can have any name) is,</p>
-<dl class="last docutils">
-<dt>Args:</dt>
-<dd>element: The value of the element</dd>
-<dt>Returns:</dt>
-<dd>The selected value derived from the element value</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
-source sequence.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.OrderedParallelQueryable.then_by">
-<tt class="descname">then_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.OrderedParallelQueryable.then_by" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="asq.parallel_queryable.ParallelQueryable">
 <em class="property">class </em><tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">ParallelQueryable</tt><big>(</big><em>iterable</em>, <em>pool=None</em>, <em>chunksize=1</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable" title="Permalink to this definition">¶</a></dt>
 <dd><p>A parallel version of Queryable using the multiprocessing module.</p>
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.aggregate">
-<tt class="descname">aggregate</tt><big>(</big><em>func</em>, <em>seed=&lt;object object at 0x403a8a98&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.aggregate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.as_ordered">
-<tt class="descname">as_ordered</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.as_ordered" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.as_sequential">
-<tt class="descname">as_sequential</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.as_sequential" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.close">
-<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.close" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.group_by">
-<tt class="descname">group_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.group_by" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.order_by">
-<tt class="descname">order_by</tt><big>(</big><em>func=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.order_by" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="asq.parallel_queryable.ParallelQueryable.select">
 <tt class="descname">select</tt><big>(</big><em>selector</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms each element of a sequence into a new form.</p>
 <p>Each element is transformed through a selector function to produce a value for each value in the source
 sequence. The generated sequence is lazily evaluated.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>selector: A unary function mapping a value in the source sequence to the corresponding value in the generated</dt>
-<dd><p class="first">generated sequence. The argument of the selector function
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>selector</strong> &#8211; <p>A unary function mapping a value in the source sequence to the corresponding value in the generated
+generated sequence. The argument of the selector function
 (which can have any name) is,</p>
-<dl class="last docutils">
+<dl class="docutils">
 <dt>Args:</dt>
 <dd>element: The value of the element</dd>
 <dt>Returns:</dt>
 <dd>The selected value derived from the element value</dd>
 </dl>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
-source sequence.</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A generated sequence whose elements are the result of invoking the selector function on each element of the
+source sequence.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="asq.parallel_queryable.ParallelQueryable.select_many">
-<tt class="descname">select_many</tt><big>(</big><em>projector</em>, <em>selector=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select_many" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">select_many</tt><big>(</big><em>projector</em>, <em>selector=&lt;function identity at 0xa806aac&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select_many" title="Permalink to this definition">¶</a></dt>
 <dd><p>Projects each element of a sequence to an intermediate new sequence, flattens the resulting sequence into one
 sequence and optionally transforms the flattened sequence using a selector function.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>projector: A unary function mapping each element of the source sequence into an intermediate sequence. If no</dt>
-<dd><p class="first">projection function is provided, the intermediate sequence will consist of the single corresponding
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>projector</strong> &#8211; <p>A unary function mapping each element of the source sequence into an intermediate sequence. If no
+projection function is provided, the intermediate sequence will consist of the single corresponding
 element from the source sequence. The projector function argument (which can have any name) and return
 values are,</p>
-<dl class="last docutils">
+<dl class="docutils">
 <dt>Args:</dt>
 <dd>element: The value of the element</dd>
 <dt>Returns:</dt>
 <dd>An iterable derived from the element value</dd>
 </dl>
-</dd>
-<dt>selector: An optional unary functon mapping the elements in the flattened intermediate sequence to</dt>
-<dd><p class="first">corresponding elements of the result sequence. If no selector function is provided, the identity
+</li>
+<li><strong>selector</strong> &#8211; <p>An optional unary functon mapping the elements in the flattened intermediate sequence to
+corresponding elements of the result sequence. If no selector function is provided, the identity
 function is used.  The selector function argument and return values are,</p>
-<dl class="last docutils">
+<dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
 <dt>element: The value of the intermediate element from the concatenated sequences arising from the</dt>
@@ -609,24 +1866,17 @@ function is used.  The selector function argument and return values are,</p>
 <dt>Returns:</dt>
 <dd>The selected value derived from the element value</dd>
 </dl>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>A generated sequence whose elements are the result of projecting each element of the source sequence using
-projector function and then mapping each element through an optional selector function.</dd>
-</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A generated sequence whose elements are the result of projecting each element of the source sequence using
+projector function and then mapping each element through an optional selector function.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.select_many_with_correspondence">
-<tt class="descname">select_many_with_correspondence</tt><big>(</big><em>projector=&lt;function &lt;lambda&gt; at 0xb0655dc&gt;</em>, <em>selector=&lt;function &lt;lambda&gt; at 0xb065614&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select_many_with_correspondence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.select_many_with_index">
-<tt class="descname">select_many_with_index</tt><big>(</big><em>projector=&lt;function &lt;lambda&gt; at 0xb06556c&gt;</em>, <em>selector=&lt;function identity at 0xad3464c&gt;</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.select_many_with_index" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="asq.parallel_queryable.ParallelQueryable.select_with_index">
@@ -634,32 +1884,28 @@ projector function and then mapping each element through an optional selector fu
 <dd><p>Transforms each element of a sequence into a new form, incorporating the index of the element.</p>
 <p>Each element is transformed through a selector function which accepts the element value and its zero-based index
 in the source sequence. The generated sequence is lazily evaluated.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>selector: A two argument function mapping the index of a value in the source sequence and the element value</dt>
-<dd><p class="first">itself to the corresponding value in the generated sequence. The two arguments of the selector function
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>selector</strong> &#8211; <p>A two argument function mapping the index of a value in the source sequence and the element value
+itself to the corresponding value in the generated sequence. The two arguments of the selector function
 (which can have any names) and its return value are,</p>
-<dl class="last docutils">
+<dl class="docutils">
 <dt>Args:</dt>
 <dd>index: The zero-based index of the element
 element: The value of the element</dd>
 <dt>Returns:</dt>
 <dd>The selected value derived from the index and element</dd>
 </dl>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>A generated sequence whose elements are the result of invoking the selector function on each element of the
-source sequence</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A generated sequence whose elements are the result of invoking the selector function on each element of the
+source sequence</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
-
-<dl class="method">
-<dt id="asq.parallel_queryable.ParallelQueryable.where">
-<tt class="descname">where</tt><big>(</big><em>predicate</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.ParallelQueryable.where" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -675,16 +1921,6 @@ source sequence</dd>
 <dd><p>Partition the input sequence into a list of lists</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="asq.parallel_queryable.sorter">
-<tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">sorter</tt><big>(</big><em>funcs_iterable</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.sorter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="asq.parallel_queryable.star">
-<tt class="descclassname">asq.parallel_queryable.</tt><tt class="descname">star</tt><big>(</big><em>func_and_args</em><big>)</big><a class="headerlink" href="#asq.parallel_queryable.star" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 </div>
 
@@ -696,8 +1932,8 @@ source sequence</dd>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">API</a><ul>
-<li><a class="reference internal" href="#serial-asq">Serial asq</a></li>
+<li><a class="reference internal" href="#">API Documentation for asq</a><ul>
+<li><a class="reference internal" href="#module-asq.queryable">asq</a></li>
 <li><a class="reference internal" href="#parallel-asq">Parallel asq</a></li>
 </ul>
 </li>
@@ -740,12 +1976,12 @@ source sequence</dd>
         <li class="right" >
           <a href="index.html" title="Welcome to asq’s documentation!"
              >previous</a> |</li>
-        <li><a href="index.html">asq v0.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">asq 0.9 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Robert Smallshire.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.6.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
     </div>
   </body>
 </html>
