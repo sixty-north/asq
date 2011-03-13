@@ -1,18 +1,28 @@
 # Asq's setup.py
 
 from distutils.core import setup
+
+version = "0.9"
+
+with open('README.txt', 'r') as readme:
+    long_description = readme.read()
+
 setup(
     name = "asq",
     packages = ["asq"],
-    version = "0.5",
-    description = "LINQ-for-objects inspired implementation for Python",
+    version = "{version}".format(version=version),
+    description = "LINQ-for-objects style queries for Python iterables.",
     author = "Robert Smallshire",
     author_email = "robert@smallshire.org.uk",
     url = "http://code.google.com/p/asq/",
-    keywords = ["Python", "LINQ", "Parallel"],
+    download_url="http://code.google.com/p/asq/downloads/detail?name=asq-{version}.tar.gz".format(version=version),
+    keywords = ["Python", "LINQ"],
+    license="MIT License",
     classifiers = [
+        "Development Status :: 4 - Beta"
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2"
+        "Programming Language :: Python :: 2.6"
+        "Programming Language :: Python :: 2.7"
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta",
         "Environment :: Other Environment",
@@ -22,12 +32,6 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules"
         "Topic :: Utilities",
         ],
-    long_description = """\
-Asq
-===
-
-A simple implementation of a LINQ-inspired API for Python which operates over
-Python iterables, including a parallel version implemented in terms of the
-Python standard library multiprocessing module.
-"""
+    requires = ['ordereddict'],
+    long_description = long_description
 )
