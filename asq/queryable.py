@@ -1,8 +1,4 @@
-'''
-queryable.py A module for LINQ-like facility in Python.
-'''
-
-from __future__ import print_function
+'''A module for a LINQ-like facility in Python.'''
 
 import heapq
 import itertools

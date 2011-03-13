@@ -1,1 +1,3 @@
 recursive-include docs *.html *.css *.png
+recursive-include asq/test *.py
+recursive-include asq/examples *.py
