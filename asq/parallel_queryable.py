@@ -17,6 +17,9 @@ def star(func_and_args):
 class ParallelQueryable(Queryable):
     '''
     A parallel version of Queryable using the multiprocessing module.
+
+    Warning: This parallel query functionality should be considered to be
+        alpha quality.
     '''
     def __init__(self, iterable, pool=None, chunksize=1):
         super(ParallelQueryable, self).__init__(iterable)
@@ -171,6 +174,11 @@ class ParallelQueryable(Queryable):
         return queryable.Queryable(iter(self))
 
 class OrderedParallelQueryable(ParallelQueryable):
+    '''A ParallelQueryable representing an ordered iterable.
+
+    Warning: This parallel query functionality should be considered to be
+        alpha quality.
+    '''
 
     def __init__(self, iterable, func=None, pool=None, chunksize=1):
         super(OrderedParallelQueryable, self).__init__(iterable, pool, chunksize)
