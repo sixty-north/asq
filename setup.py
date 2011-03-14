@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-version = "0.9"
+from asq import __version__ as version
 
 with open('README.txt', 'r') as readme:
     long_description = readme.read()

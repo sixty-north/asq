@@ -1254,9 +1254,9 @@ class Queryable(object):
         valid Python identifier.
 
         Note: This method uses deferred execution, but as soon as execution
-        commences the entirety of the second_iterable is consumed; therefore,
-        although the source sequence may be infinite the second_iterable must be
-        finite.
+            commences the entirety of the second_iterable is consumed;
+            therefore, although the source sequence may be infinite the
+            second_iterable must be finite.
 
         Args:
             second_iterable: Elements from this sequence are excluded from the
@@ -1506,15 +1506,15 @@ class Queryable(object):
                     type=str(type(inner_iterable))[7: -1]))
 
         if not is_callable(outer_key_selector):
-            raise TypeError("group_by() parameter outer_key_selector={outer_key_selector} is not callable".format(
+            raise TypeError("group_join() parameter outer_key_selector={outer_key_selector} is not callable".format(
                     outer_key_selector=repr(outer_key_selector)))
 
         if not is_callable(inner_key_selector):
-            raise TypeError("group_by() parameter inner_key_selector={inner_key_selector} is not callable".format(
+            raise TypeError("group_join() parameter inner_key_selector={inner_key_selector} is not callable".format(
                     inner_key_selector=repr(inner_key_selector)))
 
         if not is_callable(result_selector):
-            raise TypeError("group_by() parameter result_selector={result_selector} is not callable".format(
+            raise TypeError("group_join() parameter result_selector={result_selector} is not callable".format(
                     result_selector=repr(result_selector)))
 
         return self._create(self._generate_group_join_result(inner_iterable, outer_key_selector,
@@ -2120,7 +2120,22 @@ class Queryable(object):
                 return False
         return True
 
+    # TODO: Implement the __eq__ and __ne__ operators in terms of sequence_equal
+
     def as_parallel(self, pool=None):
+        '''Return a ParallelQueryable for parallel execution of queries.
+
+        Warning: This feature should be considered experimental alpha quality.
+
+        Args:
+            pool: An optional multiprocessing pool which will provide execution
+                resources for parellel processing.  If omitted, a pool will be
+                created if necessary and managed internally.
+
+        Returns:
+            A ParallelQueryable on which all the standard query operators may
+            be called.
+        '''
         from .parallel_queryable import ParallelQueryable
         return ParallelQueryable(self, pool)
 
@@ -2135,25 +2150,75 @@ class Queryable(object):
     # an efficiency optimisation.
 
     def __contains__(self, item):
+        '''Support for membership testing using the 'in' operator.
+
+        The time complexity for this operation is Order
+
+        Args:
+            item: The item for which to test membership.
+
+        Returns:
+            True if item is in the sequence, otherwise False.
+        '''
+
         return self.contains(item)
 
     def __getitem__(self, index):
+        '''Support for indexing into the sequence using square brackets.
+
+        Equivalent to element_at().
+
+        Args:
+            index: The index should be between zero and count() - 1 inclusive.
+                Negative indices are not interpreted in the same way they are
+                for built-in lists, and are considered out-of-range.
+
+        Returns:
+            The value of the element at offset index into the sequence.
+
+        Raises:
+            IndexError: If the index is out-of-range.
+        '''
         return self.element_at(index)
 
     def __str__(self):
+        '''Returns a stringified representation of the Queryable.
+
+        The string will *not* necessarily contain the sequence data.
+
+        Returns:
+            A stringified representation of the Queryable.
+        '''
         return repr(self)
 
     def __reversed__(self):
+        '''Support for sequence reversal using the reversed() built-in.
+
+        Called by reversed() to implement reverse iteration.
+
+        Equivalent to the reverse() method.
+
+        Returns:
+            A Queryable over the reversed sequence.
+            
+        '''
         return self.reverse()
 
     def __repr__(self):
+        '''Returns a stringified representation of the Queryable.
+
+        The string will *not* necessarily contain the sequence data.
+
+        Returns:
+            A stringified representation of the Queryable.
+        '''
         # Must be careful not to consume the iterable here
         return 'Queryable({iterable})'.format(iterable=self._iterable)
 
 class OrderedQueryable(Queryable):
     '''A Queryable representing an ordered iterable.
 
-    The sorting implemented by this class in that a partial sort is performed so
+    The sorting implemented by this class is an incremental partial sort so
     you don't pay for sorting results which are never enumerated.'''
 
     def __init__(self, iterable, order, func):
@@ -2169,18 +2234,60 @@ class OrderedQueryable(Queryable):
         self._funcs = [ (order, func) ]
 
     def then_by(self, key_selector=identity):
+        '''Introduce subsequent ordering to the sequence with an optional key.
+
+        The returned sequence will be sorted in ascending order by the
+        selected key.
+
+        Note: This method uses deferred execution.
+
+        Args:
+            key_selector: A unary function the only positional argument to
+                which is the element value from which the key will be
+                selected.  The return value should be the key from that
+                element.
+
+        Returns:
+            An OrderedQueryable over the sorted items.
+
+        Raises:
+            ValueError: If the OrderedQueryable is closed().
+            TypeError: If key_selector is not callable.
+        '''
         if self.closed():
-            raise ValueError("Attempt to call to_tuple() on a closed Queryable.")
+            raise ValueError("Attempt to call then_by() on a "
+                             "closed OrderedQueryable.")
 
         if not is_callable(key_selector):
-            raise TypeError("then_by() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
+            raise TypeError("then_by() parameter key_selector={key_selector} "
+                    "is not callable".format(key_selector=repr(key_selector)))
 
         self._funcs.append( (-1, key_selector) )
         return self
 
     def then_by_descending(self, key_selector=identity):
+        '''Introduce subsequent ordering to the sequence with an optional key.
+
+        The returned sequence will be sorted in descending order by the
+        selected key.
+
+        Note: This method uses deferred execution.
+
+        Args:
+            key_selector: A unary function the only positional argument to
+                which is the element value from which the key will be
+                selected.  The return value should be the key from that
+                element.
+
+        Returns:
+            An OrderedQueryable over the sorted items.
+
+        Raises:
+            ValueError: If the OrderedQueryable is closed().
+            TypeError: If key_selector is not callable.
+        '''
         if self.closed():
-            raise ValueError("Attempt to call to_tuple() on a closed Queryable.")
+            raise ValueError("Attempt to call then_by() on a closed OrderedQueryable.")
 
         if not is_callable(key_selector):
             raise TypeError("then_by_descending() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
@@ -2189,6 +2296,11 @@ class OrderedQueryable(Queryable):
         return self
         
     def __iter__(self):
+        '''Support for the iterator protocol.
+
+        Returns:
+            An iterator object over the sorted elements.
+        '''
 
         # Determine which sorting algorithms to use
         directions = [direction for direction, _ in self._funcs]
@@ -2264,10 +2376,19 @@ class OrderedQueryable(Queryable):
             yield item
 
 class Lookup(Queryable):
-    '''A read-only ordered dictionary for which there can be multiple value for
-    each key.'''
+    '''A multi-valued dictionary.
 
-    def __init__(self, key_value_pairs, equality_comparer=operator.eq):
+    A Lookup represents a collection of keys, each one of which is mapped to
+    one or more values. The keys in the Lookup are maintained in the order in
+    which they were added. The values for each key are also maintained in
+    order.
+
+    All standard query operators may be used on a Lookup. When iterated or
+    used as a Queryable the elements are returned as a sequence of Grouping
+    objects.
+    '''
+
+    def __init__(self, key_value_pairs):
         '''Construct with a sequence of (key, value) tuples.'''
         self._dict = OrderedDict()
         for key, value in key_value_pairs:
@@ -2293,10 +2414,20 @@ class Lookup(Queryable):
         return len(self._dict)
 
     def __contains__(self, key):
+        '''Determines whether a lookup contains a specific key.'''
+
         return key in self._dict
 
     def __repr__(self):
+        '''Support for the repr() built-in function.
+
+        Returns:
+            The official string representation of the object.
+        '''
         return 'Lookup({d})'.format(d=list(self._generate_repr_result()))
+
+    # TODO: Equality operators. Should compare equal if their Groupings sorted
+    #       by key compare equal
 
     def _generate_repr_result(self):
         for key in self._dict:
@@ -2311,16 +2442,27 @@ class Lookup(Queryable):
             yield selector(grouping.key, grouping)
 
 class Grouping(Queryable):
+    '''A collection of objects which share a common key.
+
+    All standard query operators may be used on a Grouping.
+
+    Note: It is not intended that clients should directly create Grouping
+        objects. Instances of this class are retrieved from Lookup objects.
+    '''
 
     def __init__(self, ordered_dict, key):
         self._key = key
         sequence = ordered_dict[key] if key in ordered_dict else empty()
         super(Grouping, self).__init__(sequence)
 
-    key = property(lambda self: self._key)
+    key = property(lambda self: self._key,
+                   doc="The key common to all elements.")
 
     def __len__(self):
+        '''The number of items in the Grouping.'''
         return self.count()
+
+    # TODO: Should compare equal if their key and sorted sequences compare equal
 
     def __repr__(self):
         return 'Grouping(key={k})'.format(k=repr(self._key))
