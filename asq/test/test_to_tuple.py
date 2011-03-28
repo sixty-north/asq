@@ -1,5 +1,5 @@
 import unittest
-from asq.queryable import Queryable
+from asq.queryables import Queryable
 
 class TestToTuple(unittest.TestCase):
 

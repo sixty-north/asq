@@ -3,7 +3,7 @@ test_queryable.py Unit tests for asq.queryable.Queryable
 '''
 import unittest
 
-from asq.queryable import Queryable
+from asq.queryables import Queryable
 
 def times_two(x):
     return 2 * x

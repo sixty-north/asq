@@ -9,7 +9,7 @@ import colorsys
 import math
 import Image
 
-from asq.queryable import Queryable, asq
+from asq.queryables import Queryable, asq
 
 __author__ = 'rjs'
 

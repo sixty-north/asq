@@ -1,5 +1,5 @@
 import unittest
-from asq.queryable import empty
+from asq.initiators import empty
 
 __author__ = 'rjs'
 

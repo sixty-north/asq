@@ -1,6 +1,6 @@
 import sys
 import unittest
-from asq.queryable import Queryable, identity
+from asq.queryables import Queryable, identity
 from asq.test.test_queryable import times, inc_chr, times_two
 
 if not sys.platform == 'cli':

@@ -1,7 +1,10 @@
-from .queryable import (asq, integers, repeat, empty)
+'''Package initialisation for asq.
 
-__all__ = ['asq', 'integers', 'repeat', 'empty']
-
-__version__ = '0.9'
+No submodules are imported.  Names from submodules should be imported directly
+from that submodule.
+'''
+from .version import __version__
 
 __author__ = 'Robert Smallshire'
+
+

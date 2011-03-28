@@ -1,5 +1,5 @@
 import unittest
-from asq.queryable import Grouping, Queryable
+from asq.queryables import Grouping, Queryable
 
 __author__ = 'rjs'
 

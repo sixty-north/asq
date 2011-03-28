@@ -8,7 +8,7 @@ import sys
 sys.stderr.write("Warning: The asq parallel query functionality should be "
                  "considered to be alpha quality.")
 
-from .queryable import (Queryable, identity, default)
+from .queryables import (Queryable, identity, default)
 
 def star(func_and_args):
     func, args = func_and_args
