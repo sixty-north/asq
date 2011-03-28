@@ -1,5 +1,5 @@
 import unittest
-from asq.queryable import Queryable
+from asq.queryables import Queryable
 from asq.test.test_queryable import TracingGenerator, infinite
 
 __author__ = 'rjs'

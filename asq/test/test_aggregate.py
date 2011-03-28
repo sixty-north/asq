@@ -1,6 +1,6 @@
 import operator
 import unittest
-from asq.queryable import Queryable
+from asq.queryables import Queryable
 
 __author__ = 'rjs'
 

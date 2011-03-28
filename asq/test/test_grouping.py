@@ -1,7 +1,7 @@
 import unittest
-from asq.queryable import Grouping
+from asq.queryables import Grouping
 
-from asq.portability import OrderedDict
+from asq._portability import OrderedDict
 
 __author__ = 'rjs'
 
