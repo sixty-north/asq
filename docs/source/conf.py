@@ -43,8 +43,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'asq'
-copyright = u'2011, Robert Smallshire'
+project = 'asq'
+copyright = '2011, Robert Smallshire'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -114,7 +114,7 @@ html_theme = 'nature'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = 'images/asq_logo_150.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -182,8 +182,8 @@ htmlhelp_basename = 'asqdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'asq.tex', u'asq Documentation',
-   u'Robert Smallshire', 'manual'),
+  ('index', 'asq.tex', 'asq Documentation',
+   'Robert Smallshire', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -215,6 +215,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'asq', u'asq Documentation',
-     [u'Robert Smallshire'], 1)
+    ('index', 'asq', 'asq Documentation',
+     ['Robert Smallshire'], 1)
 ]

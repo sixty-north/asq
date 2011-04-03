@@ -25,7 +25,7 @@ Contents
    differences
    faq
    changes
-
+   licence
 
 Indices and tables
 ==================

@@ -11,9 +11,9 @@ chaining to create complex queries without compromising readability.  For
 example, to take the first five uppercased results from a list of words sorted
 by length and then alphabetically, try::
 
-  >>> from asq import asq
+  >>> from asq import query
   >>> words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
-  >>> asq(words).order_by(len).then_by().take(5).select(str.upper).to_list()
+  >>> query(words).order_by(len).then_by().take(5).select(str.upper).to_list()
   ['ONE', 'SIX', 'TEN', 'TWO', 'FIVE']
 
 Over 40 standard query operators are provided together with various utilities

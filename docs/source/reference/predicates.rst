@@ -40,7 +40,7 @@ value passed to the unary predicate.
      Filter for those numbers equal to five::
 
        >>> numbers = [5, 9, 12, 5, 89, 34, 2, 67, 43]
-       >>> asq(numbers).where(eq_(5)).to_list()
+       >>> query(numbers).where(eq_(5)).to_list()
        [5, 5]
 
   .. autofunction:: in_(lhs)
@@ -50,7 +50,7 @@ value passed to the unary predicate.
      Filter for specific words containing 'ei'::
 
        >>> words = ['banana', 'receive', 'believe', 'ticket', 'deceive']
-       >>> asq(words).where(in_('ei')).to_list()
+       >>> query(words).where(in_('ei')).to_list()
        ['receive', 'deceive']
 
   .. autofunction:: is_(rhs)
@@ -63,7 +63,7 @@ value passed to the unary predicate.
        >>> sentinel
        <object object at 0x0000000002ED8040>
        >>> objects = ["Dinosaur", 5, sentinel, 89.3]
-       >>> asq(objects).where(is_(sentinel)).to_list()
+       >>> query(objects).where(is_(sentinel)).to_list()
        [<object object at 0x0000000002ED8040>]
        >>>
 
@@ -74,7 +74,7 @@ value passed to the unary predicate.
      Filter for those numbers greater-than-or-equal to 43::
 
        >>> numbers = [5, 9, 12, 5, 89, 34, 2, 67, 43]
-       >>> asq(numbers).where(ge_(43)).to_list()
+       >>> query(numbers).where(ge_(43)).to_list()
        [89, 67, 43]
 
   .. autofunction:: gt_(rhs)
@@ -84,7 +84,7 @@ value passed to the unary predicate.
      Filter for those numbers greater-than 43::
 
        >>> numbers = [5, 9, 12, 5, 89, 34, 2, 67, 43]
-       >>> asq(numbers).where(gt_(43)).to_list()
+       >>> query(numbers).where(gt_(43)).to_list()
        [89, 67]
 
   .. autofunction:: le_(rhs)
@@ -94,7 +94,7 @@ value passed to the unary predicate.
      Filter for those numbers less-than-or-equal to 43::
 
        >>> numbers = [5, 9, 12, 5, 89, 34, 2, 67, 43]
-       >>> asq(numbers).where(le_(43)).to_list()
+       >>> query(numbers).where(le_(43)).to_list()
        [5, 9, 12, 5, 34, 2, 43]
 
   .. autofunction:: lt_(rhs)
@@ -104,7 +104,7 @@ value passed to the unary predicate.
      Filter for those numbers less-than-or-equal to 43::
 
        >>> numbers = [5, 9, 12, 5, 89, 34, 2, 67, 43]
-       >>> asq(numbers).where(lt_(43)).to_list()
+       >>> query(numbers).where(lt_(43)).to_list()
        [5, 9, 12, 5, 34, 2]
 
   .. autofunction:: ne_(rhs)
@@ -114,7 +114,7 @@ value passed to the unary predicate.
      Filter for those numbers not equal to 5::
 
        >>> numbers = [5, 9, 12, 5, 89, 34, 2, 67, 43]
-       >>> asq(numbers).where(ne_(5)).to_list()
+       >>> query(numbers).where(ne_(5)).to_list()
        [9, 12, 89, 34, 2, 67, 43]
 
 Predicate combinators
@@ -150,7 +150,7 @@ is outside the range 5 to 37.
      Filter a list for all the words which both start with 'a' and end 't'::
 
        >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-       >>> asq(words).where(and_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
+       >>> query(words).where(and_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
        ['alphabet', 'aghast']
 
   ..  autofunction:: nand_(predicate1, predicate2)
@@ -161,7 +161,7 @@ is outside the range 5 to 37.
       letters 'a' and 't' respectively::
 
         >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-        >>> asq(words).where(nand_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
+        >>> query(words).where(nand_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
         ['train', 'apple', 'tent', 'alarm']
 
   .. autofunction:: nor_(predicate1, predicate2)
@@ -172,7 +172,7 @@ is outside the range 5 to 37.
      't'::
 
        >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-       >>> asq(words).where(nor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
+       >>> query(words).where(nor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
        ['train']
 
   .. autofunction:: not_(predicate)
@@ -184,7 +184,7 @@ is outside the range 5 to 37.
 
        >>> sentinel = object()
        >>> objects = ["Dinosaur", 5, sentinel, 89.3]
-       >>> asq(objects).where(not_(is_(sentinel))).to_list()
+       >>> query(objects).where(not_(is_(sentinel))).to_list()
        ['Dinosaur', 5, 89.3]
 
   .. autofunction:: or_(predicate1, predicate2)
@@ -194,7 +194,7 @@ is outside the range 5 to 37.
      Filter a list for all words which either start with 'a' or end with 't'::
 
        >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-       >>> asq(words).where(or_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
+       >>> query(words).where(or_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
        ['alphabet', 'apple', 'aghast', 'tent', 'alarm']
 
   .. autofunction:: xor_(predicate1, predicate2)
@@ -205,7 +205,7 @@ is outside the range 5 to 37.
      but not both::
 
        >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-       >>> asq(words).where(xor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
+       >>> query(words).where(xor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
        ['apple', 'tent', 'alarm']
 
   .. autofunction:: xnor_(predicate1, predicate2)
@@ -216,7 +216,7 @@ is outside the range 5 to 37.
      don't start with 'a' and don't end with 't'::
 
        >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-       >>> asq(words).where(xnor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
+       >>> query(words).where(xnor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
        ['alphabet', 'train', 'aghast']
 
 

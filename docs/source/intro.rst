@@ -23,6 +23,8 @@ transformations are probably best left as regular Python comprehensions.  It's
 easy to mix and match ``asq`` with comprehensions and indeed any other Python
 function which produces or consumes *iterables*.
 
+
+
 Diving in
 =========
 
@@ -52,19 +54,19 @@ is rightly considered bad practice in programs)::
 Let's start by creating a simple query to find those students who's first names
 begin with a letter 'J'::
 
-  >>> asq(students).where(lambda student: student['firstname'].startswith('J'))
+  >>> query(students).where(lambda student: student['firstname'].startswith('J'))
   Queryable(<filter object at 0x00000000031D9B70>)
 
 To dissect this line and its result left to right, we have:
 
-  1. A call to the ``asq(students)``. Here ``asq()`` is a query *initiator* - a
+  1. A call to the ``query(students)``. Here ``query()`` is a query *initiator* - a
      factory function for creating a Queryable object from, in this case, an
-     iterable. The ``asq()`` function is the key entry point into the query
+     iterable. The ``query()`` function is the key entry point into the query
      system (although there are others).
 
   2. A method call to ``where()``. Where is one of the ``asq`` query operators
      and is in fact a method on the Queryable returned by the preceding call to
-     ``asq()``. The ``where()`` query operator accepts a single argument, which
+     ``query()``. The ``where()`` query operator accepts a single argument, which
      is a callable predicate (*i.e.* returning either True or False) function
      which which each element will be tested.
 
@@ -84,13 +86,13 @@ Initiators
 
 All query expressions begin with query *initiator*. Initiators are the entry
 points to ``asq``. All initiators return Queryables on which any query method
-can be called. We have already seen the ``asq()`` initiator in use. The
-full list of available query initiators is::
+can be called. We have already seen the ``query()`` initiator in use. The
+full list of available query initiators is:
 
   ========================== ==================================================
   Initiator                  Purpose
   ========================== ==================================================
-  ``asq(iterable)``          Make a Queryable from any iterable
+  ``query(iterable)``          Make a Queryable from any iterable
   ``integers(start, count)`` Make a Queryable sequence of consecutive integers
   ``repeat(value, count)``   Make a Queryable from a repeating value
   ``empty()``                Make a Queryable from an empty sequence
@@ -103,7 +105,7 @@ In order to make the query execute we need to iterate over the Queryable or
 chain additional calls to convert the result to, for example, a list.  We'll
 do this by creating the query again, but this time assigning it to a name::
 
-  >>> q = asq(students).where(lambda student: student['firstname'].startswith('J'))
+  >>> q = query(students).where(lambda student: student['firstname'].startswith('J'))
   >>> q
   Queryable(<filter object at 0x00000000031D9BE0>)
   >>> q.to_list()
@@ -126,7 +128,7 @@ Most of the query operators can be composed in chains to create more complex
 queries. For example, we could extract and compose the full names of the
 three students resulting from the previous query with::
 
-  >>> asq(students).where(lambda s: s['firstname'].startswith('J'))        \
+  >>> query(students).where(lambda s: s['firstname'].startswith('J'))        \
                    .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
                    .to_list()
   ['Joe Blogs', 'John Doe', 'Jane Doe']
@@ -136,7 +138,7 @@ for readability. They are not part of the syntax of the expression.
 
 If we would like our results sorted by the students' minimum scores we can do::
 
- >>> asq(students).where(lambda s: s['firstname'].startswith('J'))        \
+ >>> query(students).where(lambda s: s['firstname'].startswith('J'))        \
                   .order_by(lambda s: min(s['scores']))                   \
                   .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
                   .to_list()
@@ -170,7 +172,7 @@ Lambda is probably the most frequently used mechanism for specifying selectors.
 This example squares each element::
 
   >>> numbers = [1, 67, 34, 23, 56, 34, 45]
-  >>> asq(numbers).select(lambda x: x**2).to_list()
+  >>> query(numbers).select(lambda x: x**2).to_list()
   [1, 4489, 1156, 529, 3136, 1156, 2025]
 
 Functions
@@ -184,7 +186,7 @@ In this example we use the built-in ``len()`` function as the selector::
   >>> words = 'The quick brown fox jumped over the lazy dog'.split()
   >>> words
   ['The', 'quick', 'brown', 'fox', 'jumped', 'over', 'the', 'lazy', 'dog']
-  >>> asq(words).select(len).to_list()
+  >>> query(words).select(len).to_list()
   [3, 5, 5, 3, 6, 4, 3, 4, 3]
 
 Unbound methods
@@ -200,7 +202,7 @@ In this example, we use an unbound method ``upper()`` of the built-in string
 class::
 
   >>> words = ["the", "quick", "brown", "fox"]
-  >>> asq(words).select(str.upper).to_list()
+  >>> query(words).select(str.upper).to_list()
   ['THE', 'QUICK', 'BROWN', 'FOX']
 
 This has the effect of making the method call *on* each element in the
@@ -229,7 +231,7 @@ a factor specified at initialization when the ``multiply`` method is called::
   >>> times_by_five
   <bound method Multiplier.multiply of <__main__.Multiplier object at 0x0000000002F251D0>>
   >>>
-  >>> asq(numbers).select(times_by_five).to_list()
+  >>> query(numbers).select(times_by_five).to_list()
   [5, 335, 170, 115, 280, 170, 225]
 
 This has the effect of passing each element of the sequence in turn as an
@@ -267,7 +269,7 @@ Let's start by looking at an example without selector factories. Our query will
 be to order the employees by descending grade, then by ascending last name and
 finally by ascending first name::
 
-  >>>  asq(employees).order_by_descending(lambda employee: employee['grade']) \
+  >>>  query(employees).order_by_descending(lambda employee: employee['grade']) \
   ...                .then_by(lambda employee: employee['lastname'])          \
   ...                .then_by(lambda employee: employee['firstname']).to_list()
   [{'grade': 4, 'lastname': 'Doe', 'firstname': 'Jane'},
@@ -280,7 +282,7 @@ Those lambda expressions can be a bit of a mouthful, especially given Python's
 less-than-concise lambda system.  We can improve by using less descriptive
 names for the lambda arguments::
 
-  >>>  asq(employees).order_by_descending(lambda e: e['grade'])  \
+  >>>  query(employees).order_by_descending(lambda e: e['grade'])  \
   ...                .then_by(lambda e: e['lastname'])           \
   ...                .then_by(lambda e: e['firstname']).to_list()
   [{'grade': 4, 'lastname': 'Doe', 'firstname': 'Jane'},
@@ -308,7 +310,7 @@ how using ``k_()`` reducing the verbosity and apparent complexity of the query
 somewhat::
 
   >>> from asq import k_
-  >>> asq(employees).order_by_descending(k_('grade'))   \
+  >>> query(employees).order_by_descending(k_('grade'))   \
   ...               .then_by(k_('lastname'))            \
   ...               .then_by(k_('firstname')).to_list()
   [{'grade': 4, 'lastname': 'Doe', 'firstname': 'Jane'},
@@ -340,7 +342,7 @@ First of all, our ``Employee`` class::
 
 Now the query and its result use the lambda form for the selectors::
 
-  >>> asq(employees).order_by_descending(lambda employee: employee.grade)  \
+  >>> query(employees).order_by_descending(lambda employee: employee.grade)  \
   ...               .then_by(lambda employee: employee.lastname)           \
   ...               .then_by(lambda employee: employee.firstname).to_list()
   [Employee('Jane', 'Doe', 4), Employee('Joe', 'Bloggs', 3),
@@ -360,7 +362,7 @@ is equivalent to::
 
 Using this construct we can shorted our query to the more concise::
 
-  >>> asq(employees).order_by_descending(a_('grade'))  \
+  >>> query(employees).order_by_descending(a_('grade'))  \
   ...               .then_by(a_('lastname'))           \
   ...               .then_by(a_('firstname')).to_list()
   [Employee('Jane', 'Doe', 4), Employee('Joe', 'Bloggs', 3),
@@ -401,7 +403,7 @@ is equivalent to::
 
 We can use this to easy generate a list of full names for our employees::
 
-  >>> asq(employees).select(m_('full_name')).to_list()
+  >>> query(employees).select(m_('full_name')).to_list()
   ['Joe Bloggs', 'Ola Nordmann', 'Kari Nordmann', 'Jane Doe', 'John Doe']
 
 The ``m_()`` selector factory also accepts arbitrary number of additional
@@ -417,7 +419,7 @@ is equivalent to::
 For example to determine total cost of awarding bonuses to our employees on the
 basis of grade, we can do::
 
-  >>> asq(employees).select(m_('award_bonus', 1000)).to_list()
+  >>> query(employees).select(m_('award_bonus', 1000)).to_list()
   [3000, 3000, 2000, 4000, 3000]
 
 
@@ -441,7 +443,7 @@ selector passed to ``order_by()`` allowing if to default to the identity
 selector::
 
  >>> words = "the quick brown fox jumped over the lazy dog".split()
- >>> asq(words).order_by().to_list()
+ >>> query(words).order_by().to_list()
  ['brown', 'dog', 'fox', 'jumped', 'lazy', 'over', 'quick', 'the', 'the']
 
 Some query operators, notably ``select()`` perform important optimisations when
@@ -463,7 +465,7 @@ Lambdas
 ~~~~~~~
 
   >>> numbers = [0, 56, 23, 78, 94, 56, 12, 34, 36, 90, 23, 76, 4, 67]
-  >>> asq(numbers).where(lambda x: x > 35).to_list()
+  >>> query(numbers).where(lambda x: x > 35).to_list()
   [56, 78, 94, 56, 36, 90, 76, 67]
 
 Functions
@@ -472,14 +474,14 @@ Functions
 Here we use the ``bool()`` built-in function to remove zeros from the list::
 
   >>> numbers = [0, 56, 23, 78, 94, 56, 12, 34, 36, 90, 23, 76, 4, 67]
-  >>> asq(numbers).where(bool).to_list()
+  >>> query(numbers).where(bool).to_list()
   [56, 23, 78, 94, 56, 12, 34, 36, 90, 23, 76, 4, 67]
 
 Unbound methods
 ~~~~~~~~~~~~~~~
 
   >>> a = ['zero', 'one', '2', '3', 'four', 'five', '6', 'seven', 'eight', '9']
-  >>> asq(a).where(str.isalpha).to_list()
+  >>> query(a).where(str.isalpha).to_list()
   ['zero', 'one', 'four', 'five', 'seven', 'eight']
 
 Bound methods
@@ -519,12 +521,12 @@ So given::
 
 the query expression::
 
-  >>> asq(numbers).where(lambda x: x > 35).take_while(lambda x: x < 90).to_list()
+  >>> query(numbers).where(lambda x: x > 35).take_while(lambda x: x < 90).to_list()
   [56, 78]
 
 could be written more concisely as::
 
-  >>> asq(numbers).where(gt_(35)).take_while(lt_(90)).to_list()
+  >>> query(numbers).where(gt_(35)).take_while(lt_(90)).to_list()
   [56, 78]
 
 
@@ -551,13 +553,13 @@ So given::
 
 the query expression::
 
-  >>> asq(numbers).where(lambda x: x > 20 and x < 80).to_list()
+  >>> query(numbers).where(lambda x: x > 20 and x < 80).to_list()
   [56, 23, 78, 56, 34, 36, 23, 76, 67]
 
 
 could be expressed as::
 
-  >>> asq(numbers).where(and_(gt_(20), lt_(80).to_list()
+  >>> query(numbers).where(and_(gt_(20), lt_(80).to_list()
   [56, 23, 78, 56, 34, 36, 23, 76, 67]
 
 
@@ -575,7 +577,7 @@ used with the predicate combinators.  For example, consider a sequence of
 ``Employee`` objects which have an ``intern`` attribute which evaluates to True
 or False.  We can filter out interns using this query::
 
-  >>> asq(employees).where(not_(a_('intern')))
+  >>> query(employees).where(not_(a_('intern')))
 
 
 Comparers

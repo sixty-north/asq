@@ -85,7 +85,7 @@ Queryable
          Test whether 49 is one of the squares of two, seven or nine::
 
            >>> a = [2, 7, 9]
-           >>> 49 in asq(a).select(lambda x: x*x)
+           >>> 49 in query(a).select(lambda x: x*x)
            True
 
       .. automethod:: __enter__()
@@ -104,7 +104,7 @@ Queryable
          Retrieve the fourth element of a greater than six::
 
            >>> a = [7, 3, 9, 2, 1, 10, 11, 4, 13]
-           >>> asq(a).where(lambda x: x > 6)[3]
+           >>> query(a).where(lambda x: x > 6)[3]
            11
 
       .. automethod:: __init__(iterable)
@@ -118,7 +118,7 @@ Queryable
 
          .. note::
 
-            The ``asq(iterable)`` initiator should normally be used in
+            The ``query(iterable)`` initiator should normally be used in
             preference to calling the ``Queryable`` constructor directly.
 
       .. automethod:: __iter__()
@@ -135,7 +135,7 @@ Queryable
         obtain an iterator over the query results::
 
           >>> a = [8, 9, 2]
-          >>> q = asq(a)
+          >>> q = query(a)
           >>> iterator = iter(q)
           >>> next(iterator)
           8
@@ -149,7 +149,7 @@ Queryable
         Call ``__iter__()`` indirectly by using a ``for`` loop::
 
           >>> a = [1, 9, 4]
-          >>> q = asq(a)
+          >>> q = query(a)
           >>> for v in q:
           ...     print(v)
           ...
@@ -176,7 +176,7 @@ Queryable
          loop::
 
            >>> a = [7, 3, 9, 2, 1]
-           >>> q = asq(a)
+           >>> q = query(a)
            >>> for v in reversed(q):
            ...     print(v)
            ...
@@ -198,7 +198,7 @@ Queryable
          built-in::
 
            >>> a = [9, 7, 8]
-           >>> q = asq(a)
+           >>> q = query(a)
            >>> str(q)
            'Queryable([9, 7, 8])'
 
@@ -220,7 +220,7 @@ Queryable
          Convert the Queryable to a string using the ``str()`` built-in::
 
            >>> a = [9, 7, 8]
-           >>> q = asq(a)
+           >>> q = query(a)
            >>> str(q)
            'Queryable([9, 7, 8])'
 
@@ -231,13 +231,13 @@ Queryable
          Compute the product of a list of numbers::
 
            >>> numbers = [4, 7, 3, 2, 1, 9]
-           >>> asq(numbers).aggregate(lambda accumulator, update: accumulator * update)
+           >>> query(numbers).aggregate(lambda accumulator, update: accumulator * update)
            1512
 
          Concatenate strings to an initial seed value::
 
            >>> cheeses = ['Cheddar', 'Stilton', 'Cheshire', 'Beaufort', 'Brie']
-           >>> asq(cheeses).aggregate(lambda a, u: a + ' ' + u, seed="Cheeses:")
+           >>> query(cheeses).aggregate(lambda a, u: a + ' ' + u, seed="Cheeses:")
            'Cheeses: Cheddar Stilton Cheshire Beaufort Brie'
 
          Concatenate text fragments using ``operator.add()`` and return the
@@ -245,7 +245,7 @@ Queryable
 
            >>> from operator import add
            >>> fragments = ['The quick ', 'brown ', 'fox jumped over ', 'the ', 'lazy dog.']
-           >>> asq(fragments).aggregate(add, lambda result: len(result.split()))
+           >>> query(fragments).aggregate(add, lambda result: len(result.split()))
            9
 
       .. automethod:: all(predicate=bool)
@@ -255,13 +255,13 @@ Queryable
          Determine whether all values evaluate to True in a boolean context::
 
            >>> items = [5, 2, "camel", 3.142, (3, 4, 9)]
-           >>> asq(objects).all()
+           >>> query(objects).all()
            True
 
          Check that all numbers are divisible by 13::
 
            >>> numbers = [260, 273, 286, 299, 312, 325, 338, 351, 364, 377]
-           >>> asq(numbers).all(lambda x: x % 13 == 0)
+           >>> query(numbers).all(lambda x: x % 13 == 0)
            True
 
       .. automethod:: any(predicate=None)
@@ -271,14 +271,14 @@ Queryable
          Determine whether the sequence contains any items::
 
            >>> items = [0, 0, 0]
-           >>> asq(items).any()
+           >>> query(items).any()
            True
 
          Determine whether the sequence contains any items which are a multiple
          of 13::
 
            >>> numbers = [98, 458, 32, 876, 12, 9, 325]
-           >>> asq(numbers).any(lambda x: x % 13 == 0)
+           >>> query(numbers).any(lambda x: x % 13 == 0)
            True
 
       .. automethod:: as_parallel(pool=None)
@@ -290,13 +290,13 @@ Queryable
          Compute the average of some numbers::
 
            >>> numbers = [98, 458, 32, 876, 12, 9, 325]
-           >>> asq(numbers).average()
+           >>> query(numbers).average()
            258.57142857142856
 
          Compute the mean square of a sequence::
 
            >>> numbers = [98, 458, 32, 876, 12, 9, 325]
-           >>> asq(numbers).average(lambda x: x*x)
+           >>> query(numbers).average(lambda x: x*x)
            156231.14285714287
 
       .. automethod:: close()
@@ -310,7 +310,7 @@ Queryable
          Concatenate two sequences of numbers:
 
            >>> numbers = [1, 45, 23, 34]
-           >>> asq(numbers).concat([98, 23, 23, 12]).to_list()
+           >>> query(numbers).concat([98, 23, 23, 12]).to_list()
            [1, 45, 23, 34, 98, 23, 23, 12]
 
       .. automethod:: contains(value, equality_comparer=operator.eq)
@@ -327,7 +327,7 @@ Queryable
          insensitive check::
 
            >>> words = ['A', 'man', 'a', 'plan', 'a', 'canal', 'Panama']
-           >>> asq(words).contains('panama',
+           >>> query(words).contains('panama',
            ...                     lambda lhs, rhs: lhs.lower() == rhs.lower())
            True
 
@@ -338,13 +338,13 @@ Queryable
          Count the number of elements in a sequence::
 
            >>> people = ['Sheila', 'Jim', 'Fred']
-           >>> asq(people).count()
+           >>> query(people).count()
            3
 
          Count the number of names containing the letter 'i'::
 
            >>> people = ['Sheila', 'Jim', 'Fred']
-           >>> asq(people).count(lambda s: 'i' in s)
+           >>> query(people).count(lambda s: 'i' in s)
            3
 
       .. automethod:: default_if_empty(default)
@@ -354,13 +354,13 @@ Queryable
          An empty sequence triggering the default return::
 
            >>> e = []
-           >>> asq(e).default_if_empty(97).to_list()
+           >>> query(e).default_if_empty(97).to_list()
            [97]
 
          A non-empty sequence passing through::
 
            >>> f = [70, 45, 34]
-           >>> asq(f).default_if_empty(97).to_list()
+           >>> query(f).default_if_empty(97).to_list()
            [70, 45, 34]
 
       .. automethod:: difference(second_iterable, selector=identity)
@@ -371,7 +371,7 @@ Queryable
 
            >>> a = [0, 2, 4, 5, 6, 8, 9]
            >>> b = [1, 3, 5, 7, 8]
-           >>> asq(a).difference(b).to_list()
+           >>> query(a).difference(b).to_list()
            [0, 2, 4, 6, 9]
 
          Countries in the first list which are not in the second list, compared
@@ -379,7 +379,7 @@ Queryable
 
            >>> a = ['UK', 'Canada', 'qatar', 'china', 'New Zealand', 'Iceland']
            >>> b = ['iceland', 'CANADA', 'uk']
-           >>> asq(a).difference(b, lambda x: x.lower()).to_list()
+           >>> query(a).difference(b, lambda x: x.lower()).to_list()
            ['qatar', 'china', 'New Zealand']
 
       .. automethod:: distinct(selector=identity)
@@ -389,7 +389,7 @@ Queryable
          Remove duplicate numbers::
 
            >>> d = [0, 2, 4, 5, 6, 8, 9, 1, 3, 5, 7, 8]
-           >>> asq(d).distinct().to_list()
+           >>> query(d).distinct().to_list()
            [0, 2, 4, 5, 6, 8, 9, 1, 3, 7]
 
          A sequence such that no two numbers in the result have digits which
@@ -399,7 +399,7 @@ Queryable
            >>> def sum_of_digits(num):
            ...     return sum(int(i) for i in str(num))
            ...
-           >>> asq(e).distinct(sum_of_digits).to_list()
+           >>> query(e).distinct(sum_of_digits).to_list()
            [10, 34, 56, 11, 89]
 
       .. automethod:: element_at(index)
@@ -409,7 +409,7 @@ Queryable
          Retrieve the fifth element from a list::
 
            >>> f = [10, 34, 56, 11, 89]
-           >>> asq(f).element_at(4)
+           >>> query(f).element_at(4)
            89
 
       .. automethod:: first(predicate=None)
@@ -419,13 +419,13 @@ Queryable
          Retrieve the first element of a sequence::
 
            >>> e = [10, 34, 56, 43, 74, 25, 11, 89]
-           >>> asq(e).first()
+           >>> query(e).first()
            10
 
          Retrieve the first element of a sequence divisible by seven::
 
            >>> e = [10, 34, 56, 43, 74, 25, 11, 89]
-           >>> asq(e).first(lambda x: x % 7 == 0)
+           >>> query(e).first(lambda x: x % 7 == 0)
            56
 
       .. automethod:: first_or_default(default, predicate=None)
@@ -435,19 +435,19 @@ Queryable
          Retrieve the first element of a sequence::
 
            >>> e = [10, 34, 56, 43, 74, 25, 11, 89]
-           >>> asq(e).first_or_default(14)
+           >>> query(e).first_or_default(14)
            10
 
          Return the default when called on an empty sequence::
 
            >>> f = []
-           >>> asq(f).first_or_default(17)
+           >>> query(f).first_or_default(17)
            17
 
          Retrieve the first element of a sequence divisible by eight::
 
            >>> e = [10, 34, 56, 43, 74, 25, 11, 89]
-           >>> asq(e).first_or_default(10, lambda x: x % 8 == 0)
+           >>> query(e).first_or_default(10, lambda x: x % 8 == 0)
            56
 
       .. automethod:: group_by(key_selector=identity, element_selector=identity, result_selector=lambda key, grouping: grouping)
@@ -457,7 +457,7 @@ Queryable
          Group numbers by the remainder when dividing them by five::
 
            >>> numbers = [10, 34, 56, 43, 74, 25, 11, 89]
-           >>> groups = asq(e).group_by(lambda x: x % 5).to_list()
+           >>> groups = query(e).group_by(lambda x: x % 5).to_list()
            >>> groups
            [Grouping(key=0), Grouping(key=4), Grouping(key=1),
             Grouping(key=3)]
@@ -481,7 +481,7 @@ Queryable
            ...            dict(name="Hans Schweizer", nationality="Swiss"),
            ...            dict(name="Tom Cobbleigh", nationality="British"),
            ...            dict(name="Tommy Atkins", nationality="British") ]
-           >>> groups = asq(people).group_by(lambda p: p['nationality'],
+           >>> groups = query(people).group_by(lambda p: p['nationality'],
                                              lambda p: p['name']).to_list()
            >>> groups
            [Grouping(key='British'), Grouping(key='Norwegian'),
@@ -504,7 +504,7 @@ Queryable
            ...            dict(name="Hans Schweizer", nationality="Swiss"),
            ...            dict(name="Tom Cobbleigh", nationality="British"),
            ...            dict(name="Tommy Atkins", nationality="British") ]
-           >>> groups = asq(people).group_by(lambda p: p['nationality'],
+           >>> groups = query(people).group_by(lambda p: p['nationality'],
            ...  result_selector=lambda key, group: (key, len(group))).to_list()
            >>> groups
            [('British', 3), ('Norwegian', 2), ('Dutch', 1), ('Polish', 1),
@@ -530,7 +530,7 @@ Queryable
            ...          dict(name="Chelsea", ground="Stamford Bridge"),
            ...          dict(name="Tottenham Hotspur", ground="White Hart Lane"),
            ...          dict(name="Aston Villa", ground="Villa Park")]
-           >>> q = asq(teams).group_join(players, lambda team: team['name'],
+           >>> q = query(teams).group_join(players, lambda team: team['name'],
            ...               lambda player: player['team'],
            ...               lambda team, grouping: dict(team=team['name'],
            ...                                           ground=team['ground'],
@@ -553,7 +553,7 @@ Queryable
 
            >>> a = [1, 6, 4, 2, 6, 7, 3, 1]
            >>> b = [6, 2, 1, 9, 2, 5]
-           >>> asq(a).intersect(b).to_list()
+           >>> query(a).intersect(b).to_list()
            [1, 6, 2]
 
          Take those strings from the list ``a`` which also occur in list ``b``
@@ -561,7 +561,7 @@ Queryable
 
            >>> a = ["Apple", "Pear", "Banana", "Orange", "Strawberry"]
            >>> b = ["PEAR", "ORANGE", "BANANA", "RASPBERRY", "BLUEBERRY"]
-           >>> asq(a).intersect(b, lambda s: s.lower()).to_list()
+           >>> query(a).intersect(b, lambda s: s.lower()).to_list()
            ['Pear', 'Banana', 'Orange']
 
       .. automethod:: join(inner_iterable, outer_key_selector=identity, inner_key_selector=identity, result_selector=lambda outer, inner: (outer, inner))
@@ -576,7 +576,7 @@ Queryable
            ...         dict(name='Gnasher', owner='Dennis'),
            ...         dict(name='Dodge', owner='Roger'),
            ...         dict(name='Pearl', owner='Beryl')]
-           >>> asq(pets).join(people, lambda pet: pet['owner']).to_list()
+           >>> query(pets).join(people, lambda pet: pet['owner']).to_list()
            [({'owner': 'Minnie', 'name': 'Chester'}, 'Minnie'),
             ({'owner': 'Dennis', 'name': 'Gnasher'}, 'Dennis'),
             ({'owner': 'Roger', 'name': 'Dodge'}, 'Roger'),
@@ -584,7 +584,7 @@ Queryable
 
          or correlate owners with pets, producing more refined results::
 
-           >>> asq(people).join(pets, inner_key_selector=lambda pet: pet['owner'],
+           >>> query(people).join(pets, inner_key_selector=lambda pet: pet['owner'],
            ...   result_selector=lambda person, pet: pet['name'] + " is owned by " + person) \
            ...   .to_list()
            ['Chester is owned by Minnie',
@@ -599,13 +599,13 @@ Queryable
          Return the last number in this sequence::
 
            >>> numbers = [1, 45, 23, 34]
-           >>> asq(numbers).last()
+           >>> query(numbers).last()
            34
 
          Return the last number under 30 in this sequence::
 
            >>> numbers = [1, 45, 23, 34]
-           >>> asq(numbers).last(lambda x: x < 30)
+           >>> query(numbers).last(lambda x: x < 30)
            23
 
       .. automethod:: last_or_default(default, predicate=None)
@@ -615,26 +615,26 @@ Queryable
          Return the last number in this sequence::
 
            >>> numbers = [1, 45, 23, 34]
-           >>> asq(numbers).last()
+           >>> query(numbers).last()
            34
 
          Return the last number under 30 in this sequence::
 
            >>> numbers = [1, 45, 23, 34]
-           >>> asq(numbers).last(lambda x: x < 30)
+           >>> query(numbers).last(lambda x: x < 30)
            23
 
          Trigger return of the default using a sequence with no values which
          satisfy the predicate::
 
            >>> numbers = [1, 45, 23, 34]
-           >>> asq(numbers).last_or_default(100, lambda x: x > 50)
+           >>> query(numbers).last_or_default(100, lambda x: x > 50)
            100
 
          Trigger return of the default using an empty sequence::
 
            >>> numbers = []
-           >>> asq(numbers).last_or_default(37)
+           >>> query(numbers).last_or_default(37)
            37
 
       .. automethod:: log(logger=None, label=None, eager=False)
@@ -655,13 +655,13 @@ Queryable
          ``log()`` is never consumed::
 
            >>> numbers = [1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]
-           >>> asq(numbers).log(clog)
+           >>> query(numbers).log(clog)
 
          We can easily consume the output of ``log()`` by chaining a call to
          ``to_list()``. Use the default arguments for ``log()``::
 
            >>> numbers = [1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]
-           >>> asq(numbers).log(clog).to_list()
+           >>> query(numbers).log(clog).to_list()
            Queryable([1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]) : BEGIN (DEFERRED)
            Queryable([1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]) : [0] yields 1
            Queryable([1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]) : [1] yields 5
@@ -699,59 +699,59 @@ Queryable
          Specify a label a more concise label to ``log()``::
 
            >>> numbers = [1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]
-           >>> asq(numbers).log(clog, label='asq()').to_list()
-           asq() : BEGIN (DEFERRED)
-           asq() : [0] yields 1
-           asq() : [1] yields 5
-           asq() : [2] yields 9
-           asq() : [3] yields 34
-           asq() : [4] yields 2
-           asq() : [5] yields 9
-           asq() : [6] yields 12
-           asq() : [7] yields 7
-           asq() : [8] yields 13
-           asq() : [9] yields 48
-           asq() : [10] yields 34
-           asq() : [11] yields 23
-           asq() : [12] yields 34
-           asq() : [13] yields 9
-           asq() : [14] yields 47
-           asq() : END (DEFERRED)
+           >>> query(numbers).log(clog, label='query()').to_list()
+           query() : BEGIN (DEFERRED)
+           query() : [0] yields 1
+           query() : [1] yields 5
+           query() : [2] yields 9
+           query() : [3] yields 34
+           query() : [4] yields 2
+           query() : [5] yields 9
+           query() : [6] yields 12
+           query() : [7] yields 7
+           query() : [8] yields 13
+           query() : [9] yields 48
+           query() : [10] yields 34
+           query() : [11] yields 23
+           query() : [12] yields 34
+           query() : [13] yields 9
+           query() : [14] yields 47
+           query() : END (DEFERRED)
            [1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]
 
          We can show how the default deferred logging produces only required
          elements by only consuming the first three elements::
 
            >>> numbers = [1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]
-           >>> asq(numbers).log(clog, label='asq()').take(3).to_list()
-           asq() : BEGIN (DEFERRED)
-           asq() : [0] yields 1
-           asq() : [1] yields 5
-           asq() : [2] yields 9
+           >>> query(numbers).log(clog, label='query()').take(3).to_list()
+           query() : BEGIN (DEFERRED)
+           query() : [0] yields 1
+           query() : [1] yields 5
+           query() : [2] yields 9
            [1, 5, 9]
 
          However, by setting the ``eager`` argument to be True, we can force
          logging of the whole sequence immediately::
 
            >>> numbers = [1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]
-           >>> asq(numbers).log(clog, label='asq()', eager=True).take(3).to_list()
-           asq() : BEGIN (EAGER)
-           asq() : [0] = 1
-           asq() : [1] = 5
-           asq() : [2] = 9
-           asq() : [3] = 34
-           asq() : [4] = 2
-           asq() : [5] = 9
-           asq() : [6] = 12
-           asq() : [7] = 7
-           asq() : [8] = 13
-           asq() : [9] = 48
-           asq() : [10] = 34
-           asq() : [11] = 23
-           asq() : [12] = 34
-           asq() : [13] = 9
-           asq() : [14] = 47
-           asq() : END (EAGER)
+           >>> query(numbers).log(clog, label='query()', eager=True).take(3).to_list()
+           query() : BEGIN (EAGER)
+           query() : [0] = 1
+           query() : [1] = 5
+           query() : [2] = 9
+           query() : [3] = 34
+           query() : [4] = 2
+           query() : [5] = 9
+           query() : [6] = 12
+           query() : [7] = 7
+           query() : [8] = 13
+           query() : [9] = 48
+           query() : [10] = 34
+           query() : [11] = 23
+           query() : [12] = 34
+           query() : [13] = 9
+           query() : [14] = 47
+           query() : END (EAGER)
            [1, 5, 9]
 
          Note that in these cases the output has a different format and that
@@ -760,14 +760,14 @@ Queryable
          If ``logger`` is None (or omitted), then logging is disabled
          completely::
 
-           >>> asq(numbers).log(logger=None, label='asq()').take(3).to_list()
+           >>> query(numbers).log(logger=None, label='query()').take(3).to_list()
            [1, 5, 9]
 
          Finally, see that ``log()`` can be used at multiple points within a
          query expression::
 
            >>> numbers = [1, 5, 9, 34, 2, 9, 12, 7, 13, 48, 34, 23, 34, 9, 47]
-           >>> asq(numbers).log(clog, label='asq(numbers)')                   \
+           >>> query(numbers).log(clog, label='query(numbers)')                   \
            ...        .select(lambda x: x * x).log(clog, label='squared')     \
            ...        .where(lambda x: x > 1000).log(clog, label="over 1000") \
            ...        .take(3).log(clog, label="take 3")                      \
@@ -775,32 +775,32 @@ Queryable
            take 3 : BEGIN (DEFERRED)
            over 1000 : BEGIN (DEFERRED)
            squared : BEGIN (DEFERRED)
-           asq(numbers) : BEGIN (DEFERRED)
-           asq(numbers) : [0] yields 1
+           query(numbers) : BEGIN (DEFERRED)
+           query(numbers) : [0] yields 1
            squared : [0] yields 1
-           asq(numbers) : [1] yields 5
+           query(numbers) : [1] yields 5
            squared : [1] yields 25
-           asq(numbers) : [2] yields 9
+           query(numbers) : [2] yields 9
            squared : [2] yields 81
-           asq(numbers) : [3] yields 34
+           query(numbers) : [3] yields 34
            squared : [3] yields 1156
            over 1000 : [0] yields 1156
            take 3 : [0] yields 1156
-           asq(numbers) : [4] yields 2
+           query(numbers) : [4] yields 2
            squared : [4] yields 4
-           asq(numbers) : [5] yields 9
+           query(numbers) : [5] yields 9
            squared : [5] yields 81
-           asq(numbers) : [6] yields 12
+           query(numbers) : [6] yields 12
            squared : [6] yields 144
-           asq(numbers) : [7] yields 7
+           query(numbers) : [7] yields 7
            squared : [7] yields 49
-           asq(numbers) : [8] yields 13
+           query(numbers) : [8] yields 13
            squared : [8] yields 169
-           asq(numbers) : [9] yields 48
+           query(numbers) : [9] yields 48
            squared : [9] yields 2304
            over 1000 : [1] yields 2304
            take 3 : [1] yields 2304
-           asq(numbers) : [10] yields 34
+           query(numbers) : [10] yields 34
            squared : [10] yields 1156
            over 1000 : [2] yields 1156
            take 3 : [2] yields 1156
@@ -814,13 +814,13 @@ Queryable
          Return the maximum value from a list of numbers::
 
            >>> numbers = [1, -45, 23, -34, 19]
-           >>> asq(numbers).max()
+           >>> query(numbers).max()
            23
 
          Return the maximum absolute value from a list of numbers::
 
            >>> numbers = [1, -45, 23, -34, 19]
-           >>> asq(numbers).max(abs)
+           >>> query(numbers).max(abs)
            45
 
       .. automethod:: min(selector=identity)
@@ -830,13 +830,13 @@ Queryable
         Return the minimum value from a list of numbers::
 
            >>> numbers = [1, -45, 23, -34, 19]
-           >>> asq(numbers).max()
+           >>> query(numbers).max()
            -45
 
         Return the minimum absolute value from a list of numbers::
 
            >>> numbers = [1, -45, 23, -34, 19]
-           >>> asq(numbers).max(abs)
+           >>> query(numbers).max(abs)
            1
 
       .. automethod:: of_type(classinfo)
@@ -846,13 +846,13 @@ Queryable
          Return all of the strings from a list::
 
            >>> numbers = ["one", 2.0, "three", "four", 5, 6.0, "seven", 8, "nine", "ten"]
-           >>> asq(numbers).of_type(int).to_list()
+           >>> query(numbers).of_type(int).to_list()
            [5, 8]
 
          Return all the integers and floats from a list::
 
            >>> numbers = ["one", 2.0, "three", "four", 5, 6.0, "seven", 8, "nine", "ten"]
-           >>> asq(numbers).of_type((int, float)).to_list()
+           >>> query(numbers).of_type((int, float)).to_list()
            [2.0, 5, 6.0, 8]
 
       .. automethod:: order_by(key_selector=identity)
@@ -862,13 +862,13 @@ Queryable
          Sort a list of numbers in ascending order by their own value::
 
            >>> numbers = [1, -45, 23, -34, 19, 78, -23, 12, 98, -14]
-           >>> asq(numbers).order_by().to_list()
+           >>> query(numbers).order_by().to_list()
            [-45, -34, -23, -14, 1, 12, 19, 23, 78, 98]
 
          Sort a list of numbers in ascending order by their absolute value::
 
            >>> numbers = [1, -45, 23, -34, 19, 78, -23, 12, 98, -14]
-           >>> asq(numbers).order_by(abs).to_list()
+           >>> query(numbers).order_by(abs).to_list()
            [1, 12, -14, 19, 23, -23, -34, -45, 78, 98]
 
          See that the relative order of the two elements which compare equal
@@ -881,13 +881,13 @@ Queryable
          Sort a list of numbers in ascending order by their own value::
 
            >>> numbers = [1, -45, 23, -34, 19, 78, -23, 12, 98, -14]
-           >>> asq(numbers).order_by_descending().to_list()
+           >>> query(numbers).order_by_descending().to_list()
            [98, 78, 23, 19, 12, 1, -14, -23, -34, -45]
 
          Sort a list of numbers in ascending order by their absolute value::
 
            >>> numbers = [1, -45, 23, -34, 19, 78, -23, 12, 98, -14]
-           >>> asq(numbers).order_by_descending(abs).to_list()
+           >>> query(numbers).order_by_descending(abs).to_list()
            [98, 78, -45, -34, 23, -23, 19, -14, 12, 1]
 
          See that the relative order of the two elements which compare equal
@@ -903,14 +903,14 @@ Queryable
            ...             dict(name="Ola Nordmann", score=61),
            ...             dict(name="John Doe", score=51),
            ...             dict(name="Tom Cobleigh", score=71)]
-           >>> asq(students).select(lambda student: student['score']).to_list()
+           >>> query(students).select(lambda student: student['score']).to_list()
            [54, 61, 51, 71]
 
          Transform a sequence of numbers into it square roots::
 
            >>> import math
            >>> numbers = [1, 45, 23, 34, 19, 78, 23, 12, 98, 14]
-           >>> asq(numbers).select(math.sqrt).to_list()
+           >>> query(numbers).select(math.sqrt).to_list()
            [1.0, 6.708203932499369, 4.795831523312719, 5.830951894845301,
             4.358898943540674, 8.831760866327848, 4.795831523312719,
             3.4641016151377544, 9.899494936611665, 3.7416573867739413]
@@ -926,7 +926,7 @@ Queryable
            >>> b = "Pack my box with five dozen liquor jugs"
            >>> c = "Jackdaws love my big sphinx of quartz"
            >>> sentences = [a, b, c]
-           >>> asq(sentences).select_many(lambda sentence: sentence.split()).to_list()
+           >>> query(sentences).select_many(lambda sentence: sentence.split()).to_list()
            ['The', 'quick', 'brown', 'fox', 'jumped', 'over', 'the', 'lazy',
             'dog', 'Pack', 'my', 'box', 'with', 'five', 'dozen', 'liquor',
             'jugs', 'Jackdaws', 'love', 'my', 'big', 'sphinx', 'of', 'quartz']
@@ -938,7 +938,7 @@ Queryable
            >>> b = "Pack my box with five dozen liquor jugs"
            >>> c = "Jackdaws love my big sphinx of quartz"
            >>> sentences = [a, b, c]
-           >>> asq(sentences).select_many(lambda sentence: sentence.split(), len).to_list()
+           >>> query(sentences).select_many(lambda sentence: sentence.split(), len).to_list()
            [3, 5, 5, 3, 6, 4, 3, 4, 3, 4, 2, 3, 4, 4, 5, 6, 4, 8, 4, 2, 3, 6,
             2, 6]
 
@@ -964,7 +964,7 @@ Queryable
            ...                        "Beat It",
            ...                        "Billie Jean",
            ...                        "The Girl Is Mine"])]
-           >>> asq(albums).select_many_with_correspondence(lambda album: album['tracks'],
+           >>> query(albums).select_many_with_correspondence(lambda album: album['tracks'],
            ...   lambda album, track: track + " by " + album['artist']).to_list()
            ['Hotel California by The Eagles', 'New Kid in Town by The Eagles',
             'Life in the Fast Lane by The Eagles', 'Wasted Time by The Eagles',
@@ -998,7 +998,7 @@ Queryable
            ...                        "Beat It",
            ...                        "Billie Jean",
            ...                        "The Girl Is Mine"])]
-           >>> asq(albums).select_many_with_index(lambda index, album: (str(index) + ' - ' + track for track in album['tracks'])).to_list()
+           >>> query(albums).select_many_with_index(lambda index, album: (str(index) + ' - ' + track for track in album['tracks'])).to_list()
            ['0 - Hotel California', '0 - New Kid in Town',
             '0 - Life in the Fast Lane', '0 - Wasted Time', '1 - Taxman',
             '1 - Eleanor Rigby', '1 - Yellow Submarine', '1 - Doctor Robert',
@@ -1026,7 +1026,7 @@ Queryable
            ...                        "Beat It",
            ...                        "Billie Jean",
            ...                        "The Girl Is Mine"])]
-           >>> asq(albums).select_many_with_index(collection_selector=lambda index, album: (str(index) + ' - ' + track for track in album['tracks']),
+           >>> query(albums).select_many_with_index(collection_selector=lambda index, album: (str(index) + ' - ' + track for track in album['tracks']),
            ...     result_selector=lambda album, track: album['name'] + ' - ' + track).to_list()
            ['Hotel California - 0 - Hotel California',
             'Hotel California - 0 - New Kid in Town',
@@ -1047,14 +1047,14 @@ Queryable
            >>> dark_side_of_the_moon = [ 'Speak to Me', 'Breathe', 'On the Run',
            ... 'Time', 'The Great Gig in the Sky', 'Money', 'Us and Them',
            ... 'Any Colour You Like', 'Brain Damage', 'Eclipse']
-           >>> asq(dark_side_of_the_moon).select_with_index().to_list()
+           >>> query(dark_side_of_the_moon).select_with_index().to_list()
            [(0, 'Speak to Me'), (1, 'Breathe'), (2, 'On the Run'), (3, 'Time'),
             (4, 'The Great Gig in the Sky'), (5, 'Money'), (6, 'Us and Them'),
             (7, 'Any Colour You Like'), (8, 'Brain Damage'), (9, 'Eclipse')]
 
          Generate numbered album tracks using a custom selector::
 
-           >>> asq(dark_side_of_the_moon).select_with_index(lambda index, track: str(index) + '. ' + track).to_list()
+           >>> query(dark_side_of_the_moon).select_with_index(lambda index, track: str(index) + '. ' + track).to_list()
            ['0. Speak to Me', '1. Breathe', '2. On the Run', '3. Time',
             '4. The Great Gig in the Sky', '5. Money', '6. Us and Them',
             '7. Any Colour You Like', '8. Brain Damage', '9. Eclipse']
@@ -1067,7 +1067,7 @@ Queryable
 
            >>> a = [1, 3, 6, 2, 8]
            >>> b = [3, 6, 2, 1, 8]
-           >>> asq(a).sequence_equal(b)
+           >>> query(a).sequence_equal(b)
            False
 
          Determine whether lists ``a`` and ``b`` and equal when absolute values
@@ -1075,7 +1075,7 @@ Queryable
 
            >>> a = [1, -3, 6, -2, 8]
            >>> b = [-1, 3, -6, 2, -8]
-           >>> asq(a).sequence_equal(b, lambda lhs, rhs: abs(lhs) == abs(rhs))
+           >>> query(a).sequence_equal(b, lambda lhs, rhs: abs(lhs) == abs(rhs))
            True
 
       .. automethod:: single(predicate=None)
@@ -1085,27 +1085,27 @@ Queryable
          Return the only element in the sequence::
 
            >>> a = [5]
-           >>> asq(a).single()
+           >>> query(a).single()
            5
 
          Attempt to get the single element from a sequence with multiple
          elements::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).single()
+           >>> query(a).single()
            ValueError: Sequence for single() contains multiple elements.
 
          Return the only element in a sequence meeting a condition::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).single(lambda x: x > 6)
+           >>> query(a).single(lambda x: x > 6)
            7
 
          Attempt to get the single element from a sequence which meets a
          condition when in fact multiple elements do so::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).single(lambda x: x >= 5)
+           >>> query(a).single(lambda x: x >= 5)
            ValueError: Sequence contains more than one value matching single()
            predicate.
 
@@ -1116,34 +1116,34 @@ Queryable
          Return the only element in the sequence::
 
            >>> a = [5]
-           >>> asq(a).single_or_default(7)
+           >>> query(a).single_or_default(7)
            5
 
          Attempt to get the single element from a sequence with *multiple*
          elements::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).single_or_default(9)
+           >>> query(a).single_or_default(9)
            ValueError: Sequence for single_or_default() contains multiple
            elements
 
          Attempt to get the single element from a sequence with *no* elements::
 
            >>> a = []
-           >>> asq(a).single_or_default(9)
+           >>> query(a).single_or_default(9)
            9
 
          Return the only element in a sequence meeting a condition::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).single_or_default(9, lambda x: x > 6)
+           >>> query(a).single_or_default(9, lambda x: x > 6)
            7
 
          Attempt to get the single element from a sequence which meets a
          condition when in fact multiple elements do so::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).single(lambda x: x >= 5)
+           >>> query(a).single(lambda x: x >= 5)
            ValueError: Sequence contains more than one value matching
            single_or_default() predicate.
 
@@ -1151,7 +1151,7 @@ Queryable
          which contains no matching elements::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).single_or_default(9, lambda x: x > 20)
+           >>> query(a).single_or_default(9, lambda x: x > 20)
            9
 
       .. automethod:: skip(count=1)
@@ -1161,13 +1161,13 @@ Queryable
          Skip the first element of a sequence::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).skip().to_list()
+           >>> query(a).skip().to_list()
            [5, 4]
 
          Skip the first two elements of a sequence::
 
            >>> a = [7, 5, 4]
-           >>> asq(a).skip(2).to_list()
+           >>> query(a).skip(2).to_list()
            [4]
 
       .. automethod:: skip_while(predicate)
@@ -1178,7 +1178,7 @@ Queryable
 
            >>> words = ['aardvark', 'antelope', 'ape', 'baboon', 'cat',
            ...          'anaconda', 'zebra']
-           >>> asq(words).skip_while(lambda s: s.startswith('a')).to_list()
+           >>> query(words).skip_while(lambda s: s.startswith('a')).to_list()
            ['baboon', 'cat', 'anaconda', 'zebra']
 
       .. automethod:: sum(selector=identity)
@@ -1188,13 +1188,13 @@ Queryable
          Compute the sum of a sequence of floats::
 
            >>> numbers = [5.6, 3.4, 2.3, 9.3, 1.7, 2.4]
-           >>> asq(numbers).sum()
+           >>> query(numbers).sum()
            24.7
 
          Compute the sum of the squares of a sequence of integers::
 
            >>> numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-           >>> asq(numbers).sum(lambda x: x*x)
+           >>> query(numbers).sum(lambda x: x*x)
            385
 
       .. automethod:: take(count=1)
@@ -1204,12 +1204,12 @@ Queryable
          Take one element from the start of a list::
 
            >>> a = [9, 7, 3, 4, 2]
-           >>> asq(a).take().to_list()
+           >>> query(a).take().to_list()
            [9]
 
          Take three elements from the start of a list::
 
-           >>> asq(a).take(3).to_list()
+           >>> query(a).take(3).to_list()
            [9, 7, 3]
 
       .. automethod:: take_while(predicate)
@@ -1218,7 +1218,7 @@ Queryable
 
          >>> words = ['aardvark', 'antelope', 'ape', 'baboon', 'cat',
          ...          'anaconda', 'zebra']
-         >>> asq(words).take_while(lambda s: s.startswith('a')).to_list()
+         >>> query(words).take_while(lambda s: s.startswith('a')).to_list()
          ['aardvark', 'antelope', 'ape']
 
       .. automethod:: to_dictionary(key_selector=identity, value_selector=identity)
@@ -1229,7 +1229,7 @@ Queryable
 
            >>> animals = ['aardvark', 'baboon', 'cat', 'dot', 'frog', 'giraffe',
            ...            'horse', 'iguana']
-           >>> asq(animals).to_dictionary()
+           >>> query(animals).to_dictionary()
            {'horse': 'horse', 'aardvark': 'aardvark', 'frog': 'frog', 'cat':
             'cat', 'giraffe': 'giraffe', 'baboon': 'baboon', 'dot': 'dot',
             'iguana': 'iguana'}
@@ -1238,14 +1238,14 @@ Queryable
 
            >>> animals = ['aardvark', 'baboon', 'cat', 'dot', 'frog', 'giraffe',
            ...            'horse', 'iguana']
-           >>> asq(animals).to_dictionary(key_selector=lambda x: x[0])
+           >>> query(animals).to_dictionary(key_selector=lambda x: x[0])
            {'a': 'aardvark', 'c': 'cat', 'b': 'baboon', 'd': 'dot', 'g':
             'giraffe', 'f': 'frog', 'i': 'iguana', 'h': 'horse'}
 
          Convert to a dictionary extracting the first letter as a key and
          converting the value to uppercase::
 
-           >>> asq(animals).to_dictionary(key_selector=lambda x: x[0],
+           >>> query(animals).to_dictionary(key_selector=lambda x: x[0],
            ...                            value_selector=lambda x: x.upper())
            {'a': 'AARDVARK', 'c': 'CAT', 'b': 'BABOON', 'd': 'DOT', 'g':
             'GIRAFFE', 'f': 'FROG', 'i': 'IGUANA', 'h': 'HORSE'}
@@ -1255,7 +1255,7 @@ Queryable
          value::
 
            >>> fruit = ['apple', 'apricot', 'banana', 'cherry']
-           >>> asq(fruit).to_dictionary(lambda f: f[0])
+           >>> query(fruit).to_dictionary(lambda f: f[0])
            ValueError: Duplicate key value 'a' in sequence during
            to_dictionary()
 
@@ -1266,7 +1266,7 @@ Queryable
          Convert from a tuple into a list::
 
            >>> a = (1, 6, 8, 3, 4)
-           >>> asq(a).to_list()
+           >>> query(a).to_list()
            [1, 6, 8, 3, 4]
 
       .. automethod:: to_lookup()
@@ -1279,7 +1279,7 @@ Queryable
            >>> countries = ['Austria', 'Bahrain', 'Canada', 'Algeria',
            ...              'Belgium', 'Croatia', 'Kuwait', 'Angola', 'Greece',
            ...              'Korea']
-           >>> asq(countries).to_lookup()
+           >>> query(countries).to_lookup()
            Lookup([('Austria', 'Austria'), ('Bahrain', 'Bahrain'), ('Canada',
            'Canada'), ('Algeria', 'Algeria'), ('Belgium', 'Belgium'),
            ('Croatia', 'Croatia'), ('Kuwait', 'Kuwait'), ('Angola', 'Angola'),
@@ -1291,7 +1291,7 @@ Queryable
            >>> countries = ['Austria', 'Bahrain', 'Canada', 'Algeria',
            ...              'Belgium', 'Croatia', 'Kuwait', 'Angola', 'Greece',
            ...              'Korea']
-           >>> asq(countries).to_lookup(key_selector=lambda name: name[0])
+           >>> query(countries).to_lookup(key_selector=lambda name: name[0])
            Lookup([('A', 'Austria'), ('A', 'Algeria'), ('A', 'Angola'), ('B',
            'Bahrain'), ('B', 'Belgium'), ('C', 'Canada'), ('C', 'Croatia'),
            ('K', 'Kuwait'), ('K', 'Korea'), ('G', 'Greece')])
@@ -1302,7 +1302,7 @@ Queryable
            >>> countries = ['Austria', 'Bahrain', 'Canada', 'Algeria',
            ...              'Belgium', 'Croatia', 'Kuwait', 'Angola', 'Greece',
            ...              'Korea']
-           >>> asq(countries).to_lookup(key_selector=lambda name: name[0],
+           >>> query(countries).to_lookup(key_selector=lambda name: name[0],
            ...                        value_selector=lambda name: name.upper())
            Lookup([('A', 'AUSTRIA'), ('A', 'ALGERIA'), ('A', 'ANGOLA'), ('B',
            'BAHRAIN'), ('B', 'BELGIUM'), ('C', 'CANADA'), ('C', 'CROATIA'),
@@ -1315,13 +1315,13 @@ Queryable
          Convert a list to a set::
 
            >>> a = [4, 9, 2, 3, 0, 1]
-           >>> asq(a).to_set()
+           >>> query(a).to_set()
            {0, 1, 2, 3, 4, 9}
 
          Attempt to convert a list containing duplicates to a set::
 
            >>> b = [6, 2, 9, 0, 2, 1, 9]
-           >>> asq(b).to_set()
+           >>> query(b).to_set()
            ValueError: Duplicate item value 2 in sequence during to_set()
 
       .. automethod:: to_str(separator)
@@ -1331,26 +1331,26 @@ Queryable
          Convert a sequence of characters into a string::
 
          >>> chars = ['c', 'h', 'a', 'r', 'a', 'c', 't', 'e', 'r', 's']
-         >>> asq(chars).to_str()
+         >>> query(chars).to_str()
          'characters'
 
          Concatenate some word fragments into a single string::
 
            >>> syllables = ['pen', 'ta', 'syll', 'ab', 'ic']
-           >>> asq(syllables).to_str()
+           >>> query(syllables).to_str()
 
          Coerce some integers to strings and concatenate their digits to form
          a single string::
 
            >>> codes = [72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33]
-           >>> asq(codes).to_str('-')
+           >>> query(codes).to_str('-')
            '72-101-108-108-111-44-32-87-111-114-108-100-33'
 
          Coerce some integers to strings and concatenate their values separated
          by hyphens to form a single string::
 
            >>> codes = [72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33]
-           >>> asq(codes).to_str('-')
+           >>> query(codes).to_str('-')
            '72-101-108-108-111-44-32-87-111-114-108-100-33'
 
       .. automethod:: to_tuple()
@@ -1360,7 +1360,7 @@ Queryable
          Convert from a list into a tuple::
 
            >>> a = [1, 6, 8, 3, 4]
-           >>> asq(a).to_list()
+           >>> query(a).to_list()
            (1, 6, 8, 3, 4)
 
       .. automethod:: union(second_iterable, selector=identity)
@@ -1371,7 +1371,7 @@ Queryable
 
            >>> a = [1, 6, 9, 3]
            >>> b = [2, 6, 7, 3]
-           >>> asq(a).union(b).to_list()
+           >>> query(a).union(b).to_list()
            [1, 6, 9, 3, 2, 7]
 
          Create a list of numbers, based on their absolute values, which are in
@@ -1380,7 +1380,7 @@ Queryable
 
            >>> a = [-1, -4, 2, 6, 7]
            >>> b = [3, -4, 2, -6, 9]
-           >>> asq(a).union(b, abs).to_list()
+           >>> query(a).union(b, abs).to_list()
            [-1, -4, 2, 6, 7, 3, 9]
 
       .. automethod:: where(predicate)
@@ -1390,7 +1390,7 @@ Queryable
          Filter for elements greater than five::
 
            >>> a = [1, 7, 2, 9, 3]
-           >>> asq(a).where(lambda x: x > 5).to_list()
+           >>> query(a).where(lambda x: x > 5).to_list()
            [7, 9]
 
       .. automethod:: zip(second_iterable, result_selector=lambda x, y: (x, y))
@@ -1402,7 +1402,7 @@ Queryable
 
            >>> a = [1, 4, 6, 4, 2, 9, 1, 3, 8]
            >>> b = [6, 7, 2, 9, 3, 5, 9]
-           >>> asq(a).zip(b).to_list()
+           >>> query(a).zip(b).to_list()
            [(1, 6), (4, 7), (6, 2), (4, 9), (2, 3), (9, 5), (1, 9)]
 
          Multiply the corresponding elements of two sequences to create a new
@@ -1410,7 +1410,7 @@ Queryable
 
            >>> a = [1, 4, 6, 4, 2, 9, 1, 3, 8]
            >>> b = [6, 7, 2, 9, 3, 5, 9]
-           >>> asq(a).zip(b, lambda x, y: x * y).to_list()
+           >>> query(a).zip(b, lambda x, y: x * y).to_list()
            [6, 28, 12, 36, 6, 45, 9]
 
 OrderedQueryable

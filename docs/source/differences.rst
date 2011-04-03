@@ -66,7 +66,7 @@ be concisely created by the ``new()`` factory function::
   from asq.record import new
 
   names = ['Dog', 'Cat', 'Giraffe', 'Monkey', 'Tortoise']
-  result = asq(names)
+  result = query(names)
       .select(lambda animal_name: new(name_length=len(animal_name),
                                       animal_name=animal_name))
       .where(lambda x: x.name_length > 3)
@@ -83,8 +83,14 @@ called monkey patching, whereby new methods can be added to existing classes,
 cannot be applied to built-in types such as list because they are immutable by
 design.
 
-For this reason query initiators such ``asq()`` must be used to convert a
+For this reason query initiators such ``query()`` must be used to convert a
 Python iterable into a type which supports query operators.
+
+Nonetheless, the core operators included in ``asq`` may be supplemented with
+additional operators by adding new methods to the appropriate queryable type,
+usually ``Queryable`` itself.
+
+A decorator called ``@extend`` is provided by ``asq`` for this purpose.
 
 Overloading
 -----------
@@ -156,7 +162,7 @@ become separate named methods in ``asq``.
  =============== ================
  LINQ            `asq`
  =============== ================
- ``IEnumerable`` ``asq(iterable)``
+ ``IEnumerable`` ``query(iterable)``
  ``range()``     ``integers()``
  ``except()``    ``difference()``
  =============== =================
@@ -215,10 +221,10 @@ to support idiomatic Python usage.
 
 So, for example, the expression::
 
-  5 in asq(numbers).select(lambda: x * 2)
+  5 in query(numbers).select(lambda: x * 2)
 
 is equivalent to::
 
-  asq(numbers).select(lambda: x * 2).contains(5)
+  query(numbers).select(lambda: x * 2).contains(5)
 
 
