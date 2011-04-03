@@ -19,7 +19,7 @@ def generate(start, func):
         yield value
         value = func(value)
 
-def colnorm((r,g,b)):
+def colnorm(r,g,b):
     return (int(255*r)-1,int(255*g)-1,int(255*b)-1)
 
 def col(n,max):
@@ -56,7 +56,7 @@ def mandelbrot():
                 lambda y: Queryable.range(0, ImageWidth).select(lambda x: (x * SampleWidth) / ImageWidth + OffsetX),
                 lambda y, x: (x, y)) \
             .select(lambda real_imag: complex(*real_imag)) \
-            .select(lambda c: asq(generate(c, lambda x: x * x + c))
+            .select(lambda c: query(generate(c, lambda x: x * x + c))
                               .take_while(lambda x: x.real**2 + x.imag**2 < 4)
                               .take(MaxIterations)
                               .count()) \

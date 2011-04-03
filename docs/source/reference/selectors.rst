@@ -28,7 +28,7 @@ Selectors
 
        >>> from selectors import identity
        >>> a = [5, 3, 0, 1, 0, 4, 2, 0, 3]
-       >>> asq(a).where(identity).to_list()
+       >>> query(a).where(identity).to_list()
        [5, 3, 1, 4, 2, 3]
        
 
@@ -71,7 +71,7 @@ Selector factories
        ...               SpaceShip("Venator", 1137, 7400),
        ...               SpaceShip("Lambda-class T-4a shuttle", 20, 6),
        ...               SpaceShip("GR-45 medium transport", 90, 6)]
-       >>> asq(spaceships).order_by(a_('length')).select(a_('name')).to_list()
+       >>> query(spaceships).order_by(a_('length')).select(a_('name')).to_list()
        ['V-19 Torrent', 'Lambda-class T-4a shuttle', 'GR-45 medium transport',
         'Nebulon-B', 'Venator']
 
@@ -103,7 +103,7 @@ Selector factories
        ...            dict(name='Saturn', mass=95.2, period=10761),
        ...            dict(name='Uranus', mass=14.6, period=30721),
        ...            dict(name='Neptune', mass=17.2, period=60201)]
-       >>> asq(planets).order_by(k_('mass')).select(k_('period')).to_list()
+       >>> query(planets).order_by(k_('mass')).select(k_('period')).to_list()
        [88, 555.3, 224.7, 365.3, 30721, 60201, 10761, 4332]
 
   .. autofunction:: m_(name, *args, **kwargs)
@@ -136,19 +136,19 @@ Selector factories
        ...          SwimmingPool(25, 12.5),
        ...          SwimmingPool(100, 25),
        ...          SwimmingPool(10, 10)]
-       >>> asq(pools).select(m_('area')).to_list()
+       >>> query(pools).select(m_('area')).to_list()
        [1250, 312.5, 2500, 100]
 
      Compute volumes of the above pools for a water depth of 2 metres by
      passing the depth as a positional argument to the `m_()` selector
      factory::
 
-       >>> asq(pools).select(m_('volume', 2)).to_list()
+       >>> query(pools).select(m_('volume', 2)).to_list()
        [2500, 625.0, 5000, 200]
 
      Alternatively, we can use a named parameter to make the code clearer::
 
-       >>> asq(pools).select(m_('volume', depth=1.5)).to_list()
+       >>> query(pools).select(m_('volume', depth=1.5)).to_list()
        [1875.0, 468.75, 3750.0, 150.0]
 
      

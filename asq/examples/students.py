@@ -8,17 +8,17 @@ students = [dict(firstname='Joe', lastname='Blogs', scores=[56, 23, 21, 89]),
             dict(firstname='Mario', lastname='Rossi', scores=[37, 95, 45, 18])]
 
 # Find all students where the first score is over 90
-first_over_90 = asq(students).where(lambda student: student['scores'][0] > 90)
+first_over_90 = query(students).where(lambda student: student['scores'][0] > 90)
 
 # Select the last name of students where the first score is over 90
-asq(students).where(lambda student: student['scores'][0] > 90) \
+query(students).where(lambda student: student['scores'][0] > 90) \
              .select(lambda student: student['lastname'])
 
 # Compute the maximum of all scores overall
-asq(students).select_many(lambda student: student['scores']).max()
+query(students).select_many(lambda student: student['scores']).max()
 
 # Order the students by last name and then by first name
-asq(students).order_by(lambda x: x['lastname']) \
+query(students).order_by(lambda x: x['lastname']) \
              .then_by(lambda x: x['firstname'])
 
 
@@ -29,4 +29,4 @@ asq(students).order_by(lambda x: x['lastname']) \
 # selector functions for attributes and keys respectively.  The previous
 # example could thus be rendered as::
 
-asq(students).order_by(k_('lastname')).then_by(k_('firstname'))
+query(students).order_by(k_('lastname')).then_by(k_('firstname'))

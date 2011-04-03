@@ -238,9 +238,9 @@ def sorter(funcs_iterable):
 
 def realize_partitions(iterable, floor = 1, ceiling = 32768):
     '''Partition the input sequence into a list of lists'''
-    return [list(part) for part in partition(iterable)]
+    return [list(part) for part in geometric_partitions(iterable)]
 
-def partition(iterable, floor = 1, ceiling = 32768):
+def geometric_partitions(iterable, floor = 1, ceiling = 32768):
     '''
     Partition an iterable into chunks.  Returns an iterator over partitions.
     '''
@@ -253,7 +253,7 @@ def partition(iterable, floor = 1, ceiling = 32768):
         while True:
             #print("partition_size =", partition_size)
             # Split the iterable and replace the original iterator to avoid advancing it
-            partition, iterable = itertools.tee(iterable)
+            geometric_partitions, iterable = itertools.tee(iterable)
 
             # Yield the first partition, limited to the partition size
             yield Queryable(partition).take(partition_size)

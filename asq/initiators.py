@@ -5,7 +5,7 @@ from ._portability import irange
 
 __author__ = 'Robert Smallshire'
 
-def asq(iterable):
+def query(iterable):
     '''Make an iterable queryable.
 
     Use this function as an entry-point to the asq system of chainable query
@@ -46,7 +46,7 @@ def integers(start, count):
     '''
     if count < 0:
         raise ValueError("integers() count cannot be negative")
-    return asq(irange(start, start + count))
+    return query(irange(start, start + count))
 
 
 def repeat(element, count):
@@ -63,7 +63,7 @@ def repeat(element, count):
     '''
     if count < 0:
         raise ValueError("repeat() count cannot be negative")
-    return asq(itertools.repeat(element, count))
+    return query(itertools.repeat(element, count))
 
 _empty = None
 
@@ -78,7 +78,7 @@ def empty():
     # module dependency
     global _empty
     if _empty is None:
-        _empty = asq(tuple())
+        _empty = query(tuple())
     return _empty
 
 

@@ -12,20 +12,20 @@ Initiators
 
      .. currentmodule asq.initiators
 
-     asq
+     query
      empty
      integers
      repeat
 
-  .. autofunction:: asq(iterable)
+  .. autofunction:: query(iterable)
 
      .. rubric:: Examples
 
      Create a queryable from a list::
 
-       >>> from asq.initiators import asq
+       >>> from asq.initiators import query
        >>> a = [1, 7, 9, 4, 3, 2]
-       >>> q = asq(a)
+       >>> q = query(a)
        >>> q
        Queryable([1, 7, 9, 4, 3, 2])
        >>> q.to_list()

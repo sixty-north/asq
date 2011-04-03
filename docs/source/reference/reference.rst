@@ -9,3 +9,4 @@ API Reference
    selectors
    predicates
    record
+   extension

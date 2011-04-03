@@ -66,6 +66,20 @@ except NameError:
     def is_callable(x):
         return isinstance(x, Callable)
 
+try:
+    # Python 3
+    def _dummy():
+        pass
+    _dummy.__name__
+    del _dummy
+    def function_name(f):
+        return f.__name__
+except AttributeError:
+    # Python 2
+    def function_name(f):
+        return f.func_name
+    
+
 
     
 

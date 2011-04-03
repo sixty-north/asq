@@ -25,8 +25,8 @@ equivalents of some Haskell code using folds and the Python ``asq`` code using
  ====================  =====================================
  Haskell               asq
  ====================  =====================================
- ``foldl f seed seq``  ``asq(seq).aggregate(f, seed)``
- ``foldr f seed seq``  ``asq(seq).reverse().aggregate(f, seed)``
+ ``foldl f seed seq``  ``query(seq).aggregate(f, seed)``
+ ``foldr f seed seq``  ``query(seq).reverse().aggregate(f, seed)``
  ====================  =====================================
 
 Wouldn't generators be a better name for what ``asq`` calls initiators?
