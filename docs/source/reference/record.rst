@@ -1,11 +1,14 @@
-Records and ``new()``
-=====================
+``asq.record``
+==============
 
 .. automodule:: asq.record
 
   Records provide a convenient anonymous class which can be useful for
   managing intermediate query results. ``new()`` provides a concise way to
   create ``Records`` in the middle of a query.
+
+``asq.record.Record``
+---------------------
 
   .. autoclass:: Record
 
@@ -19,6 +22,8 @@ Records and ``new()``
 
      .. automethod:: __str__()
 
+``asq.record.new``
+------------------
 
   .. autofunction:: new(**kwargs)
 

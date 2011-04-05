@@ -1,10 +1,10 @@
-Queryables
-==========
+``asq.queryables``
+==================
 
 .. automodule:: asq.queryables
 
-Queryable
----------
+``asq.queryables.Queryable``
+----------------------------
 
    .. autoclass:: Queryable
 
@@ -1413,8 +1413,8 @@ Queryable
            >>> query(a).zip(b, lambda x, y: x * y).to_list()
            [6, 28, 12, 36, 6, 45, 9]
 
-OrderedQueryable
-----------------
+``asq.queryables.OrderedQueryable``
+-----------------------------------
 
    .. autoclass:: OrderedQueryable
 
@@ -1425,8 +1425,8 @@ OrderedQueryable
 
       TODO: Document OrderedQueryable
 
-Lookup
-------
+``asq.queryables.Lookup``
+-------------------------
 
    .. autoclass:: Lookup
 
@@ -1437,8 +1437,8 @@ Lookup
 
       TODO: Document Lookup
 
-Grouping
---------
+``asq.queryables.Grouping``
+---------------------------
 
    .. autoclass:: Grouping
 

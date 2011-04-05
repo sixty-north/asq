@@ -1,5 +1,5 @@
-Initiators
-==========
+``asq.initiators``
+==================
 
 .. automodule:: asq.initiators
 

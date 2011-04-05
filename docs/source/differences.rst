@@ -14,13 +14,17 @@ chaining).  Any LINQ query can be expressed using the fluent interface. This is
 not true for the LINQ domain specific languages embedded in C# and VB.NET but
 they provide syntactic sugar for many common queries structures.
 
-For example the following LINQ comprehension expression in C#::
+For example the following LINQ comprehension expression in C#:
 
-  from item in collection where item.id == 3 select item
+.. code-block:: c#
 
-is equivalent to the following call without syntactic sugar in C#::
+   from item in collection where item.id == 3 select item
 
-  collection.Where(item => item.id ==3)
+is equivalent to the following call without syntactic sugar in C#:
+
+.. code-block:: c#
+
+   collection.Where(item => item.id == 3)
 
 No language extensions are provided by ``asq``; however, the fluent
 interface is fully supported.
@@ -51,13 +55,15 @@ For example, the following LINQ query expression::
       orderby nameLength
       select animalName;
 
-is equivalent to the C# method chain::
+is equivalent to the C# method chain:
 
-  var result = names
-      .Select(animalName => new { nameLength = animalName.Length, animalName})
-      .Where(x=>x.nameLength > 3)
-      .OrderBy(x=>x.nameLength)
-      .Select(x=>x.animalName);
+.. code-block:: c#
+
+   var result = names
+       .Select(animalName => new { nameLength = animalName.Length, animalName})
+       .Where(x=>x.nameLength > 3)
+       .OrderBy(x=>x.nameLength)
+       .Select(x=>x.animalName);
 
 The latter form can be emulated in ``asq`` using a ``Record`` object which can
 be concisely created by the ``new()`` factory function::
@@ -97,7 +103,9 @@ Overloading
 
 Being statically typed C# supports method overloading and this is used
 extensively by LINQ. For example, the ``SelectMany()`` method has the following
-four overloads::
+four overloads:
+
+.. code-block:: c#
 
   SelectMany<TSource, TResult>(IEnumerable<TSource>,
                                Func<TSource, IEnumerable<TResult>>)
@@ -159,13 +167,13 @@ Owing to clashes with existing Python types, some specific name changes have
 been made. Other name changes have been made because overloads in LINQ have
 become separate named methods in ``asq``.
 
- =============== ================
+ =============== ===================
  LINQ            `asq`
- =============== ================
+ =============== ===================
  ``IEnumerable`` ``query(iterable)``
  ``range()``     ``integers()``
  ``except()``    ``difference()``
- =============== =================
+ =============== ===================
 
 Selector and predicate factories
 --------------------------------

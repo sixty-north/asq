@@ -1,5 +1,5 @@
-Predicates
-==========
+``asq.predicates``
+==================
 
 .. automodule:: asq.predicates
 

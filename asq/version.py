@@ -1,6 +1,6 @@
 '''Specification of the aqq version'''
 
-__version__ = '0.9'
+__version__ = '0.9.1'
 
 
   
