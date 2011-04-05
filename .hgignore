@@ -1,4 +1,5 @@
 syntax: glob
+
 # Python development
 *.pyc
 
@@ -7,9 +8,15 @@ MANIFEST
 build/lib.*
 dist/*
 
+# Sphinx docs
+docs/build/*
+
 # PyCharm
 .idea/*
 *.iml
+
+# Jython
+*$py.class
 
 syntax: regexp
 .*~

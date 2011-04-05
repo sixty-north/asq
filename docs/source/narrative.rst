@@ -1,5 +1,5 @@
-Introduction
-============
+``asq`` Introduction
+====================
 
 ``asq`` implements a chained declarative style queries for Python *iterables*.
 This provides an alternative to traditional ``for`` loops or comprehensions
@@ -23,7 +23,10 @@ transformations are probably best left as regular Python comprehensions.  It's
 easy to mix and match ``asq`` with comprehensions and indeed any other Python
 function which produces or consumes *iterables*.
 
+Installing ``asq``
+==================
 
+TODO
 
 Diving in
 =========
@@ -583,9 +586,18 @@ or False.  We can filter out interns using this query::
 Comparers
 ---------
 
+TODO: Document comparers
+
 
 Debugging
 ---------
+
+TODO: Document debugging
+
+Extending ``asq``
+-----------------
+
+TODO: Document extending asq
 
 
 .. [#] Except the single selector argument to the ``select()`` operator itself.
