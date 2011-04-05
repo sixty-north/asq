@@ -2416,6 +2416,8 @@ class Lookup(Queryable):
     objects.
     '''
 
+    # TODO: Modify Lookup so it is decoupled from Grouping
+
     def __init__(self, key_value_pairs):
         '''Construct with a sequence of (key, value) tuples.'''
         self._dict = OrderedDict()
@@ -2479,6 +2481,8 @@ class Grouping(Queryable):
         objects. Instances of this class are retrieved from Lookup objects.
     '''
 
+    # TODO: Modify Grouping so it is more decoupled from ordereddict and Lookup
+    
     def __init__(self, ordered_dict, key):
         self._key = key
         sequence = ordered_dict[key] if key in ordered_dict else empty()
