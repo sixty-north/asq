@@ -1,5 +1,5 @@
-Extension
-==========
+``asq.extension``
+=================
 
 .. automodule:: asq.extension
 

@@ -14,16 +14,55 @@ under the MIT License
 Contents
 ========
 
+Front Matter
+------------
+
+.. toctree::
+   :maxdepth: 2
+
+   front_matter/front_matter
+
+Narrative Documentation
+-----------------------
+
+Read this to learn how to use ``asq``.
+
 .. toctree::
    :maxdepth: 3
 
-   front_matter/front_matter
    narrative
+
+Reference Documentation
+-----------------------
+
+Descriptions and examples for every public function, class and method in
+``asq``.
+
+.. toctree::
+   :maxdepth: 4
+
    reference/reference
    differences
    faq
+
+Detailed Change History
+-----------------------
+
+.. toctree::
+   :maxdepth: 3
+
    changes
-   examples
+
+Samples
+-------
+
+More complex examples of non-trivial usage of ``asq``:
+
+.. toctree::
+   :maxdepth: 3
+
+   samples
+
 
 Indices and tables
 ==================

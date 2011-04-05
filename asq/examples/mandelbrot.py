@@ -6,12 +6,9 @@ http://msmvps.com/blogs/jon_skeet/archive/2008/02/26/visualising-the-mandelbrot-
 
 '''
 import colorsys
-import math
 import Image
 
-from asq.queryables import Queryable, asq
-
-__author__ = 'rjs'
+from asq.initiators import integers
 
 def generate(start, func):
     value = start
@@ -37,23 +34,9 @@ def mandelbrot():
     ImageWidth = 480
     ImageHeight = int(SampleHeight * ImageWidth / SampleWidth)
 
-    '''
-                var query = from row in Enumerable.Range(0, ImageHeight)
-                        from col in Enumerable.Range(0, ImageWidth)
-                        // Work out the initial complex value from the row and column
-                        let c = new Complex((col * SampleWidth) / ImageWidth + OffsetX,
-                                            (row * SampleHeight) / ImageHeight + OffsetY)
-                        // Work out the number of iterations
-                        select Generate(c, x => x * x + c).TakeWhile(x => x.SquareLength < 4)
-                                                          .Take(MaxIterations)
-                                                          .Count() into count
-                        // Map that to an appropriate byte value
-                        select (byte)(count == MaxIterations ? 0 : (count % 255) + 1);
-    '''
-
-    query = Queryable.range(0, ImageHeight).select(lambda y: (y * SampleHeight) / ImageHeight + OffsetY) \
+    query = integers(0, ImageHeight).select(lambda y: (y * SampleHeight) / ImageHeight + OffsetY) \
             .select_many_with_correspondence(
-                lambda y: Queryable.range(0, ImageWidth).select(lambda x: (x * SampleWidth) / ImageWidth + OffsetX),
+                lambda y: integers(0, ImageWidth).select(lambda x: (x * SampleWidth) / ImageWidth + OffsetX),
                 lambda y, x: (x, y)) \
             .select(lambda real_imag: complex(*real_imag)) \
             .select(lambda c: query(generate(c, lambda x: x * x + c))

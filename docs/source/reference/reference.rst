@@ -1,8 +1,11 @@
 API Reference
 =============
 
+``asq``
+-------
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    initiators
    queryables

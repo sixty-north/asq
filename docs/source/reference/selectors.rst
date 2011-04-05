@@ -1,5 +1,5 @@
-Selectors
-=========
+``asq.selectors``
+=================
 
 .. automodule:: asq.selectors
 
