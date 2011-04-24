@@ -4,6 +4,8 @@ __author__ = 'Robert Smallshire'
 
 from ._portability import function_name
 
+# TODO: [asq 1.0] extension needs unit tests
+
 def add_method(function, klass, name=None):
     '''Add an existing function to a class as a method.
 
@@ -21,7 +23,7 @@ def add_method(function, klass, name=None):
     Returns:
         The function argument unmodified.
     '''
-    # TODO: Should we be using functools.update_wrapper in here?
+    # Should we be using functools.update_wrapper in here?
     if name is None:
         name = function_name(function)
     setattr(klass, name, function)

@@ -1,3 +1,3 @@
 __author__ = 'rjs'
 
-# TODO: Test comparers
+# TODO: [asq 1.0] Test comparers

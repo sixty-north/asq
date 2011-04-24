@@ -2083,7 +2083,7 @@ class Queryable(object):
                 return False
         return True
 
-    # TODO: Implement the __eq__ and __ne__ operators in terms of sequence_equal
+    # TODO: [asq 1.1] Implement the __eq__ and __ne__ operators in terms of sequence_equal
 
     def log(self, logger=None, label=None, eager=False):
         '''
@@ -2367,7 +2367,7 @@ class OrderedQueryable(Queryable):
                 def __init__(self, t):
                     self.t = tuple(t)
 
-                # TODO: We could use some runtime code generation here to compile a custom comparison operator
+                # TODO: [asq 1.1] We could use some runtime code generation here to compile a custom comparison operator
                 def __lt__(lhs, rhs):
                     for direction, lhs_element, rhs_element in zip(directions, lhs.t, rhs.t):
                         cmp = (lhs_element > rhs_element) - (rhs_element > lhs_element)
@@ -2416,7 +2416,7 @@ class Lookup(Queryable):
     objects.
     '''
 
-    # TODO: Modify Lookup so it is decoupled from Grouping
+    # TODO: [asq 1.1] Modify Lookup so it is decoupled from Grouping
 
     def __init__(self, key_value_pairs):
         '''Construct with a sequence of (key, value) tuples.'''
@@ -2456,7 +2456,7 @@ class Lookup(Queryable):
         '''
         return 'Lookup({d})'.format(d=list(self._generate_repr_result()))
 
-    # TODO: Equality operators. Should compare equal if their Groupings sorted
+    # TODO: [asq 1.1] Equality operators. Should compare equal if their Groupings sorted
     #       by key compare equal
 
     def _generate_repr_result(self):
@@ -2481,7 +2481,7 @@ class Grouping(Queryable):
         objects. Instances of this class are retrieved from Lookup objects.
     '''
 
-    # TODO: Modify Grouping so it is more decoupled from ordereddict and Lookup
+    # TODO: [asq 1.1] Modify Grouping so it is more decoupled from ordereddict and Lookup
     
     def __init__(self, ordered_dict, key):
         self._key = key
@@ -2495,7 +2495,7 @@ class Grouping(Queryable):
         '''The number of items in the Grouping.'''
         return self.count()
 
-    # TODO: Should compare equal if their key and sorted sequences compare equal
+    # TODO: [asq 1.1] Should compare equal if their key and sorted sequences compare equal
 
     def __repr__(self):
         return 'Grouping(key={k})'.format(k=repr(self._key))

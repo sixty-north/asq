@@ -1,6 +1,6 @@
 __author__ = 'rjs'
 
-# TODO: Write tests for log()
+# TODO: [asq 1.0] Write tests for log()
 
 
   

@@ -5,7 +5,7 @@ __author__ = 'rjs'
 
 #class TestToStr(unittest.TestCase):
 
-# TODO: Write tests for str
+# TODO: [asq 1.0] Write tests for str
 
 #    def test_to_set(self):
 #        a = set([1, 2, 4, 8, 16, 32])
