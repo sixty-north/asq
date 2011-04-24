@@ -24,7 +24,7 @@ class ParallelQueryable(Queryable):
     def __init__(self, iterable, pool=None, chunksize=1):
         super(ParallelQueryable, self).__init__(iterable)
 
-        #TODO : Support for shared pools
+        #TODO [asq 2.0] Support for shared pools
 
         self._own_pool = pool is None
 
@@ -126,11 +126,11 @@ class ParallelQueryable(Queryable):
         '''
         sequences = (self._create(item).select(projector) for item in iter(self))
         #print(sequences)
-        # TODO: Without the list() to force evaluation multiprocessing deadlocks...
+        # TODO: [asq 2.0] Without the list() to force evaluation multiprocessing deadlocks...
         chained_sequence = list(itertools.chain.from_iterable(sequences))
         return self._create(self._pool.imap_unordered(selector, chained_sequence, self._chunksize))
 
-    # TODO: Replace lambda with a named module-scope function
+    # TODO: [asq 2.0] Replace lambda with a named module-scope function
     def select_many_with_index(self, projector=lambda i,x:[x], selector=identity):
         sequences = (self._create(item).select_with_index(projector) for item in iter(self))
         chained_sequence = itertools.chain.from_iterable(sequences)
@@ -147,7 +147,7 @@ class ParallelQueryable(Queryable):
     def order_by(self, func=identity):
         return self._create_ordered(iter(self), func)
 
-    # TODO: order_by_descending
+    # TODO: [asq 2.0] order_by_descending
 
     def where(self, predicate):
         partitions = realize_partitions(iter(self))
@@ -217,12 +217,12 @@ class OrderedParallelQueryable(ParallelQueryable):
         self.funcs.append(func)
         return self
 
-    # TODO: then_by_descending
+    # TODO: [asq 2.0] order_by_descending, then_by_descending
 
     def __iter__(self):
         partitions = realize_partitions(self._iter())
-        # TODO: Ensure that the sort is stable
-        # TODO: Try using functools.partial and respond to
+        # TODO: [asq 2.0] Ensure that the sort is stable
+        # TODO: [asq 2.0] Try using functools.partial and respond to
         # http://techguyinmidtown.com/2009/01/23/hack-for-functoolspartial-and-multiprocessing/
         # Actually, maybe functools.partial is pickleable in Python 3
         # http://www.mail-archive.com/python-bugs-list@python.org/msg47732.html
@@ -253,7 +253,7 @@ def geometric_partitions(iterable, floor = 1, ceiling = 32768):
         while True:
             #print("partition_size =", partition_size)
             # Split the iterable and replace the original iterator to avoid advancing it
-            geometric_partitions, iterable = itertools.tee(iterable)
+            partition, iterable = itertools.tee(iterable)
 
             # Yield the first partition, limited to the partition size
             yield Queryable(partition).take(partition_size)
