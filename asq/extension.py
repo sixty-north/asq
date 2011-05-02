@@ -4,8 +4,6 @@ __author__ = 'Robert Smallshire'
 
 from ._portability import function_name
 
-# TODO: [asq 1.0] extension needs unit tests
-
 def add_method(function, klass, name=None):
     '''Add an existing function to a class as a method.
 
@@ -22,10 +20,16 @@ def add_method(function, klass, name=None):
 
     Returns:
         The function argument unmodified.
+
+    Raises:
+        ValueError: If klass already has an attribute with the same name as the
+            extension method.
     '''
     # Should we be using functools.update_wrapper in here?
     if name is None:
         name = function_name(function)
+    if hasattr(klass, name):
+        raise ValueError("Cannot replace existing attribute with method '{name}'".format(name=name))
     setattr(klass, name, function)
     return function
 
@@ -42,6 +46,10 @@ def extend(klass, name=None):
     Returns:
         A decorator function which accepts a single function as its only
         argument.  The decorated function will be added to class klass.
+
+    Raises:
+        ValueError: If klass already has an attribute with the same name as the
+            extension method.
     '''
     def decorator(f):
         return add_method(f, klass, name)
