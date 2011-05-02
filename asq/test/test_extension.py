@@ -83,7 +83,6 @@ class TestExtension(unittest.TestCase):
         self.assertTrue(hasattr(instance, "method"))
 
         self.assertEqual(method.__doc__, Extendee.method.__doc__)
-        # TODO: [asq 1.0] Check function name
 
         self.assertEqual(instance.method(), "The result of method()")
         self.assertEqual(function_name(method), function_name(Extendee.method))
