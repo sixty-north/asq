@@ -14,9 +14,6 @@ class TestExtension(unittest.TestCase):
 
         instance = Extendee()
 
-        self.assertFalse(hasattr(Extendee, "method"))
-        self.assertFalse(hasattr(instance, "method"))
-
         def method(self):
             "This is the test extension method."
             return "The result of method()"
@@ -38,9 +35,6 @@ class TestExtension(unittest.TestCase):
 
         instance = Extendee()
 
-        self.assertFalse(hasattr(Extendee, "method"))
-        self.assertFalse(hasattr(instance, "method"))
-
         def method(self):
             "This is the test extension method."
             return "The result of method()"
@@ -55,17 +49,30 @@ class TestExtension(unittest.TestCase):
 
         self.assertEqual(instance.foo(), "The result of method()")
 
+    def test_add_method_with_existing_name(self):
+
+        class Extendee(object):
+
+            def foo(self):
+                return "This is the original foo"
+
+        instance = Extendee()
+
+        self.assertFalse(hasattr(Extendee, "method"))
+        self.assertFalse(hasattr(instance, "method"))
+
+        def method(self):
+            "This is the test extension method."
+            return "The result of method()"
+        
+        self.assertRaises(ValueError, lambda: add_method(method, Extendee, "foo"))
+
     def test_extend_decorator(self):
 
         class Extendee(object):
             pass
 
         instance = Extendee()
-
-        self.assertFalse(hasattr(Extendee, "method"))
-        self.assertFalse(hasattr(instance, "method"))
-        self.assertFalse(hasattr(Extendee, "foo"))
-        self.assertFalse(hasattr(instance, "foo"))
 
         @extend(Extendee)
         def method(self):
@@ -88,11 +95,6 @@ class TestExtension(unittest.TestCase):
 
         instance = Extendee()
 
-        self.assertFalse(hasattr(Extendee, "method"))
-        self.assertFalse(hasattr(instance, "method"))
-        self.assertFalse(hasattr(Extendee, "foo"))
-        self.assertFalse(hasattr(instance, "foo"))
-
         @extend(Extendee, "foo")
         def method(self):
             "This is the test extension method."
@@ -105,3 +107,18 @@ class TestExtension(unittest.TestCase):
         self.assertEqual(function_name(method), function_name(Extendee.foo))
 
         self.assertEqual(instance.foo(), "The result of method()")
+
+    def test_extend_decorator_with_existing_name(self):
+
+        class Extendee(object):
+
+            def foo(self):
+                return "This is the original foo"
+
+        def perform_extension():
+            @extend(Extendee, "foo")
+            def method(self):
+                "This is the test extension method."
+                return "The result of method()"
+
+        self.assertRaises(ValueError, perform_extension)
