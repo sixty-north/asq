@@ -7,7 +7,7 @@ import operator
 from .selectors import identity
 from .initiators import empty
 from ._portability import (imap, ifilter, irange, izip, izip_longest,
-                          fold, is_callable, OrderedDict)
+                          fold, is_callable, OrderedDict, has_unicode_type)
 
 # A sentinel singleton used to identify default argument values.
 default = object()
@@ -2007,12 +2007,16 @@ class Queryable(object):
         '''Build a string from the source sequence.
 
         The elements of the query result will each coerced to a string and then
-        the resulting strings concatenated to return a single string.
+        the resulting strings concatenated to return a single string. This
+        allows the natural processing of character sequences as strings. An
+        optional separator which will be inserted between each item may be
+        specified.
 
         Note: this method uses immediate execution.
 
         Args:
-            separator: An optional string separator.
+            separator: An optional separator which will be coerced to a string
+                and inserted between each source item in the resulting string.
 
         Returns:
             A single string which is the result of stringifying each element
@@ -2020,12 +2024,48 @@ class Queryable(object):
 
         Raises:
             TypeError: If any element cannot be coerced to a string.
+            TypeError: If the separator cannot be coerced to a string.
             ValueError: If the Queryable is closed.
         '''
         if self.closed():
             raise ValueError("Attempt to call to_str() on a closed Queryable.")
 
-        return separator.join(self.select(str))
+        return str(separator).join(self.select(str))
+
+    if has_unicode_type():
+        def to_unicode(self, separator=u''):
+            '''Build a unicode string from the source sequence.
+
+            Note: This method is only available on Python implementations which
+                support the named unicode type (e.g. Python 2.x).
+
+            The elements of the query result will each coerced to a unicode
+            string and then the resulting strings concatenated to return a
+            single string. This allows the natural processing of character
+            sequences as strings. An optional separator which will be inserted
+            between each item may be specified.
+
+            Note: this method uses immediate execution.
+
+            Args:
+                separator: An optional separator which will be coerced to a
+                    unicode string and inserted between each source item in the
+                    resulting string.
+
+            Returns:
+                A single unicode string which is the result of stringifying each
+                element and concatenating the results into a single string.
+
+            Raises:
+                TypeError: If any element cannot be coerced to a string.
+                TypeError: If the separator cannot be coerced to a string.
+                ValueError: If the Queryable is closed.
+            '''
+            if self.closed():
+                raise ValueError("Attempt to call to_unicode() on a closed "
+                                 "Queryable.")
+
+            return unicode(separator).join(self.select(unicode))
 
     def sequence_equal(self, second_iterable, equality_comparer=operator.eq):
         '''

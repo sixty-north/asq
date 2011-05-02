@@ -79,6 +79,15 @@ except AttributeError:
     def function_name(f):
         return f.func_name
     
+try:
+    # Python 2
+    unicode()
+    def has_unicode_type():
+        return True
+except NameError:
+    # Python 3
+    def has_unicode_type():
+        return False
 
 
     
