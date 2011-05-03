@@ -16,14 +16,11 @@ class Record(object):
         '''
         self.__dict__.update(kwargs)
 
-    def __getstate__(self):
-        '''Support for pickling.'''
-        return self
+    def __eq__(self, rhs):
+        return self.__dict__ == rhs.__dict__
 
-    def __setstate__(self, state):
-        '''Support for unpickling.'''
-        self.update(state)
-        self.__dict__ = self
+    def __ne__(self, rhs):
+        return self.__dict__ != rhs.__dict__
 
     def __str__(self):
         '''A string representation of the Record.'''
