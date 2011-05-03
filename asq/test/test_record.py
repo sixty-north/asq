@@ -5,8 +5,6 @@ from asq.record import Record, new
 
 __author__ = 'rjs'
 
-# TODO [asq 1.0]
-
 class TestRecord(unittest.TestCase):
 
     def test_create(self):
