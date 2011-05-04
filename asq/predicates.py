@@ -99,7 +99,7 @@ def is_(rhs):
     '''
     return lambda lhs: lhs is rhs
 
-def in_(lhs):
+def contains_(lhs):
     '''Create a unary predicate which tests for membership if its argument.
 
     Args:
@@ -143,24 +143,6 @@ def and_(predicate1, predicate2):
     '''
     return lambda lhs: predicate1(lhs) and predicate2(lhs)
 
-def nand_(predicate1, predicate2):
-    '''A predicate combinator which produces the a new predicate which is the
-    negated logical conjunction of two existing unary predicates.
-
-    The predicate returned by this combinator returns True when at least one of
-    the supplied predicates returns False, otherwise it returns False.
-
-    Args:
-        predicate1: A unary predicate function.
-        predicate2: A unary predicate function.
-
-    Returns:
-        A unary predicate function which is the negated logical conjunction of
-        predicate1 and predicate2.
-    '''
-    return lambda lhs: not(predicate1(lhs) and predicate2(lhs))
-
-
 def or_(predicate1, predicate2):
     '''A predicate combinator which produces the a new predicate which is the
     logical disjunction of two existing unary predicates.
@@ -177,23 +159,6 @@ def or_(predicate1, predicate2):
         predicate1 and predicate2.
     '''
     return lambda lhs: predicate1(lhs) or predicate2(lhs)
-
-def nor_(predicate1, predicate2):
-    '''A predicate combinator which produces the a new predicate which is the
-    logical nor of two existing unary predicates.
-
-    The predicate returned by this combinator returns True when neither of the
-    two supplied predicates return True, otherwise it returns False.
-
-    Args:
-        predicate1: A unary predicate function.
-        predicate2: A unary predicate function.
-
-    Returns:
-        A unary predicate function which is the logical nor of
-        predicate1 and predicate2.
-    '''
-    return lambda lhs: not(predicate1(lhs) or predicate2(lhs))
 
 def xor_(predicate1, predicate2):
     '''A predicate combinator which produces the a new predicate which is the
@@ -212,20 +177,3 @@ def xor_(predicate1, predicate2):
         of predicate1 and predicate2.
     '''
     return lambda lhs: predicate1(lhs) != predicate2(lhs)
-
-def xnor_(predicate1, predicate2):
-    '''A predicate combinator which produces the a new predicate which is the
-    logical equality of two existing unary predicates.
-
-    The predicate returned by this combinator returns True when the two
-    supplied predicates return the same value, otherwise it returns False.
-
-    Args:
-        predicate1: A unary predicate function.
-        predicate2: A unary predicate function.
-
-    Returns:
-        A unary predicate function which is the logical equality of predicate1
-        and predicate2.
-    '''
-    return lambda lhs: predicate1(lhs) == predicate2(lhs)
