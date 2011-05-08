@@ -2,6 +2,7 @@
 
 __author__ = 'Robert Smallshire'
 
+
 def eq_(rhs):
     '''Create a predicate which tests its argument for equality with a value.
 
@@ -15,6 +16,7 @@ def eq_(rhs):
     '''
     return lambda lhs: lhs == rhs
 
+
 def ne_(rhs):
     '''Create a predicate which tests its argument for inequality with a value.
 
@@ -27,6 +29,7 @@ def ne_(rhs):
         for inequality with rhs.
     '''
     return lambda lhs: lhs != rhs
+
 
 def lt_(rhs):
     '''Create a predicate which performs a less-than comparison of its argument
@@ -42,6 +45,7 @@ def lt_(rhs):
     '''
     return lambda lhs: lhs < rhs
 
+
 def le_(rhs):
     '''Create a predicate which performs a less-than-or-equal comparison of its
     argument with a value.
@@ -55,6 +59,7 @@ def le_(rhs):
         argument (lhs) is less-than-or-equal to rhs.
     '''
     return lambda lhs: lhs <= rhs
+
 
 def ge_(rhs):
     '''Create a predicate which performs a greater-than-or-equal comparison of
@@ -70,6 +75,7 @@ def ge_(rhs):
     '''
     return lambda lhs: lhs >= rhs
 
+
 def gt_(rhs):
     '''Create a predicate which performs a greater-than comparison of its
     argument with a value.
@@ -83,6 +89,7 @@ def gt_(rhs):
         argument (lhs) is less-than-or-equal to rhs.
     '''
     return lambda lhs: lhs > rhs
+
 
 def is_(rhs):
     '''Create a predicate which performs an identity comparison of its
@@ -99,6 +106,7 @@ def is_(rhs):
     '''
     return lambda lhs: lhs is rhs
 
+
 def contains_(lhs):
     '''Create a unary predicate which tests for membership if its argument.
 
@@ -111,6 +119,7 @@ def contains_(lhs):
         arguments (lhs) contains lhs.
     '''
     return lambda rhs: lhs in rhs
+
 
 def not_(predicate):
     '''A predicate combinator which negates produces an inverted predicate.
@@ -125,6 +134,7 @@ def not_(predicate):
         A unary predicate function which is the logical inverse of pred.
     '''
     return lambda lhs: not predicate(lhs)
+
 
 def and_(predicate1, predicate2):
     '''A predicate combinator which produces the a new predicate which is the
@@ -143,6 +153,7 @@ def and_(predicate1, predicate2):
     '''
     return lambda lhs: predicate1(lhs) and predicate2(lhs)
 
+
 def or_(predicate1, predicate2):
     '''A predicate combinator which produces the a new predicate which is the
     logical disjunction of two existing unary predicates.
@@ -159,6 +170,7 @@ def or_(predicate1, predicate2):
         predicate1 and predicate2.
     '''
     return lambda lhs: predicate1(lhs) or predicate2(lhs)
+
 
 def xor_(predicate1, predicate2):
     '''A predicate combinator which produces the a new predicate which is the
