@@ -1,5 +1,6 @@
 __author__ = 'Robert Smallshire'
 
+
 def insensitive_eq(lhs, rhs):
     '''Case insensitive string equality operator.
 
@@ -12,10 +13,3 @@ def insensitive_eq(lhs, rhs):
         False.
     '''
     return lhs.lower() == rhs.lower()
-
-
-
-
-
-
-  

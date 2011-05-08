@@ -2,6 +2,7 @@
 
 __author__ = 'Robert Smallshire'
 
+
 def k_(key):
     '''Create a selector function which indexes into the element by key.
 
@@ -15,6 +16,7 @@ def k_(key):
     '''
     return lambda element: element[key]
 
+
 def a_(name):
     '''Create a selector function which selects an attribute by name.
 
@@ -27,6 +29,7 @@ def a_(name):
         only argument and returns the value of that attribute.
     '''
     return lambda element: getattr(element, name)
+
 
 def m_(name, *args, **kwargs):
     '''Create a selector function which calls a named method.
@@ -46,6 +49,7 @@ def m_(name, *args, **kwargs):
         result of the method call.
     '''
     return lambda element: getattr(element, name)(*args, **kwargs)
+
 
 def identity(x):
     '''The identity function.

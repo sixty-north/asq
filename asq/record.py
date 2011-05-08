@@ -1,5 +1,6 @@
 __author__ = 'Robert Smallshire'
 
+
 class Record(object):
     '''A class to which any attribute can be added at construction.'''
 
@@ -30,6 +31,7 @@ class Record(object):
         '''A valid Python expression string representation of the Record.'''
         return "Record(" + ', '.join(str(key) + '=' + repr(value) for key, value in self.__dict__.items()) + ')'
 
+
 def new(**kwargs):
     '''A convenience factory for creating Records.
 
@@ -42,6 +44,4 @@ def new(**kwargs):
         A Record which has a named attribute for each of the keyword arguments.
     '''
     return Record(**kwargs)
-
-
 

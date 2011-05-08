@@ -5,6 +5,7 @@ from ._portability import irange
 
 __author__ = 'Robert Smallshire'
 
+
 def query(iterable):
     '''Make an iterable queryable.
 
@@ -65,7 +66,9 @@ def repeat(element, count):
         raise ValueError("repeat() count cannot be negative")
     return query(itertools.repeat(element, count))
 
+
 _empty = None
+
 
 def empty():
     '''An empty Queryable.
@@ -80,8 +83,3 @@ def empty():
     if _empty is None:
         _empty = query(tuple())
     return _empty
-
-
-
-
-  

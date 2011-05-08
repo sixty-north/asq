@@ -10,19 +10,23 @@ import Image
 
 from asq.initiators import integers
 
+
 def generate(start, func):
     value = start
     while True:
         yield value
         value = func(value)
 
-def colnorm(r,g,b):
-    return (int(255*r)-1,int(255*g)-1,int(255*b)-1)
 
-def col(n,max):
+def colnorm(r, g, b):
+    return (int(255 * r) - 1, int(255 * g) - 1, int(255 * b) - 1)
+
+
+def col(n, max):
     if n == max:
-        return (0,0,0)
-    return colnorm(colorsys.hsv_to_rgb(0.0,1.0,float(n)/max))
+        return (0, 0, 0)
+    return colnorm(colorsys.hsv_to_rgb(0.0, 1.0, float(n) / max))
+
 
 def mandelbrot():
     MaxIterations = 200
@@ -40,7 +44,7 @@ def mandelbrot():
                 lambda y, x: (x, y)) \
             .select(lambda real_imag: complex(*real_imag)) \
             .select(lambda c: query(generate(c, lambda x: x * x + c))
-                              .take_while(lambda x: x.real**2 + x.imag**2 < 4)
+                              .take_while(lambda x: x.real ** 2 + x.imag ** 2 < 4)
                               .take(MaxIterations)
                               .count()) \
             .select(lambda c: ((c * 7) % 255, (c * 5) % 255, (c * 11) % 255) if c != MaxIterations else (0, 0, 0))
@@ -50,6 +54,7 @@ def mandelbrot():
     image = Image.new("RGB", (ImageWidth, ImageHeight))
     image.putdata(data)
     image.show()
+
 
 if __name__ == '__main__':
     mandelbrot()
