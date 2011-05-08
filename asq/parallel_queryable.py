@@ -271,7 +271,6 @@ def geometric_partitions(iterable, floor=1, ceiling=32768):
     '''
     partition_size = floor
     run_length = multiprocessing.cpu_count()
-    count = 0
     run_count = 0
 
     try:
