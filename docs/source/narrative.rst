@@ -10,8 +10,8 @@ advantages over loops or comprehensions:
     when combining multiple queries.
 
  2. **Readability**: Chained ``asq`` query operators can have superior
-    readability to nested or chained comprehensions.  Multi-key sorting is much
-    clearer with ``asq`` than with other approaches.
+    readability to nested or chained comprehensions.  For example, multi-key
+    sorting is much clearer with ``asq`` than with other approaches.
 
  3. **Abstraction**: Query expressions in ``asq`` decouple query specification
     from the execution mechanism giving more flexibility with how query results
@@ -52,7 +52,7 @@ Now we can import the query tools we need. For our purposes the easiest thing
 is to import everything from the package in one go (although remember that this
 is rightly considered bad practice in programs)::
 
-  >>> from asq.initiators import asq
+  >>> from asq.initiators import query
 
 Let's start by creating a simple query to find those students who's first names
 begin with a letter 'J'::
@@ -120,7 +120,7 @@ Most of the ``asq`` query operators like ``where()`` use so-called deferred
 execution whereas others which return non-Queryable results use immediate
 execution and force evaluation of any pending deferred operations.
 
-Queries are execute when we realise the results by converting them to a
+Queries are executed when the results are realised by converting them to a
 concrete type such as a list, dictionary or set, or by any of the query
 operators which return a single value.
 
@@ -131,7 +131,7 @@ Most of the query operators can be composed in chains to create more complex
 queries. For example, we could extract and compose the full names of the
 three students resulting from the previous query with::
 
-  >>> query(students).where(lambda s: s['firstname'].startswith('J'))        \
+  >>> query(students).where(lambda s: s['firstname'].startswith('J'))      \
                    .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
                    .to_list()
   ['Joe Blogs', 'John Doe', 'Jane Doe']
@@ -308,9 +308,9 @@ and::
 
   lambda x: x['foo']
 
-because in fact the first expression is in fact returning the second one. See
-how using ``k_()`` reducing the verbosity and apparent complexity of the query
-somewhat::
+are equivalent because in fact the first expression is in fact returning the
+second one. See how using ``k_()`` reducing the verbosity and apparent
+complexity of the query somewhat::
 
   >>> from asq import k_
   >>> query(employees).order_by_descending(k_('grade'))   \
@@ -512,6 +512,7 @@ The provided predicates are:
   ``ge_(value)``                ``lambda x: x >= value``
   ``gt_(value)``                ``lambda x: x >= value``
   ``is_(value)``                ``lambda x: x is value``
+  ``contains_(value)``          ``lambda x: value in x``
   ============================= ===============================================
 
 Predicates are available in the ``predicates`` module of the ``asq`` package::
@@ -592,7 +593,118 @@ TODO: Document comparers
 Debugging
 ---------
 
-TODO: Document debugging
+With potentially so much deferred execution occuring, debugging ``asq`` query
+expressions using tools such as debuggers can be challenging. Furthermore, since
+queries are expressions use of statements such as Python 2 ``print`` can be
+awkward.
+
+To ease debugging, ``asq`` provides a logging facility which can be used to
+display intermediate results with an optional abiliity for force full, rather
+than lazy, evaluation of sequences.
+
+To demonstrate, let's start with a bug-ridden implementation of Fizz-Buzz
+implemented with ``asq``. Fizz-Buzz is a game where the numbers 1 to 100 are
+read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
+divisible by five, "Buzz" is shouted.
+
+  >>> from asq.initiators import integers
+  >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x) \
+  ...                 .select(lambda x: "Buzz" if x % 5 == 0 else x).to_list()
+
+At a glance this looks like it should work, but when run we get::
+
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    File "asq/queryables.py", line 1910, in to_list
+      lst = list(self)
+    File "<stdin>", line 1, in <lambda>
+  TypeError: not all arguments converted during string formatting
+
+To investigate further it would be useful to examine the intermediate results.
+We can do this using the ``log()`` query operator, which accepts any logger
+supporting a ``debug(message)`` method. We can get just such a logger from the
+Python standard library ``logging`` module::
+
+  >>> import logging
+  >>> clog = logging.getLogger("clog")
+  >>> clog.setLevel(logging.DEBUG)
+
+which creates a console logger we have called ``clog``::
+
+  >>> from asq.initiators import integers
+  >>> integers(1, 100) \
+  ...  .select(lambda x: "Fizz" if x % 3 == 0 else x).log(clog, label="Fizz select"). \
+  ...  .select(lambda x: "Buzz" if x % 5 == 0 else x).to_list()
+  DEBUG:clog:Fizz select : BEGIN (DEFERRED)
+  DEBUG:clog:Fizz select : [0] yields 1
+  DEBUG:clog:Fizz select : [1] yields 2
+  DEBUG:clog:Fizz select : [2] yields 'Fizz'
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    File "asq/queryables.py", line 1910, in to_list
+      lst = list(self)
+    File "<stdin>", line 1, in <lambda>
+  TypeError: not all arguments converted during string formatting
+
+so we can see the the first select operator yields 1, 2, 'Fizz' before the
+failure. Now it's perhaps more obvious that when x in the second lambda is equal
+to 'Fizz' the ``%`` operator will be operating on a string on its left-hand side
+and so the ```%`` will perform string interpolation rather than modulus. This is
+the cause of the error we see.
+
+We can fix this by not applying the modulus operator in the case that x is
+'Fizz'::
+
+  >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x).log(clog, label="Fizz select") \
+                      .select(lambda x: "Buzz" if x != "Fizz" and x % 5 == 0 else x).to_list()
+  DEBUG:clog:Fizz select : BEGIN (DEFERRED)
+  DEBUG:clog:Fizz select : [0] yields 1
+  DEBUG:clog:Fizz select : [1] yields 2
+  DEBUG:clog:Fizz select : [2] yields 'Fizz'
+  DEBUG:clog:Fizz select : [3] yields 4
+  DEBUG:clog:Fizz select : [4] yields 5
+  DEBUG:clog:Fizz select : [5] yields 'Fizz'
+  DEBUG:clog:Fizz select : [6] yields 7
+  DEBUG:clog:Fizz select : [7] yields 8
+  DEBUG:clog:Fizz select : [8] yields 'Fizz'
+  DEBUG:clog:Fizz select : [9] yields 10
+  DEBUG:clog:Fizz select : [10] yields 11
+  DEBUG:clog:Fizz select : [11] yields 'Fizz'
+  DEBUG:clog:Fizz select : [12] yields 13
+  DEBUG:clog:Fizz select : [13] yields 14
+  DEBUG:clog:Fizz select : [14] yields 'Fizz'
+  DEBUG:clog:Fizz select : [15] yields 16
+  DEBUG:clog:Fizz select : [16] yields 17
+  ...
+  DEBUG:clog2:Fizz select : [98] yields 'Fizz'
+  DEBUG:clog2:Fizz select : [99] yields 100
+  DEBUG:clog2:Fizz select : END (DEFERRED)
+  [1, 2, 'Fizz', 4, 'Buzz', 'Fizz', 7, 8, 'Fizz', 'Buzz', 11, 'Fizz', 13, 14,
+   'Fizz', 16, 17, 'Fizz', 19, 'Buzz', 'Fizz', 22, 23, 'Fizz', 'Buzz', 26,
+   'Fizz', 28, 29, 'Fizz', 31, 32, 'Fizz', 34, 'Buzz', 'Fizz', 37, 38, 'Fizz',
+   'Buzz', 41, 'Fizz', 43, 44, 'Fizz', 46, 47, 'Fizz', 49, 'Buzz', 'Fizz', 52,
+   53, 'Fizz', 'Buzz', 56, 'Fizz', 58, 59, 'Fizz', 61, 62, 'Fizz', 64, 'Buzz',
+   'Fizz', 67, 68, 'Fizz', 'Buzz', 71, 'Fizz', 73, 74, 'Fizz', 76, 77, 'Fizz',
+   79, 'Buzz', 'Fizz', 82, 83, 'Fizz', 'Buzz', 86, 'Fizz', 88, 89, 'Fizz', 91,
+   92, 'Fizz', 94, 'Buzz', 'Fizz', 97, 98, 'Fizz', 'Buzz']
+
+The problem is solved, but inspection of the output shows that our query
+expression produces incorrect results for those numbers which are multiples of
+both 3 and 5, such as 15, for which we should be returning 'FizzBuzz'. For the
+sake of completeness, let's modify the expression to deal with this::
+
+  >>> integers(1, 100).select(lambda x: "FizzBuzz" if x % 15 == 0 else x) \
+                      .select(lambda x: "Fizz" if x != "FizzBuzz" and x % 3 == 0 else x) \
+                      .select(lambda x: "Buzz" if x != "FizzBuzz" and x != "Fizz" and x % 5 == 0 else x).to_list()
+  [1, 2, 'Fizz', 4, 'Buzz', 'Fizz', 7, 8, 'Fizz', 'Buzz', 11, 'Fizz', 13, 14,
+   'FizzBuzz', 16, 17, 'Fizz', 19, 'Buzz', 'Fizz', 22, 23, 'Fizz', 'Buzz', 26,
+   'Fizz', 28, 29, 'FizzBuzz', 31, 32, 'Fizz', 34, 'Buzz', 'Fizz', 37, 38,
+   'Fizz', 'Buzz', 41, 'Fizz', 43, 44, 'FizzBuzz', 46, 47, 'Fizz', 49, 'Buzz',
+   'Fizz', 52, 53, 'Fizz', 'Buzz', 56, 'Fizz', 58, 59, 'FizzBuzz', 61, 62,
+   'Fizz', 64, 'Buzz', 'Fizz', 67, 68, 'Fizz', 'Buzz', 71, 'Fizz', 73, 74,
+   'FizzBuzz', 76, 77, 'Fizz', 79, 'Buzz', 'Fizz', 82, 83, 'Fizz', 'Buzz', 86,
+   'Fizz', 88, 89, 'FizzBuzz', 91, 92, 'Fizz', 94, 'Buzz', 'Fizz', 97, 98,
+   'Fizz', 'Buzz']
 
 Extending ``asq``
 -----------------
