@@ -15,3 +15,11 @@ This example can be found in the source distribution of ``asq`` under
 ``asq/examples/mandelbrot.py``.
 
 .. literalinclude:: ../../asq/examples/mandelbrot.py
+
+This example can be be run with::
+
+  python -m asq.examples.mandelbrot
+
+which produces
+
+.. image:: images/mandelbrot.png
