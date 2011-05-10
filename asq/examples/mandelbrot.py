@@ -6,9 +6,9 @@ http://msmvps.com/blogs/jon_skeet/archive/2008/02/26/visualising-the-mandelbrot-
 
 '''
 import colorsys
-import Image
+#import Image
 
-from asq.initiators import integers
+from asq.initiators import integers, query
 
 def generate(start, func):
     value = start
@@ -34,18 +34,18 @@ def mandelbrot():
     ImageWidth = 480
     ImageHeight = int(SampleHeight * ImageWidth / SampleWidth)
 
-    query = integers(0, ImageHeight).select(lambda y: (y * SampleHeight) / ImageHeight + OffsetY) \
-            .select_many_with_correspondence(
-                lambda y: integers(0, ImageWidth).select(lambda x: (x * SampleWidth) / ImageWidth + OffsetX),
-                lambda y, x: (x, y)) \
-            .select(lambda real_imag: complex(*real_imag)) \
-            .select(lambda c: query(generate(c, lambda x: x * x + c))
-                              .take_while(lambda x: x.real**2 + x.imag**2 < 4)
-                              .take(MaxIterations)
-                              .count()) \
-            .select(lambda c: ((c * 7) % 255, (c * 5) % 255, (c * 11) % 255) if c != MaxIterations else (0, 0, 0))
+    q = integers(0, ImageHeight).select(lambda y: (y * SampleHeight) / ImageHeight + OffsetY) \
+        .select_many_with_correspondence(
+          lambda y: integers(0, ImageWidth).select(lambda x: (x * SampleWidth) / ImageWidth + OffsetX),
+          lambda y, x: (x, y)) \
+        .select(lambda real_imag: complex(*real_imag)) \
+        .select(lambda c: query(generate(c, lambda x: x * x + c))
+                          .take_while(lambda x: x.real**2 + x.imag**2 < 4)
+                          .take(MaxIterations)
+                          .count()) \
+        .select(lambda c: ((c * 7) % 255, (c * 5) % 255, (c * 11) % 255) if c != MaxIterations else (0, 0, 0))
 
-    data = query.to_list()
+    data = q.to_list()
 
     image = Image.new("RGB", (ImageWidth, ImageHeight))
     image.putdata(data)
