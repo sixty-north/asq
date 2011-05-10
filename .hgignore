@@ -15,6 +15,10 @@ docs/build/*
 .idea/*
 *.iml
 
+# Nose
+
+.coverage
+
 # Jython
 *$py.class
 
