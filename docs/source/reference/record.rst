@@ -16,10 +16,6 @@
 
      .. automethod:: __repr__()
 
-     .. automethod:: __getstate__()
-
-     .. automethod:: __setstate__()
-
      .. automethod:: __str__()
 
 ``asq.record.new``
