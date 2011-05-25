@@ -2451,6 +2451,8 @@ class Lookup(Queryable):
     which they were added. The values for each key are also maintained in
     order.
 
+    Note: Lookup objects are immutable.
+
     All standard query operators may be used on a Lookup. When iterated or
     used as a Queryable the elements are returned as a sequence of Grouping
     objects.
@@ -2459,13 +2461,19 @@ class Lookup(Queryable):
     # TODO: [asq 1.1] Modify Lookup so it is decoupled from Grouping
 
     def __init__(self, key_value_pairs):
-        '''Construct with a sequence of (key, value) tuples.'''
+        '''Construct a Lookup with a sequence of (key, value) tuples.
+
+        Args:
+            key_value_pairs:
+                An iterable over 2-tuples each containing a key, value pair.
+        '''
         self._dict = OrderedDict()
         for key, value in key_value_pairs:
             if key not in self._dict:
                 self._dict[key] = []
             self._dict[key].append(value)
-        super(Lookup, self).__init__(Grouping(self._dict, key) for key in self._dict)
+        groups = [Grouping(self._dict, key) for key in self._dict]
+        super(Lookup, self).__init__(groups)
 
     def __getitem__(self, key):
         '''The sequence corresponding to a given key, or an empty sequence if
@@ -2480,11 +2488,21 @@ class Lookup(Queryable):
         return Grouping(self._dict, key)
 
     def __len__(self):
-        '''The number of groupings (keys) in the lookup.'''
+        '''Support for the len() built-in function.
+
+        Returns:
+            The number of Groupings (keys) in the lookup.'''
         return len(self._dict)
 
     def __contains__(self, key):
-        '''Determines whether a lookup contains a specific key.'''
+        '''Support for the 'in' membership operator.
+
+        Args:
+            key: The key for which membership will be tested.
+
+        Returns:
+            True if the Lookup constains a Grouping for the specified key,
+            otherwise False.'''
 
         return key in self._dict
 
@@ -2535,11 +2553,16 @@ class Grouping(Queryable):
         '''The number of items in the Grouping.'''
         return self.count()
 
-    # TODO: [asq 1.1] Should compare equal if their key and sorted sequences compare equal
+    def __eq__(self, rhs):
+        return self._key == rhs._key and self.sequence_equal(rhs)
 
+    def __ne__(self, rhs):
+        return not (self == rhs)
+    
     def __repr__(self):
         return 'Grouping(key={k})'.format(k=repr(self._key))
 
+# TODO: Move is_iterable into another file
 
 def is_iterable(obj):
     '''Determine if an object is iterable.
@@ -2556,6 +2579,7 @@ def is_iterable(obj):
     except TypeError:
         return False
 
+# TODO: Move is_type into another file
 
 def is_type(obj):
     '''Determine if an object is a type.

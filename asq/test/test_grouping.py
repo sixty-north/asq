@@ -71,4 +71,92 @@ class TestGrouping(unittest.TestCase):
         b_grouping = Grouping(od, 'b')
         result = b_grouping.where(lambda x: x > 6).to_list()
         self.assertEqual(result, [7, 8])
-        
+
+    def test_grouping_equal_positive(self):
+        od1 = OrderedDict(a=[1, 2, 3, 4],
+                          b=[5, 6, 7, 8],
+                          c=[9, 10, 11, 12])
+
+        grouping1 = Grouping(od1, 'b')
+
+
+        od2 = OrderedDict(a=[1, 2, 3, 4],
+                          b=[5, 6, 7, 8],
+                          c=[9, 10, 11, 12])
+
+        grouping2 = Grouping(od2, 'b')
+
+        self.assertTrue(grouping1 == grouping2)
+
+    def test_grouping_equal_negative_key(self):
+        od1 = OrderedDict(a=[1, 2, 3, 4],
+                          c=[9, 10, 11, 12])
+
+        grouping1 = Grouping(od1, 'a')
+
+
+        od2 = OrderedDict(b=[1, 2, 3, 4],
+                          c=[9, 10, 11, 12])
+
+        grouping2 = Grouping(od2, 'b')
+
+        self.assertFalse(grouping1 == grouping2)
+
+    def test_grouping_equal_negative_sequence(self):
+        od1 = OrderedDict(a=[1, 2, 4, 3],
+                          c=[9, 10, 11, 12])
+
+        grouping1 = Grouping(od1, 'a')
+
+
+        od2 = OrderedDict(a=[1, 2, 3, 4],
+                          c=[9, 10, 11, 12])
+
+        grouping2 = Grouping(od2, 'a')
+
+        self.assertFalse(grouping1 == grouping2)
+
+    def test_grouping_not_equal_negative(self):
+        od1 = OrderedDict(a=[1, 2, 3, 4],
+                          b=[5, 6, 7, 8],
+                          c=[9, 10, 11, 12])
+
+        grouping1 = Grouping(od1, 'b')
+
+
+        od2 = OrderedDict(a=[1, 2, 3, 4],
+                          b=[5, 6, 7, 8],
+                          c=[9, 10, 11, 12])
+
+        grouping2 = Grouping(od2, 'b')
+
+        self.assertFalse(grouping1 != grouping2)
+
+    def test_grouping_not_equal_positive_key(self):
+        od1 = OrderedDict(a=[1, 2, 3, 4],
+                          c=[9, 10, 11, 12])
+
+        grouping1 = Grouping(od1, 'a')
+
+
+        od2 = OrderedDict(b=[1, 2, 3, 4],
+                          c=[9, 10, 11, 12])
+
+        grouping2 = Grouping(od2, 'b')
+
+        self.assertTrue(grouping1 != grouping2)
+
+    def test_grouping_not_equal_positive_sequence(self):
+        od1 = OrderedDict(a=[1, 2, 4, 3],
+                          c=[9, 10, 11, 12])
+
+        grouping1 = Grouping(od1, 'a')
+
+
+        od2 = OrderedDict(a=[1, 2, 3, 4],
+                          c=[9, 10, 11, 12])
+
+        grouping2 = Grouping(od2, 'a')
+
+        self.assertTrue(grouping1 != grouping2)
+

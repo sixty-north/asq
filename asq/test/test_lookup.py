@@ -134,11 +134,11 @@ class TestLookup(unittest.TestCase):
         lookup = Lookup(k_v)
         result = lookup.apply_result_selector().to_list()
         # Rely on the fact that the Lookup is ordered by first key insertion
-        self.assertEqual(result[0], ['artichoke'])
-        self.assertEqual(result[1], ['blackberry', 'blueberry'])
-        self.assertEqual(result[2], ['clementine', 'cranberry', 'cantaloupe'])
+        self.assertEqual(result[0], lookup['a'])
+        self.assertEqual(result[1], lookup['b'])
+        self.assertEqual(result[2], lookup['c'])
 
-    def test_lookup_apply_result_selector_default(self):
+    def test_lookup_apply_result_selector(self):
         k_v = [ ('a', 'artichoke'),
                 ('b', 'blackberry'),
                 ('c', 'clementine'),
@@ -177,8 +177,19 @@ class TestLookup(unittest.TestCase):
                 ('c', 'cantaloupe') ]
 
         lookup = Lookup(k_v)
+        count = 0
         for group in lookup:
+            count += 1
             self.assertTrue(isinstance(group, Grouping))
+        self.assertEqual(count, 3)
+
+        # Check that we can iterate again
+        count = 0
+        for group in lookup:
+            count += 1
+            self.assertTrue(isinstance(group, Grouping))
+        self.assertEqual(count, 3)
+
 
     def test_lookup_as_queryable(self):
         k_v = [ ('a', 'artichoke'),
