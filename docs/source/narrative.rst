@@ -688,7 +688,7 @@ We can fix this by not applying the modulus operator in the case that x is
    79, 'Buzz', 'Fizz', 82, 83, 'Fizz', 'Buzz', 86, 'Fizz', 88, 89, 'Fizz', 91,
    92, 'Fizz', 94, 'Buzz', 'Fizz', 97, 98, 'Fizz', 'Buzz']
 
-The problem is solved, but inspection of the output shows that our query
+That problem is solved, but inspection of the output shows that our query
 expression produces incorrect results for those numbers which are multiples of
 both 3 and 5, such as 15, for which we should be returning 'FizzBuzz'. For the
 sake of completeness, let's modify the expression to deal with this::
@@ -709,7 +709,76 @@ sake of completeness, let's modify the expression to deal with this::
 Extending ``asq``
 -----------------
 
-TODO: Document extending asq
+The fluent interface of ``asq`` works by chaining method calls on Queryable
+types, so to extend ``asq`` with new query operators must be able to add
+methods to Queryable. New methods added in this way must have a particular
+structure in order to be usable in the middle of a query chain.
 
+.. sidebar::
+
+  The @extend decorator described here performs the same role as C# extension
+  methods to IEnumerable play in Microsoft's LINQ.
+
+To define a new query operator, use the @extend function decorator from the
+``asq.extension`` package to decorator a module scope function. To illustrate,
+let's add a new operator which adds a separating item between existing items::
+
+  @extend(Queryable)
+  def separate_with(self, separator):
+      '''Insert a separator between items.
+
+      Note: This method uses deferred execution.
+
+      Args:
+          separator: The separating element to be inserted between each source
+              element.
+
+      Returns:
+          A Queryable over the separated sequence.
+      '''
+
+      # Validate the arguments.  It is important to validate the arguments
+      # eagerly, when the operator called, rather than when the result is
+      # evaluated to ease debugging.
+      if self.closed():
+          raise ValueError("Attempt to call separate_with() on a closed Queryable.")
+
+      # In order to get deferred execution (lazy evaluation) we need to define
+      # a generator. This generator is also a closure over the parameters to
+      # separate_with, namely 'self' and 'separator'.
+      def generator():
+          # Create an iterator over the source sequence - self is a Queryable
+          # which is iterable.
+          i = iter(self)
+
+          # Attempt to yield the first element, which may or may not exist;
+          # next() will raise StopIteration if it does not, so we exit.
+          try:
+              yield next(i)
+          except StopIteration:
+              return
+
+          # Alternately yield a separator and the next element for all
+          # remaining elements in the source sequence.
+          for item in i:
+              yield separator
+              yield item
+
+      # Create a new Queryable from the generator, by calling the _create()
+      # factory function, rather than by calling the Queryable constructor
+      # directly.  This ensures that the correct subclass of Queryable is
+      # created.
+      return self._create(generator())
+
+The @extend decorator installs the new operator so it may be used immediately::
+
+  a = [1, 4, 9, 2, 3]
+  query(a).select(lambda x: x*x).separate_with(0).to_list()
+
+which gives::
+
+  [1, 0, 16, 0, 81, 0, 4, 0, 9]
+
+TODO: Document extending asq
 
 .. [#] Except the single selector argument to the ``select()`` operator itself.
