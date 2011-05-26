@@ -2458,8 +2458,6 @@ class Lookup(Queryable):
     objects.
     '''
 
-    # TODO: [asq 1.1] Modify Lookup so it is decoupled from Grouping
-
     def __init__(self, key_value_pairs):
         '''Construct a Lookup with a sequence of (key, value) tuples.
 
@@ -2467,13 +2465,22 @@ class Lookup(Queryable):
             key_value_pairs:
                 An iterable over 2-tuples each containing a key, value pair.
         '''
+        # Maintain an ordered dictionary of groups represented as lists
         self._dict = OrderedDict()
         for key, value in key_value_pairs:
             if key not in self._dict:
                 self._dict[key] = []
             self._dict[key].append(value)
-        groups = [Grouping(self._dict, key) for key in self._dict]
-        super(Lookup, self).__init__(groups)
+
+        # Replace each list with a Grouping
+        for key, value in self._dict.iteritems():
+            grouping = Grouping(key, value)
+            self._dict[key] = grouping
+            
+        super(Lookup, self).__init__(self._dict)
+
+    def _iter(self):
+        return self._dict.itervalues()
 
     def __getitem__(self, key):
         '''The sequence corresponding to a given key, or an empty sequence if
@@ -2485,7 +2492,10 @@ class Lookup(Queryable):
         Returns:
             The Grouping corresponding to the supplied key.
         '''
-        return Grouping(self._dict, key)
+        if key in self._dict:
+            return self._dict[key]
+
+        return Grouping(key, [])
 
     def __len__(self):
         '''Support for the len() built-in function.
@@ -2501,7 +2511,7 @@ class Lookup(Queryable):
             key: The key for which membership will be tested.
 
         Returns:
-            True if the Lookup constains a Grouping for the specified key,
+            True if the Lookup contains a Grouping for the specified key,
             otherwise False.'''
 
         return key in self._dict
@@ -2539,11 +2549,16 @@ class Grouping(Queryable):
         objects. Instances of this class are retrieved from Lookup objects.
     '''
 
-    # TODO: [asq 1.1] Modify Grouping so it is more decoupled from ordereddict and Lookup
-    
-    def __init__(self, ordered_dict, key):
+    def __init__(self, key, group):
+        '''Create a Grouping with a given key and a collection of members.
+
+        Args:
+            key: The key corresponding to this Grouping
+
+            group: An iterable collection of the members of the group.
+        '''
         self._key = key
-        sequence = ordered_dict[key] if key in ordered_dict else empty()
+        sequence = list(group)
         super(Grouping, self).__init__(sequence)
 
     key = property(lambda self: self._key,
@@ -2554,15 +2569,33 @@ class Grouping(Queryable):
         return self.count()
 
     def __eq__(self, rhs):
-        return self._key == rhs._key and self.sequence_equal(rhs)
+        '''Determine value equality with another grouping.
+
+        Args:
+           rhs: The object on the right-hand-side of the comparison must support
+               a property called 'key' and be iterable.
+
+        Returns:
+            True if the keys and sequences are equal, otherwise False.
+        '''
+        return self.key == rhs.key and self.sequence_equal(rhs)
 
     def __ne__(self, rhs):
-        return not (self == rhs)
+        '''Determine value inequality with another grouping.
+
+        Args:
+           rhs: The object on the right-hand-side of the comparison must support
+               a property called 'key' and be iterable.
+
+        Returns:
+            True if the keys or sequences are not equal, otherwise False.
+        '''
+        return self.key != rhs.key or not self.sequence_equal(rhs)
     
     def __repr__(self):
         return 'Grouping(key={k})'.format(k=repr(self._key))
 
-# TODO: Move is_iterable into another file
+# TODO: [asq 1.1] Move is_iterable into another file
 
 def is_iterable(obj):
     '''Determine if an object is iterable.
@@ -2579,7 +2612,7 @@ def is_iterable(obj):
     except TypeError:
         return False
 
-# TODO: Move is_type into another file
+# TODO: [asq 1.1] Move is_type into another file
 
 def is_type(obj):
     '''Determine if an object is a type.
@@ -2595,6 +2628,3 @@ def is_type(obj):
         return True
     except TypeError:
         return False
-
-
-
