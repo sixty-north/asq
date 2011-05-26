@@ -12,6 +12,7 @@ from ._portability import (imap, ifilter, irange, izip, izip_longest,
 # A sentinel singleton used to identify default argument values.
 default = object()
 
+
 class Queryable(object):
     '''Queries over iterables executed serially.
 
@@ -2165,7 +2166,7 @@ class Queryable(object):
 
         if eager:
             return self._create(self._eager_log_result(logger, label))
-        
+
         return self._create(self._generate_lazy_log_result(logger, label))
 
     def _eager_log_result(self, logger, label):
@@ -2178,7 +2179,6 @@ class Queryable(object):
         logger.debug(label + " : END (EAGER)")
         return seq2
 
-
     def _generate_lazy_log_result(self, logger, label):
 
         logger.debug(label + " : BEGIN (DEFERRED)")
@@ -2188,7 +2188,6 @@ class Queryable(object):
             yield element
 
         logger.debug(label + " : END (DEFERRED)")
-
 
     def as_parallel(self, pool=None):
         '''Return a ParallelQueryable for parallel execution of queries.
@@ -2361,7 +2360,7 @@ class OrderedQueryable(Queryable):
 
         self._funcs.append((+1, key_selector))
         return self
-        
+
     def __iter__(self):
         '''Support for the iterator protocol.
 
@@ -2419,16 +2418,16 @@ class OrderedQueryable(Queryable):
 
                 def __eq__(lhs, rhs):
                     return lhs.t == rhs.t
-                
+
                 def __ne__(lhs, rhs):
                     return lhs.t != rhs.t
-                
+
                 def __gt__(lhs, rhs):
                     return rhs < lhs
-                
+
                 def __ge__(lhs, rhs):
                     return not lhs < rhs
-                
+
                 def __le__(lhs, rhs):
                     return not rhs < lhs
 

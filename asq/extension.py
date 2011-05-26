@@ -4,6 +4,7 @@ __author__ = 'Robert Smallshire'
 
 from ._portability import function_name
 
+
 def add_method(function, klass, name=None):
     '''Add an existing function to a class as a method.
 
@@ -14,7 +15,7 @@ def add_method(function, klass, name=None):
         function: The function to be added to the class klass.
 
         klass: The class to which the new method will be added.
-        
+
         name: An optional name for the new method.  If omitted or None the
             original name of the function is used.
 
@@ -29,9 +30,11 @@ def add_method(function, klass, name=None):
     if name is None:
         name = function_name(function)
     if hasattr(klass, name):
-        raise ValueError("Cannot replace existing attribute with method '{name}'".format(name=name))
+        raise ValueError("Cannot replace existing attribute with method "
+                         "'{name}'".format(name=name))
     setattr(klass, name, function)
     return function
+
 
 def extend(klass, name=None):
     '''A function decorator for extending an existing class.
@@ -53,8 +56,5 @@ def extend(klass, name=None):
     '''
     def decorator(f):
         return add_method(f, klass, name)
+
     return decorator
-
-
-
-
