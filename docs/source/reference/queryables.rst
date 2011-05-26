@@ -1574,5 +1574,22 @@
 
          .. currentmodule asq.queryable
 
-      TODO: Grouping
-      
+      .. rubric:: Example
+
+      Grouping, being a subclass of Queryable, supports all of the ``asq``
+      query operators.
+
+      TODO: Grouping as a Queryable
+
+      .. automethod:: __init__(key, iterable)
+
+         ..rubric:: Example
+
+         Construct a Grouping from a list::
+
+           >>> Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           Grouping(key='fruit')
+
+      .. autoproperty:: key
+
+        
