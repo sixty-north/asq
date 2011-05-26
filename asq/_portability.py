@@ -38,8 +38,10 @@ except ImportError:
     try:
         from ordereddict import OrderedDict
     except ImportError:
-        sys.stderr.write('Could not import OrderedDict. For Python versions earlier than 2.7 install the')
-        sys.stderr.write('ordereddict module from the Python Package Index with easy_install ordereddict.')
+        sys.stderr.write('Could not import OrderedDict. For Python versions '
+                         'earlier than 2.7 install the')
+        sys.stderr.write('ordereddict module from the Python Package Index '
+                         'with easy_install ordereddict.')
         sys.exit(1)
 
 try:
@@ -56,13 +58,14 @@ try:
 except NameError:
     import functools
     fold = functools.reduce
-    
+
 try:
     # Python 2.x and Python 3.2+
     is_callable = callable
 except NameError:
     # Python 3.0 and Python 3.1
     from collections import Callable
+
     def is_callable(x):
         return isinstance(x, Callable)
 
@@ -70,27 +73,25 @@ try:
     # Python 3
     def _dummy():
         pass
+
     _dummy.__name__
     del _dummy
+
     def function_name(f):
         return f.__name__
 except AttributeError:
     # Python 2
     def function_name(f):
         return f.func_name
-    
+
 try:
     # Python 2
     unicode()
+
     def has_unicode_type():
         return True
+
 except NameError:
     # Python 3
     def has_unicode_type():
         return False
-
-
-    
-
-
-  
