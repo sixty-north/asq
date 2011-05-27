@@ -1583,13 +1583,63 @@
 
       .. automethod:: __init__(key, iterable)
 
-         ..rubric:: Example
+         .. rubric:: Example
 
          Construct a Grouping from a list::
 
            >>> Grouping("fruit", ["pear", "apple", "orange", "banana"])
            Grouping(key='fruit')
 
-      .. autoproperty:: key
+      .. autoattribute:: key
+
+         .. rubric:: Example
+
+         To retrieve the key from a Grouping::
+
+           >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> g.key
+           'fruit'
+
+      .. automethod:: __len__()
+
+         .. rubric:: Example
+
+         To retrieve the number of items in a Grouping::
+
+           >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> len(g)
+           4
+
+      .. automethod:: __eq__()
+
+         .. rubric:: Example
+
+         To test whether two Groupings are equal in value::
+
+           >>> g1 = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> g2 = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> g1 == g2
+           True
+
+      .. automethod:: __ne__()
+
+         .. rubric:: Example
+
+         To test whether two Groupings are inequal in value::
+
+           >>> g1 = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> g2 = Grouping("fruit", ["cherry", "apple", "orange", "banana"])
+           >>> g1 != g2
+           True
+
+      .. automethod:: __repr__()
+
+         .. rubric:: Example
+
+         To create a string representation of the Grouping::
+
+           >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> repr(g)
+           Grouping(key="fruit", items=["pear", "apple", "orange", "banana"])
 
         
