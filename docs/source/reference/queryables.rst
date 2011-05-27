@@ -1577,9 +1577,12 @@
       .. rubric:: Example
 
       Grouping, being a subclass of Queryable, supports all of the ``asq``
-      query operators.
+      query operators. For example, to produce a list of the group items in
+      upper case::
 
-      TODO: Grouping as a Queryable
+        >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+        >>> g.select(str.upper).to_list()
+        ['PEAR', 'APPLE', 'ORANGE', 'BANANA']
 
       .. automethod:: __init__(key, iterable)
 
