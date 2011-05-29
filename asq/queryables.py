@@ -5,9 +5,10 @@ import itertools
 import operator
 
 from .selectors import identity
-from .initiators import empty
+from .extension import extend
 from ._portability import (imap, ifilter, irange, izip, izip_longest,
-                          fold, is_callable, OrderedDict, has_unicode_type)
+                          fold, is_callable, OrderedDict, has_unicode_type,
+                          itervalues, iteritems)
 
 # A sentinel singleton used to identify default argument values.
 default = object()
@@ -2033,41 +2034,6 @@ class Queryable(object):
 
         return str(separator).join(self.select(str))
 
-    if has_unicode_type():
-        def to_unicode(self, separator=u''):
-            '''Build a unicode string from the source sequence.
-
-            Note: This method is only available on Python implementations which
-                support the named unicode type (e.g. Python 2.x).
-
-            The elements of the query result will each coerced to a unicode
-            string and then the resulting strings concatenated to return a
-            single string. This allows the natural processing of character
-            sequences as strings. An optional separator which will be inserted
-            between each item may be specified.
-
-            Note: this method uses immediate execution.
-
-            Args:
-                separator: An optional separator which will be coerced to a
-                    unicode string and inserted between each source item in the
-                    resulting string.
-
-            Returns:
-                A single unicode string which is the result of stringifying each
-                element and concatenating the results into a single string.
-
-            Raises:
-                TypeError: If any element cannot be coerced to a string.
-                TypeError: If the separator cannot be coerced to a string.
-                ValueError: If the Queryable is closed.
-            '''
-            if self.closed():
-                raise ValueError("Attempt to call to_unicode() on a closed "
-                                 "Queryable.")
-
-            return unicode(separator).join(self.select(unicode))
-
     def sequence_equal(self, second_iterable, equality_comparer=operator.eq):
         '''
         Determine whether two sequences are equal by elementwise comparison.
@@ -2280,6 +2246,43 @@ class Queryable(object):
         '''
         return repr(self)
 
+if has_unicode_type():
+
+    @extend(Queryable)
+    def to_unicode(self, separator=''):
+        '''Build a unicode string from the source sequence.
+
+        Note: This method is only available on Python implementations which
+            support the named unicode type (e.g. Python 2.x).
+
+        The elements of the query result will each coerced to a unicode
+        string and then the resulting strings concatenated to return a
+        single string. This allows the natural processing of character
+        sequences as strings. An optional separator which will be inserted
+        between each item may be specified.
+
+        Note: this method uses immediate execution.
+
+        Args:
+            separator: An optional separator which will be coerced to a
+                unicode string and inserted between each source item in the
+                resulting string.
+
+        Returns:
+            A single unicode string which is the result of stringifying each
+            element and concatenating the results into a single string.
+
+        Raises:
+            TypeError: If any element cannot be coerced to a string.
+            TypeError: If the separator cannot be coerced to a string.
+            ValueError: If the Queryable is closed.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call to_unicode() on a closed "
+                             "Queryable.")
+
+        return unicode(separator).join(self.select(unicode))
+
 
 class OrderedQueryable(Queryable):
     '''A Queryable representing an ordered iterable.
@@ -2472,14 +2475,14 @@ class Lookup(Queryable):
             self._dict[key].append(value)
 
         # Replace each list with a Grouping
-        for key, value in self._dict.iteritems():
+        for key, value in iteritems(self._dict):
             grouping = Grouping(key, value)
             self._dict[key] = grouping
             
         super(Lookup, self).__init__(self._dict)
 
     def _iter(self):
-        return self._dict.itervalues()
+        return itervalues(self._dict)
 
     def __getitem__(self, key):
         '''The sequence corresponding to a given key, or an empty sequence if

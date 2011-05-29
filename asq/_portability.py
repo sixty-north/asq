@@ -95,3 +95,37 @@ except NameError:
     # Python 3
     def has_unicode_type():
         return False
+
+def itervalues(dictionary):
+    '''Get an iterator over dictionary values.
+
+    Attempts to avoid copying the dictionary values.
+
+    Args:
+        dictionary: The dictionary for which an iterator over values is wanted.
+
+    Returns:
+        An iterator over the dictionary values.
+    '''
+    try:
+        return dictionary.itervalues()
+    except AttributeError:
+        pass
+    return iter(dictionary.values())
+
+def iteritems(dictionary):
+    '''Get an iterator over dictionary items.
+
+    Attempts to avoid copying the dictionary items.
+
+    Args:
+        dictionary: The dictionary for which an iterator over items is wanted.
+
+    Returns:
+        An iterator over the dictionary items.
+    '''
+    try:
+        return dictionary.iteritems()
+    except AttributeError:
+        pass
+    return iter(dictionary.items())
