@@ -41,6 +41,16 @@ class TestLastOrDefault(unittest.TestCase):
         b = Queryable(a).last_or_default(12, lambda x: x >= 50)
         self.assertEqual(b, 57)
 
+    def test_last_or_default_non_sequence_predicate(self):
+        def series():
+            yield 42
+            yield 45
+            yield 23
+            yield 12
+        a = series()
+        b = Queryable(a).last_or_default(37, lambda x: x > 15)
+        self.assertEqual(b, 23)
+
     def test_last_or_default_predicate_empty(self):
         a = []
         b = Queryable(a).last_or_default(12, lambda x: x >= 50)
