@@ -120,3 +120,9 @@ class TestLog(unittest.TestCase):
              'take two : [1] = 8',
              'take two : END (EAGER)' ]
         self.assertEqual(logger.log, c)
+
+    def test_log_closed(self):
+        a = [1, 6, 4, 3, 9, 2]
+        b = Queryable(a)
+        b.close()
+        self.assertRaises(ValueError, lambda: b.log())
