@@ -2124,7 +2124,27 @@ class Queryable(object):
                 return False
         return True
 
-    # TODO: [asq 1.1] Implement the __eq__ and __ne__ operators in terms of sequence_equal
+    def __eq__(self, rhs):
+        '''Determine value equality with another iterable.
+
+        Args:
+           rhs: Any iterable collection.
+
+        Returns:
+            True if the sequences are equal in value, otherwise False.
+        '''
+        return self.sequence_equal(rhs)
+
+    def __ne__(self, rhs):
+        '''Determine value inequality with another iterable.
+
+        Args:
+           rhs: Any iterable collection.
+
+        Returns:
+            True if the sequences are inequal in value, otherwise False.
+        '''
+        return not (self == rhs)
 
     def log(self, logger=None, label=None, eager=False):
         '''
