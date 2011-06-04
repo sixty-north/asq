@@ -26,7 +26,30 @@ function which produces or consumes *iterables*.
 Installing ``asq``
 ==================
 
-TODO
+``asq`` is available on the `Python Package Index`_ (PyPI) and can be installed with
+``easy_install`` so long as you have `setuptools`_ installed already::
+
+  $ easy_install asq
+
+Alternatively, you can download and unpack the source distribution from the
+``asq`` `downloads page`_ or PyPI. You should then unpack the source
+distribution into a temporary directory and run the setup script which will
+install ``asq`` into the current Python environment, for example::
+
+  $ tar xzf asq-1.0.tar.gz
+  $ cd asq-1.0
+  $ python setup.py install
+
+If you are using Python 2.6 you will also need to install the back-ported
+`ordereddict`_ module which was introduced in Python 2.7.
+
+.. _Python Package Index: http://pypi.python.org/pypi/asq/
+
+.. _setuptools: http://pypi.python.org/pypi/setuptools/
+
+.. _downloads page: http://code.google.com/p/asq/downloads/list
+
+.. _ordereddict: http://pypi.python.org/pypi/ordereddict
 
 Diving in
 =========
@@ -43,16 +66,23 @@ student is represented by a dictionary::
               dict(firstname='Mario', lastname='Rossi', scores=[37, 95, 45, 18])]
 
 To avoid having to type in this data structure, you can navigate to the root of
-the unpacked source distribution of asq and then import it from the
-examples directory with::
+the unpacked source distribution of asq and then import it from ``pupils.py``
+in the examples directory with::
 
-  >>> from asq.examples.students import students
+  $ cd asq/examples/
+  $ python
+  Python 2.6.2 (r262:71605, Apr 14 2009, 22:40:02) [MSC v.1500 32 bit (Intel)] on
+  win32
+  Type "help", "copyright", "credits" or "license" for more information.
+  >>> from pupils import students
 
-Now we can import the query tools we need. For our purposes the easiest thing
-is to import everything from the package in one go (although remember that this
-is rightly considered bad practice in programs)::
+Now we can import the query tools we need. We'll start with the most commonly
+used import from ``asq`` which is the ``query`` initiator::
 
   >>> from asq.initiators import query
+
+The ``query`` initiator allows us to perform queries over any Python iterable,
+such as the ``students`` object we imported.
 
 Let's start by creating a simple query to find those students who's first names
 begin with a letter 'J'::
@@ -62,10 +92,10 @@ begin with a letter 'J'::
 
 To dissect this line and its result left to right, we have:
 
-  1. A call to the ``query(students)``. Here ``query()`` is a query *initiator* - a
-     factory function for creating a Queryable object from, in this case, an
-     iterable. The ``query()`` function is the key entry point into the query
-     system (although there are others).
+  1. A call to the ``query(students)``. Here ``query()`` is a query *initiator*
+     - a factory function for creating a Queryable object from, in this case,
+     an iterable. The ``query()`` function is the key entry point into the
+     query system (although there are others).
 
   2. A method call to ``where()``. Where is one of the ``asq`` query operators
      and is in fact a method on the Queryable returned by the preceding call to
@@ -95,7 +125,7 @@ full list of available query initiators is:
   ========================== ==================================================
   Initiator                  Purpose
   ========================== ==================================================
-  ``query(iterable)``          Make a Queryable from any iterable
+  ``query(iterable)``        Make a Queryable from any iterable
   ``integers(start, count)`` Make a Queryable sequence of consecutive integers
   ``repeat(value, count)``   Make a Queryable from a repeating value
   ``empty()``                Make a Queryable from an empty sequence
@@ -132,32 +162,44 @@ queries. For example, we could extract and compose the full names of the
 three students resulting from the previous query with::
 
   >>> query(students).where(lambda s: s['firstname'].startswith('J'))      \
-                   .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
-                   .to_list()
+  ...              .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
+  ...              .to_list()
   ['Joe Blogs', 'John Doe', 'Jane Doe']
 
-Note: The backslashes above are Python's line-continuation character, used here
-for readability. They are not part of the syntax of the expression.
+  .. note:
 
-If we would like our results sorted by the students' minimum scores we can do::
+     The backslashes above are Python's line-continuation character, used here
+     for readability. They are not part of the syntax of the expression.
 
- >>> query(students).where(lambda s: s['firstname'].startswith('J'))        \
-                  .order_by(lambda s: min(s['scores']))                   \
-                  .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
-                  .to_list()
+If we would like our results sorted by the students' minimum scores we can use
+the Python built-in function ``min()`` with the ``order_by`` query operator::
+
+ >>> query(students).where(lambda s: s['firstname'].startswith('J'))      \
+ ...                .order_by(lambda s: min(s['scores']))                   \
+ ...                .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
+ ...                .to_list()
  ['John Doe', 'Jane Doe', 'Joe Blogs']
 
 Query nesting
 -------------
 
-TODO.
+There is nothing to stop us initiating a sub-query in the course of defining a
+primary query.  For example, to order the students by their average score we
+can invoke the ``query()`` initiator a second time and chain the ``average()``
+query operator to determine the mean score to pass to ``order_by()``::
+
+  >>>  query(students).order_by(lambda s: query(s['scores']).average()) \
+  ...                 .where(lambda student: student['firstname'].startswith('J')) \
+  ...                 .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
+  ...                 .to_list()
+  ['Joe Blogs', 'John Doe', 'Jane Doe']
 
 Selectors
 ---------
 
 Many of the query operators, such as ``select()``, ``order_by`` or ``where()``
 accept selector callables for one or more of their arguments.  Typically such
-selectors are used to *select* or extract a value from an element of the
+selectors are used to *select* or *extract* a value from an element of the
 query sequence.  Selectors can be any Python callable and examples of commonly
 used selectors are demonstrated below.  In addition, ``asq`` provides some
 selector factories as a convenience for generating commonly used forms of
@@ -246,7 +288,7 @@ Selector factories
 Some selector patterns crop up very frequently and so ``asq`` provides some
 simple and concise selector factories for these cases.  Selector factories are
 themselves functions which return the actual selector function which can be
-passed to the query operator.
+passed in turn to the query operator.
 
   ============================= ===============================================
   Selector factory              Created selector function
@@ -273,8 +315,8 @@ be to order the employees by descending grade, then by ascending last name and
 finally by ascending first name::
 
   >>>  query(employees).order_by_descending(lambda employee: employee['grade']) \
-  ...                .then_by(lambda employee: employee['lastname'])          \
-  ...                .then_by(lambda employee: employee['firstname']).to_list()
+  ...                  .then_by(lambda employee: employee['lastname'])          \
+  ...                  .then_by(lambda employee: employee['firstname']).to_list()
   [{'grade': 4, 'lastname': 'Doe', 'firstname': 'Jane'},
    {'grade': 3, 'lastname': 'Bloggs', 'firstname': 'Joe'},
    {'grade': 3, 'lastname': 'Doe', 'firstname': 'John'},
@@ -282,12 +324,12 @@ finally by ascending first name::
    {'grade': 2, 'lastname': 'Nordmann', 'firstname': 'Kari'}]
 
 Those lambda expressions can be a bit of a mouthful, especially given Python's
-less-than-concise lambda system.  We can improve by using less descriptive
+less-than-concise lambda syntax.  We can improve by using less descriptive
 names for the lambda arguments::
 
   >>>  query(employees).order_by_descending(lambda e: e['grade'])  \
-  ...                .then_by(lambda e: e['lastname'])           \
-  ...                .then_by(lambda e: e['firstname']).to_list()
+  ...                  .then_by(lambda e: e['lastname'])           \
+  ...                  .then_by(lambda e: e['firstname']).to_list()
   [{'grade': 4, 'lastname': 'Doe', 'firstname': 'Jane'},
    {'grade': 3, 'lastname': 'Bloggs', 'firstname': 'Joe'},
    {'grade': 3, 'lastname': 'Doe', 'firstname': 'John'},
@@ -309,20 +351,23 @@ and::
   lambda x: x['foo']
 
 are equivalent because in fact the first expression is in fact returning the
-second one. See how using ``k_()`` reducing the verbosity and apparent
+second one. Let's see ``k_()`` in action reducing the verbosity and apparent
 complexity of the query somewhat::
 
   >>> from asq import k_
   >>> query(employees).order_by_descending(k_('grade'))   \
-  ...               .then_by(k_('lastname'))            \
-  ...               .then_by(k_('firstname')).to_list()
+  ...                 .then_by(k_('lastname'))            \
+  ...                 .then_by(k_('firstname')).to_list()
   [{'grade': 4, 'lastname': 'Doe', 'firstname': 'Jane'},
    {'grade': 3, 'lastname': 'Bloggs', 'firstname': 'Joe'},
    {'grade': 3, 'lastname': 'Doe', 'firstname': 'John'},
    {'grade': 3, 'lastname': 'Nordmann', 'firstname': 'Ola'},
    {'grade': 2, 'lastname': 'Nordmann', 'firstname': 'Kari'}]
 
-TODO: Integer indices
+It might not be immediately obvious from it's name, but ``k_()`` works with
+any object supporting indexing with square brackets, so it can also be used
+with an integer 'key' for retrieved results from sequences such as lists and
+tuples.
 
 Attribute selector factory
 ..........................
@@ -346,8 +391,8 @@ First of all, our ``Employee`` class::
 Now the query and its result use the lambda form for the selectors::
 
   >>> query(employees).order_by_descending(lambda employee: employee.grade)  \
-  ...               .then_by(lambda employee: employee.lastname)           \
-  ...               .then_by(lambda employee: employee.firstname).to_list()
+  ...                 .then_by(lambda employee: employee.lastname)           \
+  ...                 .then_by(lambda employee: employee.firstname).to_list()
   [Employee('Jane', 'Doe', 4), Employee('Joe', 'Bloggs', 3),
    Employee('John', 'Doe', 3), Employee('Ola', 'Nordmann', 3),
    Employee('Kari', 'Nordmann', 2)]
@@ -366,8 +411,8 @@ is equivalent to::
 Using this construct we can shorted our query to the more concise::
 
   >>> query(employees).order_by_descending(a_('grade'))  \
-  ...               .then_by(a_('lastname'))           \
-  ...               .then_by(a_('firstname')).to_list()
+  ...                 .then_by(a_('lastname'))           \
+  ...                 .then_by(a_('firstname')).to_list()
   [Employee('Jane', 'Doe', 4), Employee('Joe', 'Bloggs', 3),
    Employee('John', 'Doe', 3), Employee('Ola', 'Nordmann', 3),
    Employee('Kari', 'Nordmann', 2)]
@@ -438,6 +483,8 @@ The identity selector is very simple and is equivalent to::
   def identity(x):
       return x
 
+.. [#] Except the single selector argument to the ``select()`` operator itself.
+
 That is, it is a function that returns it's only argument - essentially it's a
 do-nothing function.  This is useful because frequently we don't want to select
 an attribute or key from an element - we want to use the element value
@@ -483,6 +530,9 @@ Here we use the ``bool()`` built-in function to remove zeros from the list::
 Unbound methods
 ~~~~~~~~~~~~~~~
 
+Here we use an unbound method of the ``str`` class to extract only alphabetic
+strings from a list::
+
   >>> a = ['zero', 'one', '2', '3', 'four', 'five', '6', 'seven', 'eight', '9']
   >>> query(a).where(str.isalpha).to_list()
   ['zero', 'one', 'four', 'five', 'seven', 'eight']
@@ -490,8 +540,32 @@ Unbound methods
 Bound methods
 ~~~~~~~~~~~~~
 
-TODO ???
+Bound methods are obtained by referencing the method of an *instance* rather
+than the method of a class.  That is, the instance referred to by the *self*
+parameter passed as the first argument of a method has already been determined.
 
+To illustrate, here we create a variation of Multiplier class earlier with
+a method to test whether a given number is a multiple of the supplied factor::
+
+  >>> numbers = [1, 18, 34, 23, 56, 48, 45]
+  >>>
+  >>> class Multiplier(object):
+    ...     def __init__(self, factor):
+    ...         self.factor = factor
+    ...     def is_multiple(self, value):
+    ...         return value % self.factor == 0
+    ...
+    >>> six_multiplier = Multiplier(6)
+    >>>
+    >>> is_six_a_factor = six_multiplier.is_multiple
+    >>> is_six_a_factor
+    <bound method Multiplier.is_multiple of <__main__.Multiplier object at 0x029FEDF0>>
+    >>>
+    >>> query(numbers).where(is_six_a_factor).to_list()
+    [18, 48]
+
+This has the effect of passing each element of the sequence in turn as an
+argument to the bound method which returns True or False.
 
 Predicate factories
 ~~~~~~~~~~~~~~~~~~~
@@ -528,7 +602,7 @@ the query expression::
   >>> query(numbers).where(lambda x: x > 35).take_while(lambda x: x < 90).to_list()
   [56, 78]
 
-could be written more concisely as::
+could be written more succinctly rendered as::
 
   >>> query(numbers).where(gt_(35)).take_while(lt_(90)).to_list()
   [56, 78]
@@ -587,19 +661,73 @@ or False.  We can filter out interns using this query::
 Comparers
 ---------
 
-TODO: Document comparers
+Some of the query operators accept equality comparers.  Equality comparers are
+callables which can be used to determine whether two value should be considered
+equal for the purposes of a query.  For example, the ``contains()`` query
+operator accepts an optional equality comparer used for determining membership.
+To illustrate, we will use the ``insensitive_eq()`` comparer which does a
+case insensitive equality test::
+
+  >>> from asq.comparers import insensitive_eq
+  >>> names = ['Matthew', 'Mark', 'John']
+  >>> query(names).contains('MARK', insensitive_eq)
+  True
+
+Records
+-------
+
+In all of the examples in this documentation so far, the data to be queried has
+either been represented as combinations of built-in Python types such as lists
+and dictionaries, or we have needed define specific classes to represented our
+data.  Sometimes there's a need for a type without the syntactic clutter of say
+dictionaries, but without the overhead of creating a whole class with methods;
+you just want to bunch some data together.  The ``Record`` type provided by
+``asq`` fulfills this need.  A convenience function called ``new()`` can be
+used to concisely create Records.  To use new, just pass in named arguments to
+define the Record properties::
+
+  >>> product = new(id=5723, name="Mouse", price=33, total_revenue=23212)
+  >>> product
+  Record(id=5723, price=33, total_revenue=23212, name='Mouse')
+
+And retrieve properties using regular Python attribute syntax::
+
+  >>> product.price
+  33
+
+This can be useful when we want to carry several derived values through a query
+such as in this example where we create Records containing the full names and
+highest score of students, we then sort the records by the high score::
+
+  >>> from pupils import students
+  >>> students
+  [{'lastname': 'Blogs', 'firstname': 'Joe', 'scores': [56, 23, 21, 89]},
+   {'lastname': 'Doe', 'firstname': 'John', 'scores': [34, 12, 92, 93]},
+   {'lastname': 'Doe', 'firstname': 'Jane', 'scores': [33, 94, 91, 13]},
+   {'lastname': 'Nordmann', 'firstname': 'Ola', 'scores': [98, 23, 98, 87]},
+   {'lastname': 'Nordmann', 'firstname': 'Kari', 'scores': [86, 37, 88, 87]},
+   {'lastname': 'Rossi', 'firstname': 'Mario', 'scores': [37, 95, 45, 18]}]
+  >>> query(students).select(lambda s: new(name="{firstname} {lastname}".format(**s),
+  ...                                      high_score=max(s['scores']))) \
+  ...                .order_by(a_('high_score').to_list()
+  [Record(high_score=88, name='Kari Nordmann'),
+   Record(high_score=89, name='Joe Blogs'),
+   Record(high_score=93, name='John Doe'),
+   Record(high_score=94, name='Jane Doe'),
+   Record(high_score=95, name='Mario Rossi'),
+   Record(high_score=98, name='Ola Nordmann')]
 
 
 Debugging
 ---------
 
-With potentially so much deferred execution occuring, debugging ``asq`` query
+With potentially so much deferred execution occurring, debugging ``asq`` query
 expressions using tools such as debuggers can be challenging. Furthermore, since
 queries are expressions use of statements such as Python 2 ``print`` can be
 awkward.
 
 To ease debugging, ``asq`` provides a logging facility which can be used to
-display intermediate results with an optional abiliity for force full, rather
+display intermediate results with an optional ability for force full, rather
 than lazy, evaluation of sequences.
 
 To demonstrate, let's start with a bug-ridden implementation of Fizz-Buzz
@@ -709,15 +837,15 @@ sake of completeness, let's modify the expression to deal with this::
 Extending ``asq``
 -----------------
 
+.. sidebar::  For .NET developers
+
+  The @extend decorator described here performs the same role as C# extension
+  methods to IEnumerable play in Microsoft's LINQ.
+
 The fluent interface of ``asq`` works by chaining method calls on Queryable
 types, so to extend ``asq`` with new query operators must be able to add
 methods to Queryable. New methods added in this way must have a particular
 structure in order to be usable in the middle of a query chain.
-
-.. sidebar::
-
-  The @extend decorator described here performs the same role as C# extension
-  methods to IEnumerable play in Microsoft's LINQ.
 
 To define a new query operator, use the @extend function decorator from the
 ``asq.extension`` package to decorator a module scope function. To illustrate,
@@ -779,6 +907,4 @@ which gives::
 
   [1, 0, 16, 0, 81, 0, 4, 0, 9]
 
-TODO: Document extending asq
 
-.. [#] Except the single selector argument to the ``select()`` operator itself.

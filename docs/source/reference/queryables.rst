@@ -144,7 +144,7 @@
 
            This method should not usually be called directly; use the
            ``iter()`` built-in or other Python constructs which check for the
-           presence of ``__iter__()``, such as ``for`` loops::
+           presence of ``__iter__()``, such as ``for`` loops.
 
         .. rubric:: Examples
 
@@ -194,8 +194,8 @@
          .. note::
 
             This method should not usually be called directly; use the
-            ``reversed()` built-in or other Python constructs which check for
-            the presence of __reversed__().
+            ``reversed()`` built-in or other Python constructs which check for
+            the presence of ``__reversed__()``.
 
          .. rubric:: Example
 
@@ -1357,9 +1357,9 @@
 
          Convert a sequence of characters into a string::
 
-         >>> chars = ['c', 'h', 'a', 'r', 'a', 'c', 't', 'e', 'r', 's']
-         >>> query(chars).to_str()
-         'characters'
+           >>> chars = ['c', 'h', 'a', 'r', 'a', 'c', 't', 'e', 'r', 's']
+           >>> query(chars).to_str()
+           'characters'
 
          Concatenate some word fragments into a single string::
 
