@@ -41,6 +41,19 @@ class TestSkip(unittest.TestCase):
         c = [5, 6, 7]
         self.assertEqual(b, c)
 
+    def test_skip_getitem_but_no_len(self):
+        class Seq(object):
+            def __init__(self, data):
+                self.data = data
+
+            def __getitem__(self, index):
+                return self.data[index]
+
+        seq = Seq([5, 6, 1, 5, 9])
+        b = Queryable(seq).skip(2).to_list()
+        c = [1, 5, 9]
+        self.assertEqual(b, c)
+
     def test_skip_is_deferred(self):
         a = TracingGenerator()
         self.assertEqual(a.trace, [])
