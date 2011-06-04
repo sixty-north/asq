@@ -64,9 +64,9 @@ class TestToLookup(unittest.TestCase):
         self.assertEqual(g4.to_list(), [5])
         self.assertEqual(g5.to_list(), [10])
 
-    def test_to_lookup_value_selector(self):
+    def test_to_lookup_value_selector_not_callable(self):
         a = ['Aardvark', 'Balloon', 'Carrot', 'Daisy', 'Ecological']
-        lambda: Queryable(a).to_lookup(value_selector="not callable")
+        self.assertRaises(TypeError, lambda: Queryable(a).to_lookup(value_selector="not callable"))
         
     def test_to_lookup_duplicate_keys(self):
         a = ['Aardvark', 'Balloon', 'Baboon', 'Carrot', 'Daisy', 'Ecological']
