@@ -72,3 +72,10 @@ class TestGroupJoin(unittest.TestCase):
         c = Queryable(a).group_join(b)
         self.assertEqual(a.trace, [])
         d = c.take(3).to_list()
+
+    def test_group_join_closed(self):
+        a = [1, 2]
+        b = [2, 3]
+        c = Queryable(a)
+        c.close()
+        self.assertRaises(ValueError, lambda: c.group_join(b))
