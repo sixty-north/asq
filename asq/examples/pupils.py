@@ -1,4 +1,5 @@
-from asq import asq, k_, a_
+from asq.initiators import query
+from asq.selectors import k_
 
 students = [dict(firstname='Joe', lastname='Blogs', scores=[56, 23, 21, 89]),
             dict(firstname='John', lastname='Doe', scores=[34, 12, 92, 93]),
@@ -12,14 +13,14 @@ first_over_90 = query(students).where(lambda student: student['scores'][0] > 90)
 
 # Select the last name of students where the first score is over 90
 query(students).where(lambda student: student['scores'][0] > 90) \
-             .select(lambda student: student['lastname'])
+               .select(lambda student: student['lastname'])
 
 # Compute the maximum of all scores overall
 query(students).select_many(lambda student: student['scores']).max()
 
 # Order the students by last name and then by first name
 query(students).order_by(lambda x: x['lastname']) \
-             .then_by(lambda x: x['firstname'])
+               .then_by(lambda x: x['firstname'])
 
 
 # It is very common to have selectors which retrieve a particular attribute

@@ -6,6 +6,7 @@ import operator
 
 from .selectors import identity
 from .extension import extend
+from ._types import (is_iterable, is_type)
 from ._portability import (imap, ifilter, irange, izip, izip_longest,
                           fold, is_callable, OrderedDict, has_unicode_type,
                           itervalues, iteritems)
@@ -1832,8 +1833,8 @@ class Queryable(object):
 
         Raises:
             ValueError: If called on an empty sequence with no seed value.
-            TypeError: If reducer is not callable
-            TypeError: If result_selector is not callable
+            TypeError: If reducer is not callable.
+            TypeError: If result_selector is not callable.
         '''
         if self.closed():
             raise ValueError("Attempt to call aggregate() on a "
@@ -1936,7 +1937,7 @@ class Queryable(object):
 
         Raises:
             ValueError: If duplicate keys are in the projected source sequence.
-            ValueError: If the Queryable is closed()
+            ValueError: If the Queryable is closed().
         '''
         if self.closed():
             raise ValueError("Attempt to call to_set() on a closed Queryable.")
@@ -2546,9 +2547,6 @@ class Lookup(Queryable):
         '''
         return 'Lookup({d})'.format(d=list(self._generate_repr_result()))
 
-    # TODO: [asq 1.1] Equality operators. Should compare equal if their Groupings sorted
-    #       by key compare equal
-
     def _generate_repr_result(self):
         for key in self._dict:
             for value in self._dict[key]:
@@ -2594,8 +2592,8 @@ class Grouping(Queryable):
         '''Determine value equality with another grouping.
 
         Args:
-           rhs: The object on the right-hand-side of the comparison must support
-               a property called 'key' and be iterable.
+           rhs: The object on the right-hand-side of the comparison must
+                support a property called 'key' and be iterable.
 
         Returns:
             True if the keys and sequences are equal, otherwise False.
@@ -2606,8 +2604,8 @@ class Grouping(Queryable):
         '''Determine value inequality with another grouping.
 
         Args:
-           rhs: The object on the right-hand-side of the comparison must support
-               a property called 'key' and be iterable.
+           rhs: The object on the right-hand-side of the comparison must
+                support a property called 'key' and be iterable.
 
         Returns:
             True if the keys or sequences are not equal, otherwise False.
@@ -2616,38 +2614,5 @@ class Grouping(Queryable):
     
     def __repr__(self):
         return 'Grouping(key={key}, items={items})'.format(key=repr(self._key),
-                                                     items=repr(self.to_list()))
+                                                    items=repr(self.to_list()))
 
-# TODO: [asq 1.1] Move is_iterable into another file
-
-def is_iterable(obj):
-    '''Determine if an object is iterable.
-
-    Args:
-        obj: The object to be tested for supporting iteration.
-
-    Returns:
-        True if the object is iterable, otherwise False.
-    '''
-    try:
-        iter(obj)
-        return True
-    except TypeError:
-        return False
-
-# TODO: [asq 1.1] Move is_type into another file
-
-def is_type(obj):
-    '''Determine if an object is a type.
-
-    Args:
-        obj: The object to be tested for being a type, or a tuple of types.
-
-    Returns:
-        True if the object is a type or tuple of types, otherwise False.
-    '''
-    try:
-        isinstance(None, obj)
-        return True
-    except TypeError:
-        return False
