@@ -61,4 +61,10 @@ class TestJoin(unittest.TestCase):
         e = [(2, 2), (3, 3), (4, 4)]
         self.assertEqual(d, e)
 
-
+    def test_join_closed(self):
+        a = [1, 2, 3, 4, 5]
+        b = [4, 5, 6, 7, 8]
+        c = Queryable(a)
+        c.close()
+        self.assertRaises(ValueError, lambda: c.join(b))
+    
