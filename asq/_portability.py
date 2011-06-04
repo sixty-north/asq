@@ -136,6 +136,12 @@ try:
 except ImportError:
     # Python 2.6 version from
     # http://code.activestate.com/recipes/576685-total-ordering-class-decorator/
+    # This recipe doesn't actually work on Python 3.0 or 3.1 but that doesn't
+    # matter since neither of those implementations cause the
+    # extra methods added by the decorator to be exercised.  This may become
+    # an issue in future if somebody creates an alternative Python 3
+    # implementation which is not up to Python 3.2 completeness.  That seems
+    # unlikely.
     def totally_ordered(cls):
         'Class decorator that fills-in missing ordering methods'
         convert = {
