@@ -15,10 +15,12 @@
 
          Queryable.__contains__
          Queryable.__enter__
+         Queryable.__eq__
          Queryable.__exit__
          Queryable.__getitem__
          Queryable.__init__
          Queryable.__iter__
+         Queryable.__ne__
          Queryable.__reversed__
          Queryable.__repr__
          Queryable.__str__
@@ -90,6 +92,21 @@
 
       .. automethod:: __enter__()
 
+      .. automethod:: __eq__(rjs)
+
+         .. note::
+
+           This in the infix operator equivalent of the sequence_equal()
+           query operator.
+
+         .. rubric:: Examples
+
+         Test whether a sequence is equal to a list::
+
+           >>> expected = [2, 4, 8, 16, 32]
+           >>> range(1, 5).select(lambda x: x ** 2) == expected
+           True
+
       .. automethod:: __exit__(type, value, traceback)
 
       .. automethod:: __getitem__(index)
@@ -156,6 +173,16 @@
           1
           9
           4
+
+      .. automethod:: __ne__(rjs)
+
+         .. rubric:: Examples
+
+         Test whether a sequence is not equal to a list::
+
+           >>> expected = [1, 2, 3]
+           >>> range(1, 5).select(lambda x: x ** 2) != expected
+           True
 
       .. automethod:: __reversed__()
 
@@ -1577,19 +1604,71 @@
       .. rubric:: Example
 
       Grouping, being a subclass of Queryable, supports all of the ``asq``
-      query operators.
+      query operators. For example, to produce a list of the group items in
+      upper case::
 
-      TODO: Grouping as a Queryable
+        >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+        >>> g.select(str.upper).to_list()
+        ['PEAR', 'APPLE', 'ORANGE', 'BANANA']
 
       .. automethod:: __init__(key, iterable)
 
-         ..rubric:: Example
+         .. rubric:: Example
 
          Construct a Grouping from a list::
 
            >>> Grouping("fruit", ["pear", "apple", "orange", "banana"])
            Grouping(key='fruit')
 
-      .. autoproperty:: key
+      .. autoattribute:: key
 
-        
+         .. rubric:: Example
+
+         To retrieve the key from a Grouping::
+
+           >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> g.key
+           'fruit'
+
+      .. automethod:: __len__()
+
+         .. rubric:: Example
+
+         To retrieve the number of items in a Grouping::
+
+           >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> len(g)
+           4
+
+      .. automethod:: __eq__()
+
+         .. rubric:: Example
+
+         To test whether two Groupings are equal in value::
+
+           >>> g1 = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> g2 = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> g1 == g2
+           True
+
+      .. automethod:: __ne__()
+
+         .. rubric:: Example
+
+         To test whether two Groupings are inequal in value::
+
+           >>> g1 = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> g2 = Grouping("fruit", ["cherry", "apple", "orange", "banana"])
+           >>> g1 != g2
+           True
+
+      .. automethod:: __repr__()
+
+         .. rubric:: Example
+
+         To create a string representation of the Grouping::
+
+           >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+           >>> repr(g)
+           Grouping(key="fruit", items=["pear", "apple", "orange", "banana"])
+
