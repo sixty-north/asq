@@ -44,6 +44,16 @@ class TestLast(unittest.TestCase):
         self.assertRaises(ValueError, lambda: Queryable(a).last())
 
 
+    def test_empty_non_sequence_predicate(self):
+        def series():
+            if False:
+                yield 42
+                yield 45
+                yield 23
+                yield 12
+        a = series()
+        self.assertRaises(ValueError, lambda: Queryable(a).last(lambda x: x > 40))
+
         
     def test_last_predicate(self):
         a = [37, 54, 57, 23, 12]
