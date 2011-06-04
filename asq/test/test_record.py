@@ -39,11 +39,27 @@ class TestRecord(unittest.TestCase):
         b = Record(x=10, y=20, z=30)
         self.assertFalse(a != b)
 
-    def test_pickle_roundtrip(self):
-        a = Record(x=20, y=20, z=20)
+    def test_record_pickle_roundtrip(self):
+        a = Record(x=20, y=80, z=50)
         s = pickle.dumps(a)
         b = pickle.loads(s)
         self.assertEqual(a, b)
+
+    def test_record_str(self):
+        a = Record(x=20, y=30, z=40)
+        s= str(a)
+        self.assertTrue("x=20" in s)
+        self.assertTrue("y=30" in s)
+        self.assertTrue("z=40" in s)
+
+    def test_record_repr(self):
+        a = Record(x=20, y=30, z=40)
+        s= repr(a)
+        self.assertTrue(s.startswith("Record("))
+        self.assertTrue("x=20" in s)
+        self.assertTrue("y=30" in s)
+        self.assertTrue("z=40" in s)
+        self.assertTrue(s.endswith(")"))
 
     def test_new_create(self):
         r = new(x=10, y=20, z=30)
