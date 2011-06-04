@@ -41,6 +41,13 @@ class TestGroupBy(unittest.TestCase):
         self.assertEqual(g2.to_list(), ['bouvardia'])
         self.assertEqual(g3.to_list(), ['carnations', 'cattleya', 'celosia', 'chincherinchee', 'chrysanthemum'])
 
+    def test_element_selector_not_callable(self):
+        a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
+             'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']
+        self.assertRaises(TypeError, lambda: Queryable(a).group_by(key_selector=lambda x: x[0],
+                                     element_selector="not callable"))
+
+
     def test_result_selector(self):
         a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
              'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']
@@ -53,6 +60,12 @@ class TestGroupBy(unittest.TestCase):
         self.assertEqual(g1, 6)
         self.assertEqual(g2, 1)
         self.assertEqual(g3, 5)
+
+    def test_result_selector_not_callable(self):
+        a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
+             'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum']
+        self.assertRaises(TypeError, lambda: Queryable(a).group_by(key_selector=lambda x: x[0],
+                                  result_selector="not callable"))
 
     def test_first_closed(self):
         a = ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis', 'Bouvardia', 'Carnations',
