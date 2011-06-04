@@ -24,14 +24,24 @@ value passed to the unary predicate.
   .. autosummary::
      :nosignatures:
 
+     contains_
      eq_
-     in_
      is_
      ge_
      gt_
      le_
      lt_
      ne_
+
+  .. autofunction:: contains_(lhs)
+
+     .. rubric:: Example
+
+     Filter for specific words containing 'ei'::
+
+       >>> words = ['banana', 'receive', 'believe', 'ticket', 'deceive']
+       >>> query(words).where(contains_('ei')).to_list()
+       ['receive', 'deceive']
 
   .. autofunction:: eq_(rhs)
 
@@ -42,16 +52,6 @@ value passed to the unary predicate.
        >>> numbers = [5, 9, 12, 5, 89, 34, 2, 67, 43]
        >>> query(numbers).where(eq_(5)).to_list()
        [5, 5]
-
-  .. autofunction:: in_(lhs)
-
-     .. rubric:: Example
-
-     Filter for specific words containing 'ei'::
-
-       >>> words = ['banana', 'receive', 'believe', 'ticket', 'deceive']
-       >>> query(words).where(in_('ei')).to_list()
-       ['receive', 'deceive']
 
   .. autofunction:: is_(rhs)
 
@@ -136,11 +136,8 @@ is outside the range 5 to 37.
      :nosignatures:
 
      and_
-     nand_
-     nor_
      not_
      or_
-     xnor_
      xor_
 
   .. autofunction:: and_(predicate1, predicate2)
@@ -152,28 +149,6 @@ is outside the range 5 to 37.
        >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
        >>> query(words).where(and_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
        ['alphabet', 'aghast']
-
-  ..  autofunction:: nand_(predicate1, predicate2)
-
-      ..rubric:: Example
-
-      Filter a list for all the words which don't both start and end with the
-      letters 'a' and 't' respectively::
-
-        >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-        >>> query(words).where(nand_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
-        ['train', 'apple', 'tent', 'alarm']
-
-  .. autofunction:: nor_(predicate1, predicate2)
-
-     .. rubric:: Example
-
-     Filter a list for all words which neither start with 'a' nor end with
-     't'::
-
-       >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-       >>> query(words).where(nor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
-       ['train']
 
   .. autofunction:: not_(predicate)
 
@@ -208,16 +183,6 @@ is outside the range 5 to 37.
        >>> query(words).where(xor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
        ['apple', 'tent', 'alarm']
 
-  .. autofunction:: xnor_(predicate1, predicate2)
-
-     .. rubric:: Example
-
-     Filter a list for all words which, if they start with 'a' end with 't' or
-     don't start with 'a' and don't end with 't'::
-
-       >>> words = ['alphabet', 'train', 'apple', 'aghast', 'tent', 'alarm']
-       >>> query(words).where(xnor_(m_('startswith', 'a'), m_('endswith', 't'))).to_list()
-       ['alphabet', 'train', 'aghast']
 
 
 
