@@ -19,10 +19,10 @@ class TestGrouping(unittest.TestCase):
 
     def test_grouping_repr(self):
         b_grouping = Grouping('b', [5, 6, 7, 8])
-        self.assertEqual(repr(b_grouping), "Grouping(key='b')")
+        self.assertEqual(repr(b_grouping), "Grouping(key='b', items=[5, 6, 7, 8])")
 
         c_grouping = Grouping('c', [9, 10, 11, 12, 13])
-        self.assertEqual(repr(c_grouping), "Grouping(key='c')")
+        self.assertEqual(repr(c_grouping), "Grouping(key='c', items=[9, 10, 11, 12, 13])")
 
     def test_grouping_key(self):
         b_grouping = Grouping('b', [5, 6, 7, 8])
