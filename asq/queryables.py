@@ -2090,7 +2090,27 @@ class Queryable(object):
                 return False
         return True
 
-    # TODO: [asq 1.1] Implement the __eq__ and __ne__ operators in terms of sequence_equal
+    def __eq__(self, rhs):
+        '''Determine value equality with another iterable.
+
+        Args:
+           rhs: Any iterable collection.
+
+        Returns:
+            True if the sequences are equal in value, otherwise False.
+        '''
+        return self.sequence_equal(rhs)
+
+    def __ne__(self, rhs):
+        '''Determine value inequality with another iterable.
+
+        Args:
+           rhs: Any iterable collection.
+
+        Returns:
+            True if the sequences are inequal in value, otherwise False.
+        '''
+        return not (self == rhs)
 
     def log(self, logger=None, label=None, eager=False):
         '''
@@ -2551,16 +2571,16 @@ class Grouping(Queryable):
         objects. Instances of this class are retrieved from Lookup objects.
     '''
 
-    def __init__(self, key, group):
+    def __init__(self, key, items):
         '''Create a Grouping with a given key and a collection of members.
 
         Args:
             key: The key corresponding to this Grouping
 
-            group: An iterable collection of the members of the group.
+            items: An iterable collection of the members of the group.
         '''
         self._key = key
-        sequence = list(group)
+        sequence = list(items)
         super(Grouping, self).__init__(sequence)
 
     key = property(lambda self: self._key,
@@ -2595,7 +2615,8 @@ class Grouping(Queryable):
         return self.key != rhs.key or not self.sequence_equal(rhs)
     
     def __repr__(self):
-        return 'Grouping(key={k})'.format(k=repr(self._key))
+        return 'Grouping(key={key}, items={items})'.format(key=repr(self._key),
+                                                     items=repr(self.to_list()))
 
 # TODO: [asq 1.1] Move is_iterable into another file
 
