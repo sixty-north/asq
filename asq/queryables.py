@@ -14,6 +14,9 @@ from ._portability import (imap, ifilter, irange, izip, izip_longest,
 # A sentinel singleton used to identify default argument values.
 default = object()
 
+class OutOfRangeError(ValueError):
+    '''A subclass of ValueError for signalling out of range values.'''
+    pass
 
 class Queryable(object):
     '''Queries over iterables executed serially.
@@ -797,13 +800,13 @@ class Queryable(object):
                              "closed Queryable.")
 
         if index < 0:
-            raise ValueError("Attempt to use negative index")
+            raise OutOfRangeError("Attempt to use negative index.")
 
         # Attempt to use __getitem__
         try:
             return self._iterable[index]
         except IndexError:
-            raise ValueError("Index out of range")
+            raise OutOfRangeError("Index out of range.")
         except TypeError:
             pass
 
@@ -811,7 +814,7 @@ class Queryable(object):
         for i, item in enumerate(self):
             if i == index:
                 return item
-        raise ValueError("element_at(index) out of range.")
+        raise OutOfRangeError("element_at(index) out of range.")
 
     def count(self, predicate=None):
         '''Return the number of elements (which match an optional predicate).
@@ -2229,9 +2232,13 @@ class Queryable(object):
             The value of the element at offset index into the sequence.
 
         Raises:
+            ValueError: If the Queryable is closed().
             IndexError: If the index is out-of-range.
         '''
-        return self.element_at(index)
+        try:
+            return self.element_at(index)
+        except OutOfRangeError as e:
+            raise IndexError(str(e))
 
     def __reversed__(self):
         '''Support for sequence reversal using the reversed() built-in.
@@ -2243,6 +2250,8 @@ class Queryable(object):
         Returns:
             A Queryable over the reversed sequence.
 
+        Raises:
+            ValueError: If the Queryable is closed().
         '''
         return self.reverse()
 
