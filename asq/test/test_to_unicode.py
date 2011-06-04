@@ -9,19 +9,19 @@ if has_unicode_type():
     class TestToUnicode(unittest.TestCase):
 
         def test_to_unicode(self):
-            a = "This is a string"
+            a = u"This is a string"
             b = Queryable(a).to_unicode()
             self.assertEqual(a, b)
 
         def test_to_unicode_from_sequence(self):
-            a = ["This ", "is ", "a ", "string!"]
-            b = "This is a string!"
+            a = [u"This ", u"is ", u"a ", u"string!"]
+            b = u"This is a string!"
             c = Queryable(a).to_unicode()
             self.assertEqual(b, c)
 
         def test_to_unicode_from_empty_sequence(self):
             a = []
-            b = ""
+            b = u""
             c = Queryable(a).to_unicode()
             self.assertEqual(b, c)
 
@@ -32,31 +32,31 @@ if has_unicode_type():
             self.assertEqual(b, c)
 
         def test_to_unicode_one_with_separator(self):
-            a = ['string']
+            a = [u'string']
             b = Queryable(a).to_unicode(separator=', ')
-            c = "string"
+            c = u"string"
             self.assertEqual(b, c)
 
         def test_to_unicode_many_with_separator(self):
-            a = ['this', 'list', 'will', 'be', 'separated', 'by', 'semicolons']
-            b = Queryable(a).to_unicode(separator='; ')
-            c = "this; list; will; be; separated; by; semicolons"
+            a = [u'this', u'list', u'will', u'be', u'separated', u'by', u'semicolons']
+            b = Queryable(a).to_unicode(separator=u'; ')
+            c = u"this; list; will; be; separated; by; semicolons"
             self.assertEqual(b, c)
 
         def test_to_unicode_stringify_separator(self):
-            a = ['this', 'list', 'will', 'be', 'separated', 'by', 'fives']
+            a = [u'this', u'list', u'will', u'be', u'separated', u'by', u'fives']
             b = Queryable(a).to_unicode(separator=5)
-            c = "this5list5will5be5separated5by5fives"
+            c = u"this5list5will5be5separated5by5fives"
             self.assertEqual(b, c)
 
         def test_stringify_items(self):
             a = [1, 5, 9, 34, 12, 3, 67, 1, 0]
-            b = Queryable(a).to_unicode(separator=', ')
-            c = "1, 5, 9, 34, 12, 3, 67, 1, 0"
+            b = Queryable(a).to_unicode(separator=u', ')
+            c = u"1, 5, 9, 34, 12, 3, 67, 1, 0"
             self.assertEqual(b, c)
 
         def test_to_unicode_closed(self):
-            a = ['Aardvark', 'Balloon', 'Carrot', 'Daisy', 'Ecological']
+            a = [u'Aardvark', u'Balloon', u'Carrot', u'Daisy', u'Ecological']
             b = Queryable(a)
             b.close()
             self.assertRaises(ValueError, lambda: b.to_unicode())
