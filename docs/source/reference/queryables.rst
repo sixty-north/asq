@@ -15,10 +15,12 @@
 
          Queryable.__contains__
          Queryable.__enter__
+         Queryable.__eq__
          Queryable.__exit__
          Queryable.__getitem__
          Queryable.__init__
          Queryable.__iter__
+         Queryable.__ne__
          Queryable.__reversed__
          Queryable.__repr__
          Queryable.__str__
@@ -90,6 +92,21 @@
 
       .. automethod:: __enter__()
 
+      .. automethod:: __eq__(rjs)
+
+         .. note::
+
+           This in the infix operator equivalent of the sequence_equal()
+           query operator.
+
+         .. rubric:: Examples
+
+         Test whether a sequence is equal to a list::
+
+           >>> expected = [2, 4, 8, 16, 32]
+           >>> range(1, 5).select(lambda x: x ** 2) == expected
+           True
+
       .. automethod:: __exit__(type, value, traceback)
 
       .. automethod:: __getitem__(index)
@@ -156,6 +173,16 @@
           1
           9
           4
+
+      .. automethod:: __ne__(rjs)
+
+         .. rubric:: Examples
+
+         Test whether a sequence is not equal to a list::
+
+           >>> expected = [1, 2, 3]
+           >>> range(1, 5).select(lambda x: x ** 2) != expected
+           True
 
       .. automethod:: __reversed__()
 
@@ -1645,4 +1672,3 @@
            >>> repr(g)
            Grouping(key="fruit", items=["pear", "apple", "orange", "banana"])
 
-        

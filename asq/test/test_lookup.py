@@ -203,4 +203,79 @@ class TestLookup(unittest.TestCase):
         self.assertEqual(len(a_group), 1)
         self.assertTrue(isinstance(a_group[0], Grouping))
         self.assertEqual(a_group[0].key, 'a')
+
+    def test_lookup_equality_positive(self):
+        kv1 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('c', 'cantaloupe') ]
+        group1 = Lookup(kv1)
+
+        kv2 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('c', 'cantaloupe') ]
+        group2 = Lookup(kv2)
         
+        self.assertTrue(group1 == group2)
+
+    def test_lookup_equality_negative(self):
+        kv1 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('c', 'cantaloupe') ]
+        group1 = Lookup(kv1)
+
+        kv2 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('s', 'star fruit') ]
+        group2 = Lookup(kv2)
+
+        self.assertFalse(group1 == group2)
+
+    def test_lookup_inequality_positive(self):
+        kv1 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('c', 'cantaloupe') ]
+        group1 = Lookup(kv1)
+
+        kv2 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('s', 'star fruit') ]
+        group2 = Lookup(kv2)
+
+        self.assertTrue(group1 != group2)
+
+    def test_lookup_inequality_negative(self):
+        kv1 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('c', 'cantaloupe') ]
+        group1 = Lookup(kv1)
+
+        kv2 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('c', 'cantaloupe') ]
+        group2 = Lookup(kv2)
+
+        self.assertFalse(group1 != group2)
