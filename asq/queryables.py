@@ -9,7 +9,7 @@ from .extension import extend
 from ._types import (is_iterable, is_type)
 from ._portability import (imap, ifilter, irange, izip, izip_longest,
                           fold, is_callable, OrderedDict, has_unicode_type,
-                          itervalues, iteritems)
+                          itervalues, iteritems, totally_ordered)
 
 # A sentinel singleton used to identify default argument values.
 default = object()
@@ -2269,14 +2269,28 @@ class Queryable(object):
     def __str__(self):
         '''Returns a stringified representation of the Queryable.
 
-        The string will *not* necessarily contain the sequence data.
+        The string *will* necessarily contain the sequence data.
 
         Returns:
             A stringified representation of the Queryable.
         '''
-        return repr(self)
+        return self.to_str()
 
 if has_unicode_type():
+
+    @extend(Queryable)
+    def __unicode__(self):
+        '''Returns a stringified unicode representation of the Queryable.
+
+        Note: This method is only available on Python implementations which
+            support the named unicode type (e.g. Python 2.x).
+
+        The string *will* necessarily contain the sequence data.
+
+        Returns:
+            A stringified unicode representation of the Queryable.
+        '''
+        return self.to_unicode()
 
     @extend(Queryable)
     def to_unicode(self, separator=''):
@@ -2410,6 +2424,7 @@ class OrderedQueryable(Queryable):
 
         elif direction_total == len(self._funcs):
             # Uniform descending sort - invert sense of operators
+            @totally_ordered
             class MultiKey(object):
                 def __init__(self, t):
                     self.t = tuple(t)
@@ -2418,23 +2433,11 @@ class OrderedQueryable(Queryable):
                     # Uniform descending sort - swap the comparison operators
                     return lhs.t > rhs.t
 
-                def __gt__(lhs, rhs):
-                    # Uniform descending sort - swap the comparison operators
-                    return lhs.t < rhs.t
-
                 def __eq__(lhs, rhs):
                     return lhs.t == rhs.t
-
-                def __ne__(lhs, rhs):
-                    return lhs.t != rhs.t
-
-                def __le__(lhs, rhs):
-                    return lhs.t >= rhs.t
-
-                def __ge__(lhs, rhs):
-                    return lhs.t <= rhs.t
         else:
             # Mixed ascending/descending sort - override all operators
+            @totally_ordered
             class MultiKey(object):
                 def __init__(self, t):
                     self.t = tuple(t)
@@ -2451,18 +2454,6 @@ class OrderedQueryable(Queryable):
 
                 def __eq__(lhs, rhs):
                     return lhs.t == rhs.t
-
-                def __ne__(lhs, rhs):
-                    return lhs.t != rhs.t
-
-                def __gt__(lhs, rhs):
-                    return rhs < lhs
-
-                def __ge__(lhs, rhs):
-                    return not lhs < rhs
-
-                def __le__(lhs, rhs):
-                    return not rhs < lhs
 
         # Uniform ascending sort - decorate, sort, undecorate using tuple element
         def create_key(index, item):
