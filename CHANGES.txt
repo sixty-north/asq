@@ -1,4 +1,21 @@
 Changes
 =======
 
-This is a list of changes
+asq 1.0
+-------
+
+Huge correctness and completeness changes for 1.0 since 0.9.  The API now has
+feature equivalence with LINQ for objects with 100% test coverage and complete
+documentation.
+
+The API has been very much reorganised with some renaming of crucial functions.
+The important asq() function is now called query() to prevent a clash with the
+package name itself and is found in the asq.initiators package.
+
+For common asq usage you now need to do::
+
+  from asq.initiators import query
+  a = [1, 2, 3]
+  query(a).select(lambda x: x*x).to_list()
+  
+to get started.  For more than that, consult the documentation.
