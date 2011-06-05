@@ -224,7 +224,7 @@ to support idiomatic Python usage.
   ``__getitem__``  Support for indexing with []    ``element_at()``
   ``__reversed__`` Support for reversed() built-in ``reverse()``
   ``__repr__``     Stringified representation
-  ``__str__``      Stringified representation      `
+  ``__str__``      Stringified representation      
   ================ =============================== =========================
 
 So, for example, the expression::
