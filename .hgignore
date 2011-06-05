@@ -5,7 +5,7 @@ syntax: glob
 
 # Distutils
 MANIFEST
-build/lib.*
+build/lib/*
 dist/*
 
 # Sphinx docs
