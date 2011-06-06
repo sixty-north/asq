@@ -125,9 +125,8 @@ class Queryable(object):
     def select(self, selector):
         '''Transforms each element of a sequence into a new form.
 
-        Each element is transformed through a selector function to produce a
-        value for each value in the source sequence. The generated sequence is
-        lazily evaluated.
+        Each element of the source is transformed through a selector function
+        to produce a corresponding element in teh result sequence.
 
         If the selector is identity the method will return self.
 
