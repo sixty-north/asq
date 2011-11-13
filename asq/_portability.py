@@ -1,6 +1,6 @@
 '''Python 2 and Python 3 compatibility'''
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 import sys
 
@@ -171,3 +171,14 @@ except ImportError:
                 setattr(cls, opname, opfunc)
         return cls
 
+try:
+    # Python 2
+    basestring()
+    def is_string(s):
+        return isinstance(s, basestring)
+except NameError:
+    # Python 3
+    def is_string(s):
+        return isinstance(s, str)
+    
+        

@@ -1,8 +1,9 @@
 '''
 Predicate functions for testing Python objects to determine their type.
 '''
+from asq import _portability
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 def is_iterable(obj):
     '''Determine if an object is iterable.
@@ -33,3 +34,13 @@ def is_type(obj):
         return True
     except TypeError:
         return False
+
+# TODO: Put is_callable in here too.
+
+# TODO: is_string
+def is_string(obj):
+    return _portability.is_string(obj)
+
+# TODO: is_integer
+
+

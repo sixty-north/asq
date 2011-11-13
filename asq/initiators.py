@@ -2,6 +2,7 @@
 import itertools
 
 from ._portability import irange
+from asq._portability import is_callable
 
 __author__ = 'Robert Smallshire'
 
@@ -83,3 +84,18 @@ def empty():
     if _empty is None:
         _empty = query(tuple())
     return _empty
+
+
+def generate(func, initial):
+    if not is_callable(func):
+        raise TypeError("func is not callable in call to generate().")
+    return query(_generate_result(func, initial))
+
+def _generate_result(func, initial):
+    current = initial
+    while True:
+        yield current
+        current = func(current)
+
+
+

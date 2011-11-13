@@ -1,8 +1,31 @@
-'''Classes which support the queryable interface.'''
+'''Classes which support the Queryable interface.'''
+
+# Copyright (c) 2011 Robert Smallshire.
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+__author__ = 'Robert Smallshire'
 
 import heapq
 import itertools
 import operator
+from asq.selectors import make_selector
 
 from .selectors import identity
 from .extension import extend
@@ -151,14 +174,19 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call select() on a closed Queryable.")
 
-        if not is_callable(selector):
-            raise TypeError("select() parameter selector={selector} is not "
-                            "callable".format(selector=repr(selector)))
+        try:
+            selector = make_selector(selector)
+        except ValueError:
+            raise TypeError("select() parameter selector={selector} cannot be"
+                            "converted into a callable "
+                            "selector".format(selector=repr(selector)))
 
         if selector is identity:
             return self
 
         return self._create(imap(selector, self))
+
+
 
     def select_with_index(self, selector=lambda index, element: (index,
                                                                  element)):
@@ -1210,7 +1238,8 @@ class Queryable(object):
                                                             selector))
 
     def _generate_difference_result(self, second_iterable, selector):
-        seen_elements = self._create(second_iterable).select(selector).distinct().to_set()
+        seen_elements = self._create(second_iterable).select(selector)    \
+                                                     .distinct().to_set()
         for item in self:
             sitem = selector(item)
             if selector(item) not in seen_elements:
@@ -1257,7 +1286,8 @@ class Queryable(object):
                                                             selector))
 
     def _generate_intersect_result(self, second_iterable, selector):
-        second_set = self._create(second_iterable).select(selector).distinct().to_set()
+        second_set = self._create(second_iterable).select(selector)    \
+                                                  .distinct().to_set()
         for item in self:
             sitem = selector(item)
             if sitem in second_set:
@@ -2194,6 +2224,89 @@ class Queryable(object):
         '''
         from .parallel_queryable import ParallelQueryable
         return ParallelQueryable(self, pool)
+
+    # More operators
+
+    def scan(self, func=operator.add):
+        '''
+        An inclusive prefix sum which returns the cumulative application of the
+        supplied function up to an including the current element.
+
+        Args:
+             func: An optional binary function which is commutative - that is,
+                 the order of the arguments is unimportant.  Defaults to a
+                 summing operator.
+
+        Returns:
+            A Queryable such that the nth element is the sum of the first n
+            elements of the source sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+            TypeError: If func is not callable.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call scan() on a "
+                             "closed Queryable.")
+
+        if not is_callable(func):
+            raise TypeError("scan() parameter func={0} is "
+                            "not callable".format(repr(func)))
+
+        return self._create(self._generate_scan_result(func))
+
+    def _generate_scan_result(self, func):
+
+        i = iter(self)
+        try:
+            item = next(i)
+            yield item
+            accumulator = item
+        except StopIteration:
+            return
+
+        for item in i:
+            accumulator = func(accumulator, item)
+            yield accumulator
+
+    def pre_scan(self, func=operator.add, seed=0):
+        '''
+        An exclusive prefix sum which returns the cumulative application of the
+        supplied function up to but excluding the current element.
+
+        Args:
+             func: An optional binary function which is commutative - that is,
+                 the order of the arguments is unimportant.  Defaults to a
+                 summing operator.
+
+             seed: The first element of the prefix sum and therefore also the
+                 first element of the returned sequence.
+
+        Returns:
+            A Queryable such that the nth element is the sum of the first n-1
+            elements of the source sequence.
+
+        Raises:
+            ValueError: If the Queryable has been closed.
+            TypeError: If func is not callable.
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call pre_scan() on a "
+                             "closed Queryable.")
+
+        if not is_callable(func):
+            raise TypeError("pre_scan() parameter func={0} is "
+                            "not callable".format(repr(func)))
+
+        return self._create(self._generate_pre_scan_result(func, seed))
+
+    def _generate_pre_scan_result(self, func, seed):
+
+        accumulator = seed
+        for item in self:
+            yield accumulator
+            accumulator = func(accumulator, item)
+
 
     # Methods for more Pythonic usage
 

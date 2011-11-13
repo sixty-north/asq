@@ -1,6 +1,27 @@
 Changes
 =======
 
+asq 1.1
+-------
+
+  * The selector factories k_(), a_() and m_() have much faster implementations
+    because they are now simply aliases for itemgetter, attrgetter and
+    methodcaller from the Python standard library operator module.  As a
+    result, even though they remain backwards API compatible with those in
+    asq 1.0 their capabilities are also extended somewhat:
+
+      * k_ can optionally accept more than one argument (key) and if so, the
+        selector it produces will return a tuple of multiple looked-up values
+        rather than a single value.
+
+      * a_ can optionally accept more than one argument (key) and if so, the
+        selector it produces will return a tuple of multiple looked-up values
+        rather than a single value. Furthermore, the attribute names supplied
+        in each argument can now contain dots to refer to nested attributes.
+
+  * Added asq.selectors.make_selector which will create a selector directly
+    from a string or integer using attribute or item lookup respectively.
+
 asq 1.0
 -------
 

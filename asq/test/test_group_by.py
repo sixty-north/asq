@@ -1,7 +1,7 @@
 import unittest
 from asq.queryables import Grouping, Queryable
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestGroupBy(unittest.TestCase):
 

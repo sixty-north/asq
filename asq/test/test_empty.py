@@ -1,7 +1,7 @@
 import unittest
 from asq.initiators import empty
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestEmpty(unittest.TestCase):
 
