@@ -2,7 +2,7 @@ import unittest
 from asq.queryables import Queryable
 from asq.test.test_queryable import TracingGenerator, infinite
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestGroupJoin(unittest.TestCase):
 

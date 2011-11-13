@@ -2,7 +2,7 @@ import unittest
 from asq._portability import has_unicode_type
 from asq.queryables import Queryable
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 if has_unicode_type():
 

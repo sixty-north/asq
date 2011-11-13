@@ -15,6 +15,7 @@ class Record(object):
                 attribute with the same name as the argument and the given
                 value.
         '''
+        # TODO: Do we need to check for duplicates?
         self.__dict__.update(kwargs)
 
     def __eq__(self, rhs):

@@ -3,7 +3,7 @@ import pickle
 
 from asq.record import Record, new
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestRecord(unittest.TestCase):
 

@@ -3,7 +3,7 @@ from asq.queryables import Grouping
 
 from asq._portability import OrderedDict
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestGrouping(unittest.TestCase):
 

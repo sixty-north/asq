@@ -2,7 +2,7 @@ import itertools
 import unittest
 from asq.queryables import Queryable
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 def index_by_identity(sequence, obj):
     '''Returns the index of the instance in the sequence. Comparison is by

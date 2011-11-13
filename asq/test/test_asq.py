@@ -1,7 +1,7 @@
 import unittest
 from asq.initiators import query
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestAsq(unittest.TestCase):
 

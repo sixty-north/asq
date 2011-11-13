@@ -1,7 +1,7 @@
 import unittest
 from asq.queryables import Lookup, Grouping
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestLookup(unittest.TestCase):
 

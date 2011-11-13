@@ -1,7 +1,7 @@
 import unittest
 from asq.initiators import integers
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestRange(unittest.TestCase):
 

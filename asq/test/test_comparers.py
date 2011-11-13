@@ -1,7 +1,7 @@
 import unittest
 from asq.comparers import insensitive_eq
 
-__author__ = 'rjs'
+__author__ = "Robert Smallshire"
 
 class TestComparers(unittest.TestCase):
 
