@@ -2263,7 +2263,7 @@ class Queryable(object):
             A stringified representation of the Queryable.
         '''
         # Must be careful not to consume the iterable here
-        return 'Queryable({iterable})'.format(iterable=self._iterable)
+        return 'Queryable({iterable})'.format(iterable=repr(self._iterable))
 
     def __str__(self):
         '''Returns a stringified representation of the Queryable.
