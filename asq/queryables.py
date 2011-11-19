@@ -2407,58 +2407,69 @@ class OrderedQueryable(Queryable):
         self._funcs.append((+1, key_selector))
         return self
 
+    AscendingMultiKey = tuple
+
+    @totally_ordered
+    class DescendingMultiKey(object):
+        def __init__(self, t):
+            self.t = tuple(t)
+
+        def __lt__(lhs, rhs):
+            # Uniform descending sort - swap the comparison operators
+            return lhs.t > rhs.t
+
+        def __eq__(lhs, rhs):
+            return lhs.t == rhs.t
+
+    def _create_mixed_multi_key(self, directions):
+        @totally_ordered
+        class MixedMultiKey(object):
+            def __init__(self, t):
+                self.t = tuple(t)
+
+            # TODO: [asq 1.1] We could use some runtime code generation here to compile a custom comparison operator
+            def __lt__(lhs, rhs):
+                for direction, lhs_element, rhs_element in zip(directions, lhs.t, rhs.t):
+                    cmp = (lhs_element > rhs_element) - (rhs_element > lhs_element)
+                    if cmp == direction:
+                        return True
+                    if cmp == -direction:
+                        return False
+                return False
+
+            def __eq__(lhs, rhs):
+                return lhs.t == rhs.t
+
+        return MixedMultiKey
+
+
+    def _sorting_key_type(self):
+        directions = [direction for direction, _ in self._funcs]
+        direction_total = sum(directions)
+
+        if direction_total == -len(self._funcs):
+            return OrderedQueryable.AscendingMultiKey
+
+        if direction_total == len(self._funcs):
+            return OrderedQueryable.DescendingMultiKey
+
+        return self._create_mixed_multi_key(directions)
+
     def __iter__(self):
         '''Support for the iterator protocol.
 
         Returns:
             An iterator object over the sorted elements.
         '''
+        MultiKey = self._sorting_key_type()
 
-        # Determine which sorting algorithms to use
-        directions = [direction for direction, _ in self._funcs]
-        direction_total = sum(directions)
-        if direction_total == -len(self._funcs):
-            # Uniform ascending sort - do nothing
-            MultiKey = tuple
-
-        elif direction_total == len(self._funcs):
-            # Uniform descending sort - invert sense of operators
-            @totally_ordered
-            class MultiKey(object):
-                def __init__(self, t):
-                    self.t = tuple(t)
-
-                def __lt__(lhs, rhs):
-                    # Uniform descending sort - swap the comparison operators
-                    return lhs.t > rhs.t
-
-                def __eq__(lhs, rhs):
-                    return lhs.t == rhs.t
-        else:
-            # Mixed ascending/descending sort - override all operators
-            @totally_ordered
-            class MultiKey(object):
-                def __init__(self, t):
-                    self.t = tuple(t)
-
-                # TODO: [asq 1.1] We could use some runtime code generation here to compile a custom comparison operator
-                def __lt__(lhs, rhs):
-                    for direction, lhs_element, rhs_element in zip(directions, lhs.t, rhs.t):
-                        cmp = (lhs_element > rhs_element) - (rhs_element > lhs_element)
-                        if cmp == direction:
-                            return True
-                        if cmp == -direction:
-                            return False
-                    return False
-
-                def __eq__(lhs, rhs):
-                    return lhs.t == rhs.t
-
-        # Uniform ascending sort - decorate, sort, undecorate using tuple element
-        def create_key(index, item):
+        # Uniform ascending sort - (DSU) Decorate, Sort, Undecorate using a
+        # 3-tuple to contain the derived key, the index (so the sort is stable)
+        # and the actual item (so we can retrieve when we undecorate).
+        def create_key(item):
             return MultiKey(func(item) for _, func in self._funcs)
 
-        lst = [(create_key(index, item), index, item) for index, item in enumerate(self._iterable)]
+        lst = [(create_key(item), index, item) for index, item in enumerate(self._iterable)]
         heapq.heapify(lst)
         while lst:
             key, index, item = heapq.heappop(lst)
