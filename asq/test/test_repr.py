@@ -47,7 +47,7 @@ class TestRepr(unittest.TestCase):
         self.assertEqual(d, e)
 
     def test_repr_ordered_non_consumption(self):
-        a = (x for x in range(10, 1, -1))
+        a = [x for x in range(10, 1, -1)]
         b = Queryable(a).order_by()
         c = repr(b)
         d = b.to_list()
