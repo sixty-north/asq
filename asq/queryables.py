@@ -2411,6 +2411,10 @@ class OrderedQueryable(Queryable):
 
     @totally_ordered
     class DescendingMultiKey(object):
+        '''
+        TODO
+        '''
+
         def __init__(self, t):
             self.t = tuple(t)
 
@@ -2422,6 +2426,10 @@ class OrderedQueryable(Queryable):
             return lhs.t == rhs.t
 
     def _create_mixed_multi_key(self, directions):
+        '''
+        TODO
+        '''
+
         @totally_ordered
         class MixedMultiKey(object):
             def __init__(self, t):
@@ -2444,6 +2452,8 @@ class OrderedQueryable(Queryable):
 
 
     def _sorting_key_type(self):
+        '''TODO
+        '''
         directions = [direction for direction, _ in self._funcs]
         direction_total = sum(directions)
 
@@ -2463,7 +2473,7 @@ class OrderedQueryable(Queryable):
         '''
         MultiKey = self._sorting_key_type()
 
-        # Uniform ascending sort - (DSU) Decorate, Sort, Undecorate using a
+        # Uniform ascending DSU sort - Decorate, Sort, Undecorate using a
         # 3-tuple to contain the derived key, the index (so the sort is stable)
         # and the actual item (so we can retrieve when we undecorate).
         def create_key(item):
@@ -2499,18 +2509,31 @@ class Lookup(Queryable):
                 An iterable over 2-tuples each containing a key, value pair.
         '''
         # Maintain an ordered dictionary of groups represented as lists
-        self._dict = OrderedDict()
-        for key, value in key_value_pairs:
-            if key not in self._dict:
-                self._dict[key] = []
-            self._dict[key].append(value)
-
-        # Replace each list with a Grouping
-        for key, value in iteritems(self._dict):
-            grouping = Grouping(key, value)
-            self._dict[key] = grouping
-            
+        self._dict = Lookup._dict_of_groupings(key_value_pairs)
         super(Lookup, self).__init__(self._dict)
+
+
+    @staticmethod
+    def _dict_of_groupings(key_value_pairs):
+        '''Create an OrderedDictionary of from the supplies key, value pairs,
+        where duplicate keys append to the list of values for each key.
+        '''
+        d = OrderedDict()
+        for key, value in key_value_pairs:
+            if key not in d:
+                d[key] = []
+            d[key].append(value)
+
+        Lookup._replace_lists_with_groupings(d)
+        return d
+
+    @staticmethod
+    def _replace_lists_with_groupings(d):
+        '''Replace the sequences in the dictionary values with Groupings.
+        '''
+        for key, value in iteritems(d):
+            d[key] = Grouping(key, value)
+
 
     def _iter(self):
         return itervalues(self._dict)

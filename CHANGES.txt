@@ -1,6 +1,20 @@
 Changes
 =======
 
+asq 1.0.1
+---------
+
+Fixed the repr() operator on Queryable so that it never consumes the underlying
+iterable; doing so caused major problems with debuggers which used repr() for
+displaying program state.  The repr() operator now correctly shows the class
+type.
+
+The implementation of OrderedQueryable.__iter__ has been refactored and
+simplified a little to improve maintainability.
+
+The implementation of the Lookup.__init__ method has been refactored and
+simplified a little to improve maintainability.
+
 asq 1.0
 -------
 
