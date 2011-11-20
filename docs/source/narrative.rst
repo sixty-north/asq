@@ -166,15 +166,15 @@ three students resulting from the previous query with::
   ...              .to_list()
   ['Joe Blogs', 'John Doe', 'Jane Doe']
 
-  .. note:
+.. note:
 
-     The backslashes above are Python's line-continuation character, used here
-     for readability. They are not part of the syntax of the expression.
+ The backslashes above are Python's line-continuation character, used here
+ for readability. They are not part of the syntax of the expression.
 
 If we would like our results sorted by the students' minimum scores we can use
 the Python built-in function ``min()`` with the ``order_by`` query operator::
 
- >>> query(students).where(lambda s: s['firstname'].startswith('J'))      \
+ >>> query(students).where(lambda s: s['firstname'].startswith('J'))        \
  ...                .order_by(lambda s: min(s['scores']))                   \
  ...                .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
  ...                .to_list()
@@ -188,9 +188,9 @@ primary query.  For example, to order the students by their average score we
 can invoke the ``query()`` initiator a second time and chain the ``average()``
 query operator to determine the mean score to pass to ``order_by()``::
 
-  >>>  query(students).order_by(lambda s: query(s['scores']).average()) \
+  >>>  query(students).order_by(lambda s: query(s['scores']).average())            \
   ...                 .where(lambda student: student['firstname'].startswith('J')) \
-  ...                 .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
+  ...                 .select(lambda s: s['firstname'] + ' ' + s['lastname'])      \
   ...                 .to_list()
   ['Joe Blogs', 'John Doe', 'Jane Doe']
 
