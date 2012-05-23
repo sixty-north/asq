@@ -556,7 +556,7 @@ class Queryable(object):
             raise TypeError("order_by() parameter key_selector={key_selector} "
                     "is not callable".format(key_selector=repr(key_selector)))
 
-        return self._create_ordered(iter(self), -1, key_selector)
+        return self._create_ordered(self, -1, key_selector)
 
     def order_by_descending(self, key_selector=identity):
         '''Sorts by a key in descending order.
@@ -854,6 +854,10 @@ class Queryable(object):
             return len(self._iterable)
         except TypeError:
             pass
+
+        # Recurse if we're dealing with an inner Queryable
+        if isinstance(self._iterable, Queryable):
+            return self._iterable._count()
 
         # Fall back to iterating
         index = -1
@@ -2279,6 +2283,7 @@ class Queryable(object):
         Returns:
             A stringified representation of the Queryable.
         '''
+        #return repr(self)
         return self.to_str()
 
 if has_unicode_type():
@@ -2650,7 +2655,7 @@ class Grouping(Queryable):
             True if the keys or sequences are not equal, otherwise False.
         '''
         return self.key != rhs.key or not self.sequence_equal(rhs)
-    
+
     def __repr__(self):
         return 'Grouping(key={key}, items={items})'.format(key=repr(self._key),
                                                     items=repr(self.to_list()))
