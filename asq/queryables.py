@@ -90,6 +90,12 @@ class Queryable(object):
             iterable: The iterable sequence to be ordered.
             order: +1 for ascending, -1 for descending.
             func: The function to select the sorting key.
+
+        Returns:
+            An OrderedQueryable.
+
+        Raises:
+            TypeError: If the argument is not in fact iterable.
         '''
         return OrderedQueryable(iterable, direction, func)
 
