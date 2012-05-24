@@ -30,6 +30,18 @@ class TestSequenceEqual(unittest.TestCase):
          c = Queryable(a).sequence_equal(b)
          self.assertFalse(c)
 
+    def test_sequence_equal_shorter_longer_iterable(self):
+        a = iter([1, 2, 3])
+        b = iter((1, 2, 3, 4, 16, 32))
+        c = Queryable(a).sequence_equal(b)
+        self.assertFalse(c)
+
+    def test_sequence_equal_longer_shorter_iterable(self):
+        a = iter([1, 2, 3, 4, 5, 6])
+        b = iter((1, 2, 3))
+        c = Queryable(a).sequence_equal(b)
+        self.assertFalse(c)
+
     def test_sequence_equal_empty(self):
         a = []
         b = ()
