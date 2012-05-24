@@ -49,8 +49,6 @@ class TestOrderBy(unittest.TestCase):
         b.close()
         self.assertRaises(ValueError, lambda: b.order_by(len))
 
-
-
     def test_order_by_stability(self):
         a = [1, 2, 3]
         b = [1, 2, 3]
@@ -141,6 +139,18 @@ class TestOrderBy(unittest.TestCase):
         c = ['by', 'and', 'then', 'sort', 'words', 'these', 'length', 'lexicographically']
         self.assertEqual(b, c)
 
+    def test_then_by_equal_words(self):
+        a = ['this', 'sentence', 'contains', 'this', 'word', 'twice']
+        b = Queryable(a).order_by(len).then_by_descending().to_list()
+        c = ['word', 'this', 'this', 'twice', 'sentence', 'contains']
+        self.assertEqual(b, c)
+
+    def test_then_by_identical_words(self):
+        a = ['banana', 'banana', 'banana']
+        b = Queryable(a).order_by(len).then_by_descending().to_list()
+        c = ['banana', 'banana', 'banana']
+        self.assertEqual(b, c)
+
     def test_then_by_descending_key(self):
         a = ['sort', 'using', 'third', 'letter', 'then', 'second']
         b = Queryable(a).order_by(lambda x: x[2]).then_by_descending(lambda y: y[1]).to_list()
@@ -157,4 +167,3 @@ class TestOrderBy(unittest.TestCase):
         b = Queryable(a).order_by(lambda x: x[2])
         b.close()
         self.assertRaises(ValueError, lambda: b.then_by_descending(lambda x: x[1]))
-

@@ -2459,6 +2459,9 @@ class OrderedQueryable(Queryable):
             def __eq__(lhs, rhs):
                 return lhs.t == rhs.t
 
+            def __repr__(self):
+                return "MixedMultiKey({0})".format(repr(self.t))
+
         return MixedMultiKey
 
 

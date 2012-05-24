@@ -21,3 +21,9 @@ class TestToSet(unittest.TestCase):
         a = [1, 2, 4, 8, 8, 16, 32]
         b = Queryable(a)
         self.assertRaises(ValueError, lambda: b.to_set())
+
+    def test_to_set_from_set(self):
+        a = set([1, 6, 4, 3, 2])
+        b = Queryable(a).to_set()
+        self.assertEqual(a, b)
+
