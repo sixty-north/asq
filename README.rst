@@ -26,7 +26,11 @@ Build status:
 
 .. image:: https://travis-ci.org/sixty-north/segpy.svg?branch=master
     :target: https://travis-ci.org/sixty-north/segpy
+    :alt: Build Status
 
+.. image:: https://readthedocs.org/projects/asq/badge/?version=latest
+    :target: https://readthedocs.org/projects/asq/?badge=latest
+    :alt: Documentation Status
 
 How to get it
 =============
@@ -34,10 +38,9 @@ How to get it
 ``asq`` is available on the Python Package Index and can be installed with
 easy_install from setuptools::
 
-  $ easy_install asq
+  $ pip install asq
 
-Alternatively you can download and unpack the source distribution (link to the
-left) and install using::
+Alternatively you can download and unpack the source and install using::
 
   $ cd asq-1.0
   $ python setup.py install
@@ -46,8 +49,8 @@ Requirements
 ============
 
 This version of ``asq`` works with Python 2.6 and higher, including Python 3.
-It has been tested on Python 2.6, Python 2.7, Python 3.1 and Python 3.2.
-Furthermore it is tested on !IronPython 2.6 and !IronPython 2.7.
+It has been tested on Python 2.6, Python 2.7, Python 3.1 and Python 3.2, 3.3
+and 3.4. Furthermore it is tested on IronPython 2.6 and IronPython 2.7.
 
 ``asq`` has a dependency on the ordereddict module which ships as standard
 with Python 2.7 and upwards, but this module must be installed separately
