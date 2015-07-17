@@ -47,8 +47,6 @@ If you are using Python 2.6 you will also need to install the back-ported
 
 .. _setuptools: http://pypi.python.org/pypi/setuptools/
 
-.. _downloads page: http://code.google.com/p/asq/downloads/list
-
 .. _ordereddict: http://pypi.python.org/pypi/ordereddict
 
 Diving in
