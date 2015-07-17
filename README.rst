@@ -19,6 +19,11 @@ by length and then alphabetically, try::
 Over 40 standard query operators are provided together with various utilities
 to make the API even more convenient to use in Python.
 
+Documentation
+=============
+
+Of course, there is full `Narrative and reference documentation for asq <http://asq.readthedocs.org/>`_
+
 Status
 ======
 
