@@ -173,12 +173,12 @@ except ImportError:
 
 try:
     # Python 2
-    basestring()
+    basestring
     def is_string(s):
         return isinstance(s, basestring)
 except NameError:
     # Python 3
     def is_string(s):
         return isinstance(s, str)
-    
+
         
