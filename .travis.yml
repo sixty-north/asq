@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.3"
+  - "3.4"
+# command to install dependencies
+install:
+  - "pip install -r test/test-requirements.txt"
+# command to run tests
+script: nosetests
