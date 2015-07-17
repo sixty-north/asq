@@ -82,7 +82,7 @@ def gt_(rhs):
 
     Args:
         rhs: (right-hand-side) The value against which the greater-than test
-        will be performed.
+            will be performed.
 
     Returns:
         A unary predicate function which determines whether its single
@@ -97,7 +97,7 @@ def is_(rhs):
 
     Args:
         rhs: (right-hand-side) The value against which the identity test will
-        be performed.
+            be performed.
 
     Returns:
         A unary predicate function which determines whether its single
