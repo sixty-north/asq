@@ -1,21 +1,42 @@
 # Asq's setup.py
 
 from distutils.core import setup
+import io
+import os
+import re
 
 from asq import __version__ as version
 
-with open('README.txt', 'r') as readme:
-    long_description = readme.read()
+def read(*names, **kwargs):
+    with io.open(
+        os.path.join(os.path.dirname(__file__), *names),
+        encoding=kwargs.get("encoding", "utf8")
+    ) as fp:
+        return fp.read()
+
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+# Get the long description from the relevant file
+with open(os.path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name = "asq",
     packages = ["asq"],
-    version = "{version}".format(version=version),
+    version = find_version("asq/version.py"),
     description = "LINQ-for-objects style queries for Python iterables.",
     author = "Robert Smallshire",
     author_email = "robert@smallshire.org.uk",
-    url = "http://code.google.com/p/asq/",
-    download_url="http://code.google.com/p/asq/downloads/detail?name=asq-{version}.tar.gz".format(version=version),
+    url = "https://github.com/rob-smallshire/asq",
     keywords = ["Python", "LINQ"],
     license="MIT License",
     classifiers = [
@@ -31,6 +52,5 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Utilities",
         ],
-    requires = ['ordereddict'],
     long_description = long_description
 )

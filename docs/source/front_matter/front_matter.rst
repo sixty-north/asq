@@ -3,12 +3,12 @@ Copyright
 
 ``asq``
 
-Copyright © 2010-2011 Robert Smallshire
+Copyright © 2010-2015 Robert Smallshire
 
 Official Website
 ================
 
-  http://asq.googlecode.com
+  https://github.com/rob-smallshire/asq
 
 License
 =======
