@@ -19,6 +19,15 @@ by length and then alphabetically, try::
 Over 40 standard query operators are provided together with various utilities
 to make the API even more convenient to use in Python.
 
+Status
+======
+
+Build status:
+
+.. image:: https://travis-ci.org/sixty-north/segpy.svg?branch=master
+    :target: https://travis-ci.org/sixty-north/segpy
+
+
 How to get it
 =============
 
