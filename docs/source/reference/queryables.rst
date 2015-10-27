@@ -92,7 +92,7 @@
 
       .. automethod:: __enter__()
 
-      .. automethod:: __eq__(rjs)
+      .. automethod:: __eq__(rhs)
 
          .. note::
 
@@ -174,7 +174,7 @@
           9
           4
 
-      .. automethod:: __ne__(rjs)
+      .. automethod:: __ne__(rhs)
 
          .. rubric:: Examples
 
