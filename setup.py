@@ -5,8 +5,6 @@ import io
 import os
 import re
 
-from asq import __version__ as version
-
 def read(*names, **kwargs):
     with io.open(
         os.path.join(os.path.dirname(__file__), *names),
