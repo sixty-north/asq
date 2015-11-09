@@ -7,26 +7,6 @@ from asq.initiators import query
 
 __author__ = 'Robert Smallshire'
 
-k_ = operator.itemgetter
-'''Create a selector function which indexes into the element by key.
-
-The callable object returned by this function fetches one or more items from
-its only operand using the operand's __getitem__() method. If multiple items
-are specified a tuple of looked-up values will be returned.
-
-Args:
-    key: The key which the generated selector will use to index into
-        elements.
-
-    *args: Optional additional arguments which will be used as additional keys
-        for lookup.  If supplied then the created selector will return a tuple
-        of values.
-
-Returns:
-    A unary selector function which indexes into its only argument with
-    the supplied key value(s).
-'''
-
 
 a_ = operator.attrgetter
 '''Create a selector function which selects an attribute by name.
