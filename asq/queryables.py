@@ -210,7 +210,7 @@ class Queryable(object):
                 positional arguments of the selector function are the zero-
                 based index of the current element and the value of the current
                 element. The return value should be the corresponding value in
-                the result sequence. The default selector produces an IndexedItem
+                the result sequence. The default selector produces an IndexedElement
                 containing the index and the element giving this function
                 similar behaviour to the built-in enumerate().
 

@@ -1001,7 +1001,7 @@
             'Billie Jean by Michael Jackson',
             'The Girl Is Mine by Michael Jackson']
 
-      .. automethod:: select_many_with_index(collection_selector=lambda index, source_element: (index, source_element), result_selector=lambda source_element, collection_element: collection_element)
+      .. automethod:: select_many_with_index(collection_selector=IndexedElement, result_selector=lambda source_element, collection_element: collection_element)
 
          .. rubric:: Example
 
@@ -1033,8 +1033,8 @@
             '2 - The Girl Is Mine']
 
          Incorporate the index of each album along with the track and artist
-         for a digital jukebox. A generator expression is to define the
-         collection_selector used to combine the index with the track name
+         for a digital jukebox. A generator expression defining the
+         collection_selector is used to combine the index with the track name
          when generating the intermediate sequences from each album which will
          be concatenated into the final result::
 
@@ -1064,20 +1064,28 @@
             'Thriller - 2 - Beat It', 'Thriller - 2 - Billie Jean',
             'Thriller - 2 - The Girl Is Mine']
 
-      .. automethod:: select_with_index(selector=lambda index, element: (index, element)
+      .. automethod:: select_with_index(selector=IndexedElement)
 
          .. rubric:: Examples
 
-         Generate a list of 2-tuple pairs consisting of the element index and
-         the element value using the default selector::
+         Generate a list of ``IndexedElement`` items using the default selector. The contents of an ``IndexedElement``
+         can either be accessed using the named attributes, or through the zero (index) and one (element) indexes::
 
            >>> dark_side_of_the_moon = [ 'Speak to Me', 'Breathe', 'On the Run',
            ... 'Time', 'The Great Gig in the Sky', 'Money', 'Us and Them',
            ... 'Any Colour You Like', 'Brain Damage', 'Eclipse']
            >>> query(dark_side_of_the_moon).select_with_index().to_list()
-           [(0, 'Speak to Me'), (1, 'Breathe'), (2, 'On the Run'), (3, 'Time'),
-            (4, 'The Great Gig in the Sky'), (5, 'Money'), (6, 'Us and Them'),
-            (7, 'Any Colour You Like'), (8, 'Brain Damage'), (9, 'Eclipse')]
+           [IndexedElement(index=0, element='Speak to Me'),
+            IndexedElement(index=1, element='Breathe'),
+            IndexedElement(index=2, element='On the Run'),
+            IndexedElement(index=3, element='Time'),
+            IndexedElement(index=4, element='The Great Gig in the Sky'),
+            IndexedElement(index=5, element='Money'),
+            IndexedElement(index=6, element='Us and Them'),
+            IndexedElement(index=7, element='Any Colour You Like'),
+            IndexedElement(index=8, element='Brain Damage'),
+            IndexedElement(index=9, element='Eclipse')]
+
 
          Generate numbered album tracks using a custom selector::
 
