@@ -25,12 +25,11 @@ How to get it
 ``asq`` is available on the Python Package Index and can be installed with
 easy_install from setuptools::
 
-  $ easy_install asq
+  $ pip install asq
 
-Alternatively you can download and unpack the source distribution (link to the
-left) and install using::
+Alternatively you can download and unpack the source and install using::
 
-  $ cd asq-1.0
+  $ cd asq-1.2
   $ python setup.py install
 
 Requirements
