@@ -20,26 +20,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-__author__ = 'Robert Smallshire'
-
 import heapq
 import itertools
 import operator
+
 from asq.selectors import make_selector
 
 from .selectors import identity
 from .extension import extend
+from asq.indexedelement import IndexedElement
 from ._types import (is_iterable, is_type)
 from ._portability import (imap, ifilter, irange, izip, izip_longest,
-                          fold, is_callable, OrderedDict, has_unicode_type,
-                          itervalues, iteritems, totally_ordered)
+                           fold, is_callable, OrderedDict, has_unicode_type,
+                           itervalues, iteritems, totally_ordered)
+
 
 # A sentinel singleton used to identify default argument values.
 default = object()
 
+
 class OutOfRangeError(ValueError):
     '''A subclass of ValueError for signalling out of range values.'''
     pass
+
 
 class Queryable(object):
     '''Queries over iterables executed serially.
@@ -58,7 +61,7 @@ class Queryable(object):
         '''
         if not is_iterable(iterable):
             raise TypeError("Cannot construct Queryable from non-iterable {0}"
-                .format(str(type(iterable))[7: -2]))
+                            .format(str(type(iterable))[7: -2]))
 
         self._iterable = iterable
 
@@ -111,7 +114,7 @@ class Queryable(object):
 
         Args:
             iterable: The iterable sequence to be ordered.
-            order: +1 for ascending, -1 for descending.
+            direction: +1 for ascending, -1 for descending.
             func: The function to select the sorting key.
         '''
         return OrderedQueryable(iterable, direction, func)
@@ -120,7 +123,7 @@ class Queryable(object):
         '''Support for the context manager protocol.'''
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, *_):
         '''Support for the context manager protocol.
 
         Ensures that close() is called on the Queryable.
@@ -145,7 +148,9 @@ class Queryable(object):
         '''
         self._iterable = None
 
-    def select(self, selector):
+    def select(
+            self,
+            selector):
         '''Transforms each element of a sequence into a new form.
 
         Each element of the source is transformed through a selector function
@@ -186,10 +191,9 @@ class Queryable(object):
 
         return self._create(imap(selector, self))
 
-
-
-    def select_with_index(self, selector=lambda index, element: (index,
-                                                                 element)):
+    def select_with_index(
+            self,
+            selector=IndexedElement):
         '''Transforms each element of a sequence into a new form, incorporating
         the index of the element.
 
@@ -206,7 +210,7 @@ class Queryable(object):
                 positional arguments of the selector function are the zero-
                 based index of the current element and the value of the current
                 element. The return value should be the corresponding value in
-                the result sequence. The default selector produces a 2-tuple
+                the result sequence. The default selector produces an IndexedItem
                 containing the index and the element giving this function
                 similar behaviour to the built-in enumerate().
 
@@ -228,8 +232,10 @@ class Queryable(object):
 
         return self._create(itertools.starmap(selector, enumerate(iter(self))))
 
-    def select_many(self, collection_selector=identity,
-                    result_selector=identity):
+    def select_many(
+            self,
+            collection_selector=identity,
+            result_selector=identity):
         '''Projects each element of a sequence to an intermediate new sequence,
         flattens the resulting sequences into one sequence and optionally
         transforms the flattened sequence using a selector function.
@@ -281,11 +287,11 @@ class Queryable(object):
         chained_sequence = itertools.chain.from_iterable(sequences)
         return self._create(chained_sequence).select(result_selector)
 
-    def select_many_with_index(self,
-           collection_selector=lambda index, source_element: (index,
-                                                              source_element),
-           result_selector=lambda source_element,
-                                  collection_element: collection_element):
+    def select_many_with_index(
+            self,
+            collection_selector=IndexedElement,
+            result_selector=lambda source_element,
+                                   collection_element: collection_element):
         '''Projects each element of a sequence to an intermediate new sequence,
         incorporating the index of the element, flattens the resulting sequence
         into one sequence and optionally transforms the flattened sequence
@@ -352,7 +358,9 @@ class Queryable(object):
                 value = result_selector(source_element, collection_element)
                 yield value
 
-    def select_many_with_correspondence(self, collection_selector=identity,
+    def select_many_with_correspondence(
+            self,
+            collection_selector=identity,
             result_selector=lambda source_element,
                                    collection_element: (source_element,
                                                         collection_element)):
