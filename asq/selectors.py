@@ -70,7 +70,8 @@ Returns:
     the supplied key value(s).
 '''
 
-def aq_(self, name):
+
+def aq_(name):
     '''
     Args:
         name: The name of the attribute which will be retrieved from each
@@ -83,6 +84,7 @@ def aq_(self, name):
         a Queryable.
     '''
     return lambda item: query(getattr(item, name))
+
 
 def make_selector(value):
     '''Create a selector callable from the supplied value.
@@ -103,7 +105,6 @@ def make_selector(value):
     if is_string(value):
         return a_(value)
     raise ValueError("Unable to create callable selector from '{0}'".format(value))
-
 
 
 def identity(x):
