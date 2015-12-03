@@ -47,17 +47,12 @@ easy_install from setuptools::
 
 Alternatively you can download and unpack the source and install using::
 
-  $ cd asq-1.0
+  $ cd asq-1.2
   $ python setup.py install
 
 Requirements
 ============
 
-This version of ``asq`` works with Python 2.6 and higher, including Python 3.
-It has been tested on Python 2.6, Python 2.7, Python 3.1 and Python 3.2, 3.3
-and 3.4. Furthermore it is tested on IronPython 2.6 and IronPython 2.7.
-
-``asq`` has a dependency on the ordereddict module which ships as standard
-with Python 2.7 and upwards, but this module must be installed separately
-for Python 2.6.
-
+This version of ``asq`` works with  and 2.7 and higher, including Python 3.
+It is tested on Python 2.7, Python 3.3, Python 3.4 and Python 3.5.
+Furthermore it is tested on IronPython 2.7.
