@@ -30,7 +30,7 @@ Status
 Build status:
 
 .. image:: https://travis-ci.org/sixty-north/segpy.svg?branch=master
-    :target: https://travis-ci.org/sixty-north/segpy
+    :target: https://travis-ci.org/rob-smallshire/asq
     :alt: Build Status
 
 .. image:: https://readthedocs.org/projects/asq/badge/?version=latest
