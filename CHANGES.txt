@@ -1,6 +1,15 @@
 Changes
 =======
 
+asq 1.2
+-------
+
+  * The default selector for select_with_index() now produces a new IndexedElement
+    object for each type which is a namedtuple.  As IndexedElement is a tuple this
+    change is backwards compatibile, but now the more readable item.index and
+    item.element attributes can be used instead of accessing via indexes zero and
+    one.
+
 asq 1.1
 -------
 
