@@ -5,6 +5,7 @@ import io
 import os
 import re
 
+
 def read(*names, **kwargs):
     with io.open(
         os.path.join(os.path.dirname(__file__), *names),
@@ -28,16 +29,16 @@ with io.open(os.path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name = "asq",
-    packages = ["asq"],
-    version = find_version("asq/version.py"),
-    description = "LINQ-for-objects style queries for Python iterables.",
-    author = "Robert Smallshire",
-    author_email = "robert@smallshire.org.uk",
-    url = "https://github.com/rob-smallshire/asq",
-    keywords = ["Python", "LINQ"],
+    name="asq",
+    packages=["asq"],
+    version=find_version("asq/version.py"),
+    description="LINQ-for-objects style queries for Python iterables.",
+    author="Robert Smallshire",
+    author_email="robert@smallshire.org.uk",
+    url="https://github.com/rob-smallshire/asq",
+    keywords=["Python", "LINQ"],
     license="MIT License",
-    classifiers = [
+    classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
@@ -49,5 +50,5 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Utilities",
         ],
-    long_description = long_description
+    long_description=long_description
 )
