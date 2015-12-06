@@ -24,7 +24,7 @@ def find_version(*file_paths):
 here = os.path.abspath(os.path.dirname(__file__))
 
 # Get the long description from the relevant file
-with open(os.path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
+with io.open(os.path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
