@@ -1,6 +1,11 @@
 Changes
 =======
 
+asq 1.2.1
+---------
+
+  * Fixes a problem in setup.py that prevented installation on Python 2.
+
 asq 1.2
 -------
 

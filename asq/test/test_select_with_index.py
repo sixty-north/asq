@@ -2,6 +2,7 @@ import unittest
 from asq.queryables import Queryable
 from asq.test.test_queryable import infinite, TracingGenerator
 
+
 class TestSelectWithIndex(unittest.TestCase):
 
     def test_select_with_index(self):
