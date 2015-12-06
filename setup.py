@@ -1,6 +1,6 @@
 # Asq's setup.py
 
-from distutils.core import setup
+from setuptools import setup
 import io
 import os
 import re
