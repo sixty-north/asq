@@ -232,6 +232,42 @@ class Queryable(object):
 
         return self._create(itertools.starmap(selector, enumerate(iter(self))))
 
+    def select_with_args(
+            self,
+            transform):
+        '''Apply a callable to each element in an input sequence, generating a new
+        sequence of 2-tuples where the first element is the input value and the
+        second is the transformed input value.
+
+        The generated sequence is lazily evaluated.
+
+        Note: This method uses deferred execution.
+
+        Args:
+            transform: A unary function mapping a value in the source sequence
+                to the second tuple value in the output sequence. The argument
+                of the transform function is the value of the current element.
+
+        Returns:
+            A Queryable whose elements are 2-tuples where the first element is
+            from the input sequence and the second is the result of invoking
+            the transform function on the first value.
+
+        Raises:
+            ValueError: If this Queryable has been closed.
+            TypeError: If transform is not callable.
+
+        '''
+        if self.closed():
+            raise ValueError("Attempt to call select_with_args() on a "
+                             "closed Queryable.")
+
+        if not is_callable(transform):
+            raise TypeError("select_with_args() parameter transform={0} is "
+                            "not callable".format(repr(transform)))
+
+        return self._create((elem, transform(elem)) for elem in iter(self))
+
     def select_many(
             self,
             collection_selector=identity,
