@@ -13,9 +13,9 @@ class TestToLookup(unittest.TestCase):
         g1 = b['A']
         g2 = b['B']
         g3 = b['C']
-        self.assert_(isinstance(g1, Grouping))
-        self.assert_(isinstance(g2, Grouping))
-        self.assert_(isinstance(g3, Grouping))
+        self.assertIsInstance(g1, Grouping)
+        self.assertIsInstance(g2, Grouping)
+        self.assertIsInstance(g3, Grouping)
         self.assertEqual(g1.to_list(), ['Agapanthus', 'Allium', 'Alpina', 'Alstroemeria', 'Amaranthus', 'Amarylis'])
         self.assertEqual(g2.to_list(), ['Bouvardia'])
         self.assertEqual(g3.to_list(), ['Carnations', 'Cattleya', 'Celosia', 'Chincherinchee', 'Chrysanthemum'])
@@ -29,11 +29,11 @@ class TestToLookup(unittest.TestCase):
         g3 = b['C']
         g4 = b['D']
         g5 = b['E']
-        self.assert_(isinstance(g1, Grouping))
-        self.assert_(isinstance(g2, Grouping))
-        self.assert_(isinstance(g3, Grouping))
-        self.assert_(isinstance(g4, Grouping))
-        self.assert_(isinstance(g5, Grouping))
+        self.assertIsInstance(g1, Grouping)
+        self.assertIsInstance(g2, Grouping)
+        self.assertIsInstance(g3, Grouping)
+        self.assertIsInstance(g4, Grouping)
+        self.assertIsInstance(g5, Grouping)
         self.assertEqual(g1.to_list(), ['Aardvark'])
         self.assertEqual(g2.to_list(), ['Balloon'])
         self.assertEqual(g3.to_list(), ['Carrot'])
@@ -53,11 +53,11 @@ class TestToLookup(unittest.TestCase):
         g3 = b['Carrot']
         g4 = b['Daisy']
         g5 = b['Ecological']
-        self.assert_(isinstance(g1, Grouping))
-        self.assert_(isinstance(g2, Grouping))
-        self.assert_(isinstance(g3, Grouping))
-        self.assert_(isinstance(g4, Grouping))
-        self.assert_(isinstance(g5, Grouping))
+        self.assertIsInstance(g1, Grouping)
+        self.assertIsInstance(g2, Grouping)
+        self.assertIsInstance(g3, Grouping)
+        self.assertIsInstance(g4, Grouping)
+        self.assertIsInstance(g5, Grouping)
         self.assertEqual(g1.to_list(), [8])
         self.assertEqual(g2.to_list(), [7])
         self.assertEqual(g3.to_list(), [6])
@@ -77,11 +77,11 @@ class TestToLookup(unittest.TestCase):
         g3 = b['C']
         g4 = b['D']
         g5 = b['E']
-        self.assert_(isinstance(g1, Grouping))
-        self.assert_(isinstance(g2, Grouping))
-        self.assert_(isinstance(g3, Grouping))
-        self.assert_(isinstance(g4, Grouping))
-        self.assert_(isinstance(g5, Grouping))
+        self.assertIsInstance(g1, Grouping)
+        self.assertIsInstance(g2, Grouping)
+        self.assertIsInstance(g3, Grouping)
+        self.assertIsInstance(g4, Grouping)
+        self.assertIsInstance(g5, Grouping)
         self.assertEqual(g1.to_list(), ['Aardvark'])
         self.assertEqual(g2.to_list(), ['Balloon', 'Baboon'])
         self.assertEqual(g3.to_list(), ['Carrot'])
