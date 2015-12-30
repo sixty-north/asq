@@ -28,7 +28,7 @@ from asq.selectors import make_selector
 
 from .selectors import identity
 from .extension import extend
-from asq.indexedelement import IndexedElement
+from asq.namedelements import IndexedElement, CorrespondingArgumentValue
 from ._types import (is_iterable, is_type)
 from ._portability import (imap, ifilter, irange, izip, izip_longest,
                            fold, is_callable, OrderedDict, has_unicode_type,
@@ -266,7 +266,7 @@ class Queryable(object):
             raise TypeError("select_with_args() parameter transform={0} is "
                             "not callable".format(repr(transform)))
 
-        return self._create((elem, transform(elem)) for elem in iter(self))
+        return self._create(CorrespondingArgumentValue(elem, transform(elem)) for elem in iter(self))
 
     def select_many(
             self,
