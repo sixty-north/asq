@@ -507,7 +507,7 @@ class Queryable(object):
             TypeError: If result_selector is not callable.
         '''
         if self.closed():
-            raise ValueError("Attempt to call select_with_index() on a closed "
+            raise ValueError("Attempt to call group_by() on a closed "
                              "Queryable.")
 
         if not is_callable(key_selector):
