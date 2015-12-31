@@ -28,7 +28,7 @@ from asq.selectors import make_selector
 
 from .selectors import identity
 from .extension import extend
-from asq.namedelements import IndexedElement, CorrespondingArgumentValue
+from asq.namedelements import IndexedElement, KeyedElement
 from ._types import (is_iterable, is_type)
 from ._portability import (imap, ifilter, irange, izip, izip_longest,
                            fold, is_callable, OrderedDict, has_unicode_type,
@@ -193,7 +193,8 @@ class Queryable(object):
 
     def select_with_index(
             self,
-            selector=IndexedElement):
+            selector=IndexedElement,
+            transform=identity):
         '''Transforms each element of a sequence into a new form, incorporating
         the index of the element.
 
@@ -230,11 +231,17 @@ class Queryable(object):
             raise TypeError("select_with_index() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
-        return self._create(itertools.starmap(selector, enumerate(iter(self))))
+        if not is_callable(transform):
+            raise TypeError("select_with_index() parameter item_selector={0} is "
+                            "not callable".format(repr(selector)))
+
+        return self._create(itertools.starmap(selector, enumerate(map(transform, iter(self)))))
+
 
     def select_with_args(
             self,
-            transform):
+            transform,
+            selector=KeyedElement):
         '''Apply a callable to each element in an input sequence, generating a new
         sequence of 2-tuples where the first element is the input value and the
         second is the transformed input value.
@@ -262,11 +269,15 @@ class Queryable(object):
             raise ValueError("Attempt to call select_with_args() on a "
                              "closed Queryable.")
 
+        if not is_callable(selector):
+            raise TypeError("select_with_args() parameter selector={0} is "
+                            "not callable".format(repr(selector)))
+
         if not is_callable(transform):
             raise TypeError("select_with_args() parameter transform={0} is "
                             "not callable".format(repr(transform)))
 
-        return self._create(CorrespondingArgumentValue(elem, transform(elem)) for elem in iter(self))
+        return self._create(selector(elem, transform(elem)) for elem in iter(self))
 
     def select_many(
             self,
@@ -397,9 +408,7 @@ class Queryable(object):
     def select_many_with_correspondence(
             self,
             collection_selector=identity,
-            result_selector=lambda source_element,
-                                   collection_element: (source_element,
-                                                        collection_element)):
+            result_selector=KeyedElement):
         '''Projects each element of a sequence to an intermediate new sequence,
         and flattens the resulting sequence, into one sequence and uses a
         selector function to incorporate the corresponding source for each item
@@ -426,8 +435,7 @@ class Queryable(object):
                 the intermediate sequence. The return value should be the
                 corresponding value in the result sequence. If no
                 result_selector function is provided, the elements of the
-                result sequence are 2-tuple pairs of the form (source_element,
-                intermediate_element).
+                result sequence are CorrespondingElement namedtuples.
 
         Returns:
             A Queryable over a generated sequence whose elements are the result

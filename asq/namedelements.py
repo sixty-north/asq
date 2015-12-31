@@ -3,7 +3,7 @@
 
 from collections import namedtuple
 
-IndexedElement = namedtuple('IndexedElement', ['index', 'element'])
+IndexedElement = namedtuple('IndexedElement', ['index', 'value'])
 
-CorrespondingArgumentValue = namedtuple('CorrespondingArgumentValue', ['arg', 'value'])
+KeyedElement = namedtuple('KeyedElement', ['key', 'value'])
 
