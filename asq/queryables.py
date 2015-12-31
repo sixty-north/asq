@@ -396,11 +396,11 @@ class Queryable(object):
                              "closed Queryable.")
 
         if not is_callable(collection_selector):
-            raise TypeError("select_many_with_correspondence() parameter "
+            raise TypeError("select_many_with_index() parameter "
              "projector={0} is not callable".format(repr(collection_selector)))
 
         if not is_callable(result_selector):
-            raise TypeError("select_many_with_correspondence() parameter "
+            raise TypeError("select_many_with_index() parameter "
                 "selector={0} is not callable".format(repr(result_selector)))
 
         return self._create(
