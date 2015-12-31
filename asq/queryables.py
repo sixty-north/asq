@@ -237,8 +237,7 @@ class Queryable(object):
 
         return self._create(itertools.starmap(selector, enumerate(map(transform, iter(self)))))
 
-
-    def select_with_args(
+    def select_with_corresponding(
             self,
             transform,
             selector=KeyedElement):
@@ -255,10 +254,21 @@ class Queryable(object):
                 to the second tuple value in the output sequence. The argument
                 of the transform function is the value of the current element.
 
+            selector: A binary callable mapping the of a value in
+                the source sequence and the transformed value to the
+                corresponding value in the generated sequence. The two
+                positional arguments of the selector function are the original
+                source element and the transformed value. The return value
+                should be the corresponding value in the result sequence. The
+                default selector produces a KeyedElement containing the index
+                and the element giving this function similar behaviour to the
+                built-in enumerate().
+
         Returns:
-            A Queryable whose elements are 2-tuples where the first element is
-            from the input sequence and the second is the result of invoking
-            the transform function on the first value.
+            When using the default selector, a Queryable whose elements are
+            KeyedElements where the first element is from the input sequence
+            and the second is the result of invoking the transform function on
+            the first value.
 
         Raises:
             ValueError: If this Queryable has been closed.
@@ -266,15 +276,15 @@ class Queryable(object):
 
         '''
         if self.closed():
-            raise ValueError("Attempt to call select_with_args() on a "
+            raise ValueError("Attempt to call select_with_corresponding() on a "
                              "closed Queryable.")
 
         if not is_callable(selector):
-            raise TypeError("select_with_args() parameter selector={0} is "
+            raise TypeError("select_with_corresponding() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
         if not is_callable(transform):
-            raise TypeError("select_with_args() parameter transform={0} is "
+            raise TypeError("select_with_corresponding() parameter transform={0} is "
                             "not callable".format(repr(transform)))
 
         return self._create(selector(elem, transform(elem)) for elem in iter(self))
@@ -435,7 +445,7 @@ class Queryable(object):
                 the intermediate sequence. The return value should be the
                 corresponding value in the result sequence. If no
                 result_selector function is provided, the elements of the
-                result sequence are CorrespondingElement namedtuples.
+                result sequence are KeyedElement namedtuples.
 
         Returns:
             A Queryable over a generated sequence whose elements are the result
