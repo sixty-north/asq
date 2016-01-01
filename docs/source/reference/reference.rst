@@ -12,5 +12,5 @@ API Reference
    selectors
    predicates
    record
-   indexedelement
+   namedelements
    extension

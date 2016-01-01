@@ -237,7 +237,7 @@ class Queryable(object):
 
         return self._create(itertools.starmap(selector, enumerate(map(transform, iter(self)))))
 
-    def select_with_corresponding(
+    def select_with_correspondence(
             self,
             transform,
             selector=KeyedElement):
@@ -276,15 +276,15 @@ class Queryable(object):
 
         '''
         if self.closed():
-            raise ValueError("Attempt to call select_with_corresponding() on a "
+            raise ValueError("Attempt to call select_with_correspondence() on a "
                              "closed Queryable.")
 
         if not is_callable(selector):
-            raise TypeError("select_with_corresponding() parameter selector={0} is "
+            raise TypeError("select_with_correspondence() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
         if not is_callable(transform):
-            raise TypeError("select_with_corresponding() parameter transform={0} is "
+            raise TypeError("select_with_correspondence() parameter transform={0} is "
                             "not callable".format(repr(transform)))
 
         return self._create(selector(elem, transform(elem)) for elem in iter(self))

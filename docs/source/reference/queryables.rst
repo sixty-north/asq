@@ -1094,6 +1094,25 @@
             '4. The Great Gig in the Sky', '5. Money', '6. Us and Them',
             '7. Any Colour You Like', '8. Brain Damage', '9. Eclipse']
 
+      .. automethod:: select_with_correspondence(transform, selector=KeyedElement)
+
+         .. rubric:: Examples
+
+         Generate a list of ``KeyedElement`` items using the default selector::
+
+           >>> query(range(10)).select_with_correspondence(lambda x: x%5).to_list()
+           [KeyedElement(key=0, value=0),
+            KeyedElement(key=1, value=1),
+            KeyedElement(key=2, value=2),
+            KeyedElement(key=3, value=3),
+            KeyedElement(key=4, value=4),
+            KeyedElement(key=5, value=0),
+            KeyedElement(key=6, value=1),
+            KeyedElement(key=7, value=2),
+            KeyedElement(key=8, value=3),
+            KeyedElement(key=9, value=4)]
+
+
       .. automethod:: sequence_equal(second_iterable, equality_comparer=operator.eq)
 
          .. rubric:: Examples
