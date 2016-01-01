@@ -1,21 +1,25 @@
-'''
+"""
 test_queryable.py Unit tests for asq.queryable.Queryable
-'''
+"""
 import unittest
 
 from asq.queryables import Queryable
 
+
 def times_two(x):
     return 2 * x
 
+
 def times(x, y):
     return x * y
+
 
 def infinite():
     i = 0
     while True:
         yield i
         i += 1
+
 
 class TracingGenerator(object):
 
@@ -31,18 +35,22 @@ class TracingGenerator(object):
 
     trace = property(lambda self: self._trace)
 
+
 class TestQueryable(unittest.TestCase):
 
     def test_non_iterable(self):
         self.assertRaises(TypeError, lambda: Queryable(5))
 
+
 def inc_chr(y):
     return chr(ord(y)+1)
+
 
 def randgen():
     import random
     while True:
         yield random.random()
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestQueryable)
