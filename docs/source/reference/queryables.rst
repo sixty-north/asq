@@ -1083,6 +1083,16 @@
             KeyedElement(key=8, value=3),
             KeyedElement(key=9, value=4)]
 
+         Square the integers zero to nine, retaining only those elements for which the square is an odd number::
+
+           >>> query(range(10))                           \
+           ... .select_with_correspondence(lambda x: x*x) \
+           ... .where(lambda y: y.value%2 != 0)           \
+           ... .select(lambda y: y.key)                   \
+           ... .to_list()
+           ...
+          [1, 3, 5, 7, 9]
+
       .. automethod:: select_with_index(selector=IndexedElement)
 
          .. rubric:: Examples
