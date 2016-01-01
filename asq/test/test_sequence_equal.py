@@ -2,7 +2,7 @@ import unittest
 from asq.queryables import Queryable
 from asq.test.test_queryable import infinite
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 class TestSequenceEqual(unittest.TestCase):
 

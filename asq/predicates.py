@@ -1,6 +1,6 @@
 '''Predicate function factories'''
 
-__author__ = 'Robert Smallshire'
+__author__ = 'Sixty North'
 
 
 def eq_(rhs):

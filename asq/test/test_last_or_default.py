@@ -1,7 +1,7 @@
 import unittest
 from asq.queryables import Queryable
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 class TestLastOrDefault(unittest.TestCase):
 

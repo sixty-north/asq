@@ -3,7 +3,7 @@ from asq.predicates import (eq_, ne_, lt_, le_, ge_, gt_, is_, contains_, not_,
                             and_, or_, xor_)
 from asq.selectors import identity
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 class TestEqual(unittest.TestCase):
 

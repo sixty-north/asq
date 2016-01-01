@@ -1,6 +1,6 @@
 '''Adding extension operators.'''
 
-__author__ = 'Robert Smallshire'
+__author__ = 'Sixty North'
 
 from ._portability import function_name
 

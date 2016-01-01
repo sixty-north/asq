@@ -3,7 +3,7 @@ from asq._portability import is_callable
 from asq.selectors import k_, a_, m_, identity
 from asq.test.test_queryable import TracingGenerator, infinite
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 class TestKeySelector(unittest.TestCase):
 

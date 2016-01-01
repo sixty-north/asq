@@ -5,4 +5,4 @@ from that submodule.
 '''
 from .version import __version__
 
-__author__ = 'Robert Smallshire'
+__author__ = 'Sixty North'

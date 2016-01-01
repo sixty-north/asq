@@ -3,7 +3,7 @@ from asq._portability import function_name
 
 from asq.extension import add_method, extend
 
-__author__ = 'Robert Smallshire'
+__author__ = 'Sixty North'
 
 class TestExtension(unittest.TestCase):
 

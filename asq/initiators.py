@@ -4,7 +4,7 @@ import itertools
 from ._portability import irange
 from asq._portability import is_callable
 
-__author__ = 'Robert Smallshire'
+__author__ = 'Sixty North'
 
 
 def query(iterable):

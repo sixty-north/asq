@@ -1,6 +1,6 @@
 '''Classes which support the Queryable interface.'''
 
-# Copyright (c) 2011 Robert Smallshire.
+# Copyright (c) 2011-2016 Sixty North.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -239,8 +239,8 @@ class Queryable(object):
 
     def select_with_correspondence(
             self,
-            transform,
-            selector=KeyedElement):
+            selector,
+            result_selector=KeyedElement):
         '''Apply a callable to each element in an input sequence, generating a new
         sequence of 2-tuples where the first element is the input value and the
         second is the transformed input value.
@@ -250,11 +250,10 @@ class Queryable(object):
         Note: This method uses deferred execution.
 
         Args:
-            transform: A unary function mapping a value in the source sequence
-                to the second tuple value in the output sequence. The argument
-                of the transform function is the value of the current element.
+            selector: A unary function mapping a value in the source sequence
+                to the second argument of the result selector.
 
-            selector: A binary callable mapping the of a value in
+            result_selector: A binary callable mapping the of a value in
                 the source sequence and the transformed value to the
                 corresponding value in the generated sequence. The two
                 positional arguments of the selector function are the original
@@ -283,11 +282,11 @@ class Queryable(object):
             raise TypeError("select_with_correspondence() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
-        if not is_callable(transform):
-            raise TypeError("select_with_correspondence() parameter transform={0} is "
-                            "not callable".format(repr(transform)))
+        if not is_callable(result_selector):
+            raise TypeError("select_with_correspondence() parameter result_selector={0} is "
+                            "not callable".format(repr(result_selector)))
 
-        return self._create(selector(elem, transform(elem)) for elem in iter(self))
+        return self._create(result_selector(elem, selector(elem)) for elem in iter(self))
 
     def select_many(
             self,

@@ -3,7 +3,7 @@ from asq.queryables import Queryable
 from asq.record import new
 from asq.test.test_queryable import infinite, TracingGenerator
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 class TestSelect(unittest.TestCase):
 

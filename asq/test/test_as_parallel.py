@@ -2,7 +2,7 @@ import sys
 import unittest
 from asq.queryables import Queryable
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 if not sys.platform == 'cli':
 

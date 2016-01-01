@@ -1,7 +1,7 @@
 import unittest
 from asq.initiators import repeat
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 class TestRepeat(unittest.TestCase):
 

@@ -1,4 +1,4 @@
-__author__ = 'Robert Smallshire'
+__author__ = 'Sixty North'
 
 
 def insensitive_eq(lhs, rhs):

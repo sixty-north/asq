@@ -3,7 +3,7 @@ Predicate functions for testing Python objects to determine their type.
 '''
 from asq import _portability
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 
 def is_iterable(obj):

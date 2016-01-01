@@ -5,7 +5,7 @@ from asq._portability import is_callable
 from asq._types import is_string
 from asq.initiators import query
 
-__author__ = 'Robert Smallshire'
+__author__ = 'Sixty North'
 
 
 a_ = operator.attrgetter

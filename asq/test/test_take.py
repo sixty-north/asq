@@ -2,7 +2,7 @@ import unittest
 from asq.queryables import Queryable
 from asq.test.test_queryable import infinite, TracingGenerator
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 class TestTake(unittest.TestCase):
 

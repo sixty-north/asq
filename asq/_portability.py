@@ -1,6 +1,6 @@
 '''Python 2 and Python 3 compatibility'''
 
-__author__ = "Robert Smallshire"
+__author__ = "Sixty North"
 
 import sys
 

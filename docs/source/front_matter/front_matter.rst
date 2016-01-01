@@ -3,7 +3,7 @@ Copyright
 
 ``asq``
 
-Copyright © 2010-2015 Robert Smallshire
+Copyright © 2010-2015 Sixty North
 
 Official Website
 ================

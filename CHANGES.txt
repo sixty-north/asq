@@ -1,6 +1,21 @@
 Changes
 =======
 
+asq 1.3
+-------
+
+  * Re-assigns copyright from Robert Smallshire to Sixty North AS.
+
+  * Adds ``select_with_correspondence()`` query method.
+
+  * Renames the ``indexedelement`` module to ``namedelements``.
+
+  * Renames the second element of ``IndexedElement`` from ``element`` to
+    ``value``.
+
+  * Adds the ``KeyedElement`` ``namedtuple`` to the ``namedelements`` module.
+    ``KeyedElement`` has two elements called ``key`` and ``value``.
+
 asq 1.2.1
 ---------
 

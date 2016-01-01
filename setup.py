@@ -33,9 +33,9 @@ setup(
     packages=["asq"],
     version=find_version("asq/version.py"),
     description="LINQ-for-objects style queries for Python iterables.",
-    author="Robert Smallshire",
-    author_email="robert@smallshire.org.uk",
-    url="https://github.com/rob-smallshire/asq",
+    author="Sixty North AS",
+    author_email="rob@sixty-norty.com",
+    url="https://github.com/sixty-north/asq",
     keywords=["Python", "LINQ"],
     license="MIT License",
     classifiers=[
