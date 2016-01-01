@@ -235,7 +235,7 @@ class Queryable(object):
             raise TypeError("select_with_index() parameter item_selector={0} is "
                             "not callable".format(repr(selector)))
 
-        return self._create(itertools.starmap(selector, enumerate(map(transform, iter(self)))))
+        return self._create(itertools.starmap(selector, enumerate(imap(transform, iter(self)))))
 
     def select_with_correspondence(
             self,
