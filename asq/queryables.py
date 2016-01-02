@@ -2071,7 +2071,14 @@ class Queryable(object):
         return lookup
 
     def to_dictionary(self, key_selector=identity, value_selector=identity):
-        '''Build a dictionary from the source sequence.
+        """Build a dictionary from the source sequence.
+
+        Args:
+            key_selector: A unary callable to extract a key from each item.
+                By default the key is the item itself.
+
+            value_selector: A unary callable to extract a value from each item.
+                By default the value is the item itself.
 
         Note: This method uses immediate execution.
 
@@ -2080,7 +2087,7 @@ class Queryable(object):
             ValueError: If duplicate keys are in the projected source sequence.
             TypeError: If key_selector is not callable.
             TypeError: If value_selector is not callable.
-        '''
+        """
         if self.closed():
             raise ValueError("Attempt to call to_dictionary() on a closed Queryable.")
 
@@ -2732,6 +2739,29 @@ class Lookup(Queryable):
         for grouping in self:
             yield selector(grouping.key, grouping)
 
+    def to_dictionary(
+            self,
+            key_selector=lambda item: item.key,
+            value_selector=lambda item: item.to_list()):
+        """Build a dictionary from the source sequence.
+
+        Args:
+            key_selector: A unary callable to extract a key from each item.
+                By default the key of the Grouping.
+
+            value_selector: A unary callable to extract a value from each item.
+                By default the value is the list of items from the Grouping.
+
+        Note: This method uses immediate execution.
+
+        Raises:
+            ValueError: If the Queryable is closed.
+            ValueError: If duplicate keys are in the projected source sequence.
+            TypeError: If key_selector is not callable.
+            TypeError: If value_selector is not callable.
+        """
+        return super(Lookup, self).to_dictionary(key_selector, value_selector)
+
 
 class Grouping(Queryable):
     '''A collection of objects which share a common key.
@@ -2789,3 +2819,28 @@ class Grouping(Queryable):
         return 'Grouping(key={key}, items={items})'.format(key=repr(self._key),
                                                     items=repr(self.to_list()))
 
+    def to_dictionary(
+            self,
+            key_selector=None,
+            value_selector=None):
+        """Build a dictionary from the source sequence.
+
+        Args:
+            key_selector: A unary callable to extract a key from each item or None.
+                By default the key is the key from this Grouping.
+
+            value_selector: A unary callable to extract a value from each item.
+                By default the single value is a list containing all items from the
+                Grouping.
+
+        Note: This method uses immediate execution.
+
+        Raises:
+            ValueError: If the Queryable is closed.
+            ValueError: If duplicate keys are in the projected source sequence.
+            TypeError: If key_selector is not callable.
+            TypeError: If value_selector is not callable.
+        """
+        if key_selector is None and value_selector is None:
+            return {self.key: self.to_list()}
+        return super(Grouping, self).to_dictionary(key_selector, value_selector)

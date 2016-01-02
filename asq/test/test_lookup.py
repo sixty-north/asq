@@ -279,3 +279,38 @@ class TestLookup(unittest.TestCase):
         group2 = Lookup(kv2)
 
         self.assertFalse(group1 != group2)
+
+    def test_lookup_to_dictionary_default_selectors(self):
+        kv1 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('c', 'cantaloupe') ]
+        lookup1 = Lookup(kv1)
+        actual = lookup1.to_dictionary()
+
+        expected = {'a': ['artichoke'],
+                    'b': ['blackberry', 'blueberry'],
+                    'c': ['clementine', 'cranberry', 'cantaloupe']}
+        self.assertEqual(actual, expected)
+
+    def test_lookup_to_dictionary(self):
+        kv1 = [ ('a', 'artichoke'),
+                ('b', 'blackberry'),
+                ('c', 'clementine'),
+                ('b', 'blueberry'),
+                ('c', 'cranberry'),
+                ('c', 'cantaloupe') ]
+        lookup1 = Lookup(kv1)
+        actual = lookup1.to_dictionary(
+            key_selector=lambda grouping: len(grouping),
+            value_selector=lambda grouping: grouping.element_at(0)
+        )
+
+        expected = {1: 'artichoke',
+                    2: 'blackberry',
+                    3: 'clementine'}
+
+        self.assertEqual(actual, expected)
+

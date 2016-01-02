@@ -73,3 +73,21 @@ class TestGrouping(unittest.TestCase):
         grouping2 = Grouping('a', [1, 2, 3, 4])
         self.assertTrue(grouping1 != grouping2)
 
+    def test_grouping_to_dictionary_default_selectors(self):
+        grouping1 = Grouping('a', [1, 2, 4, 3])
+        actual = grouping1.to_dictionary()
+        expected = {'a': [1, 2, 4, 3]}
+        self.assertEqual(actual, expected)
+
+    def test_grouping_to_dictionary(self):
+        grouping1 = Grouping('a', [1, 2, 4, 3])
+        actual = grouping1.to_dictionary(
+            key_selector=lambda item: item * 2,
+            value_selector=lambda item: item * 3
+        )
+        expected = {2: 3,
+                    4: 6,
+                    6: 9,
+                    8: 12}
+        self.assertEqual(actual, expected)
+
