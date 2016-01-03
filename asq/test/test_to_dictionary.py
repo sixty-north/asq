@@ -45,7 +45,13 @@ class TestToDictionary(unittest.TestCase):
 
     def test_to_dictionary_duplicate_keys(self):
         a = ['Aardvark', 'Balloon', 'Baboon', 'Carrot', 'Daisy', 'Ecological']
-        self.assertRaises(ValueError, lambda: Queryable(a).to_dictionary(lambda x: x[0]))
+        b = Queryable(a).to_dictionary(lambda x: x[0])
+        c = {'A': 'Aardvark',
+             'B': 'Baboon',
+             'C': 'Carrot',
+             'D': 'Daisy',
+             'E': 'Ecological'}
+        self.assertEqual(b, c)
 
     def test_to_dictionary_closed(self):
         a = ['Aardvark', 'Balloon', 'Carrot', 'Daisy', 'Ecological']

@@ -1532,37 +1532,37 @@
            ...
            >>> lookup = Lookup(key_value_pairs)
 
-       .. automethod:: __getitem__(key)
+      .. automethod:: __getitem__(key)
 
-          .. rubric:: Examples
+         .. rubric:: Examples
 
-          To retrieve a Grouping for a given key::
+         To retrieve a Grouping for a given key::
 
-            >>> key_value_pairs = [('tree', 'oak'),
-            ...                    ('bird', 'eagle'),
-            ...                    ('bird', 'swallow'),
-            ...                    ('tree', 'birch'),
-            ...                    ('mammal', 'mouse'),
-            ...                    ('tree', 'poplar')]
-            ...
-            >>> lookup = Lookup(key_value_pairs)
-            >>> lookup['tree']
-            Grouping(key='tree')
+           >>> key_value_pairs = [('tree', 'oak'),
+           ...                    ('bird', 'eagle'),
+           ...                    ('bird', 'swallow'),
+           ...                    ('tree', 'birch'),
+           ...                    ('mammal', 'mouse'),
+           ...                    ('tree', 'poplar')]
+           ...
+           >>> lookup = Lookup(key_value_pairs)
+           >>> lookup['tree']
+           Grouping(key='tree')
 
-          but if no such key exists a Grouping will still be returned, albeit an
-          empty one::
+         but if no such key exists a Grouping will still be returned, albeit an
+         empty one::
 
-            >>> vehicles = lookup['vehicle']
-            >>> vehicles
-            Grouping(key='vehicle')
-            >>> len(vehicles)
-            0
+           >>> vehicles = lookup['vehicle']
+           >>> vehicles
+           Grouping(key='vehicle')
+           >>> len(vehicles)
+           0
 
-       .. automethod:: __len__()
+      .. automethod:: __len__()
 
-          .. rubric:: Example
+         .. rubric:: Example
 
-          To determine the number of Groupings in a Lookup::
+         To determine the number of Groupings in a Lookup::
 
             >>> key_value_pairs = [('tree', 'oak'),
             ...                    ('bird', 'eagle'),
@@ -1574,11 +1574,11 @@
             >>> len(lookup)
             3
 
-       .. automethod:: __contains__()
+      .. automethod:: __contains__()
 
-          .. rubric:: Example
+         .. rubric:: Example
 
-          To determine whether a Lookup contains a specific Grouping::
+         To determine whether a Lookup contains a specific Grouping::
 
             >>> key_value_pairs = [('tree', 'oak'),
             ...                    ('bird', 'eagle'),
@@ -1592,11 +1592,11 @@
             >>> 'vehicle' in lookup
             False
 
-       .. automethod:: __repr__()
+      .. automethod:: __repr__()
 
-          .. rubric:: Example
+         .. rubric:: Example
 
-          To produce a string representation of a Lookup::
+         To produce a string representation of a Lookup::
 
             >>> key_value_pairs = [('tree', 'oak'),
             ...                    ('bird', 'eagle'),
@@ -1610,12 +1610,12 @@
             "Lookup([('tree', 'oak'), ('tree', 'birch'), ('tree', 'poplar'),
             ('bird', 'eagle'), ('bird', 'swallow'), ('mammal', 'mouse')])"
 
-       .. automethod:: apply_result_selector(selector)
+      .. automethod:: apply_result_selector(selector)
 
-          .. rubric:: Example
+         .. rubric:: Example
 
-          Convert each group to a set using a lambda selector and put the
-          resulting sets in a list::
+         Convert each group to a set using a lambda selector and put the
+         resulting sets in a list::
 
             >>> key_value_pairs = [('tree', 'oak'),
             ...                    ('bird', 'eagle'),
@@ -1627,6 +1627,30 @@
             >>> lookup.apply_result_selector(lambda key, group: set(group)).to_list()
             [set(['poplar', 'oak', 'birch']), set(['eagle', 'swallow']),
             set(['mouse'])]
+
+      .. automethod:: to_dictionary(key_selector=None, value_selector=None)
+
+         .. rubric:: Example
+
+         Convert a ``Lookup`` to a ``dict`` using the default selectors which produce a
+         dictionary mapping the lookup keys to lists::
+
+            >>> key_value_pairs = [('tree', 'oak'),
+            ...                    ('bird', 'eagle'),
+            ...                    ('bird', 'swallow'),
+            ...                    ('tree', 'birch'),
+            ...                    ('mammal', 'mouse'),
+            ...
+            >>> lookup = Lookup(key_value_pairs)
+            >>> lookup.to_dictionary()
+            {'mammal': ['mouse'], 'bird': ['eagle', 'swallow'], 'tree': ['oak', 'birch']}
+
+         Providing a ``value_selector`` to construct the values of the dictionary as a ``set``
+         rather than the default ``list``::
+
+            >>> lookup.to_dictionary(value_selector=set)
+            {'mammal': {'mouse'}, 'bird': {'swallow', 'eagle'}, 'tree': {'birch', 'oak'}}
+
 
 ``asq.queryables.Grouping``
 ---------------------------
@@ -1709,3 +1733,31 @@
            >>> repr(g)
            Grouping(key="fruit", items=["pear", "apple", "orange", "banana"])
 
+      .. automethod:: to_dictionary(key_selector=None, value_selector=None)
+
+         .. rubric:: Examples
+
+         Convert a ``Grouping`` to a ``dict`` using the default selectors::
+
+            >>> g = Grouping("fruit", ["pear", "apple", "orange", "banana"])
+            >>> g.to_dictionary()
+            {'fruit': ['pear', 'apple', 'orange', 'banana']}
+
+         Providing a ``key_selector`` and to generate the dictionary keys from the
+         length of each element in the ``Grouping``::
+
+           >>> g.to_dictionary(key_selector=len, value_selector=identity)
+           {4: 'pear', 5: 'apple', 6: 'banana'}
+
+         Notice that first six-letter word 'orange' is overwritten by the second
+         six-letter word, 'banana'.
+
+         Since the key of the ``Grouping`` is not availble via the items in the
+         collection, if you need to incorporate the key into the produced ``dict``
+         it must be incorporated into the selectors::
+
+            >>> g.to_dictionary(
+            ...     key_selector=lambda item: '{} letter {}'.format(len(item), g.key),
+            ...     value_selector=str.capitalize)
+            ...
+            {'5 letter fruit': 'Apple', '6 letter fruit': 'Banana', '4 letter fruit': 'Pear'}

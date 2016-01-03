@@ -4,6 +4,9 @@ Changes
 asq 1.3
 -------
 
+There are several minor breaking API changes in this release. Please read
+carefully more details:
+
   * Re-assigns copyright from Robert Smallshire to Sixty North AS.
 
   * Adds ``select_with_correspondence()`` query method.
@@ -15,6 +18,27 @@ asq 1.3
 
   * Adds the ``KeyedElement`` ``namedtuple`` to the ``namedelements`` module.
     ``KeyedElement`` has two elements called ``key`` and ``value``.
+
+  * Queryable.to_dictionary() no longer raises an exception if the key_selector
+    produces duplicate keys. Instead, the values associated with later keys
+    overwrite those produced by earlier keys.  This weakening of the
+    to_dictionary() constract allows us to maintain Liskov subsstitutability in
+    light of the specialised default key and value selectors for the overrides
+    of ``to_dictionary()`` provided for the ``Lookup`` and ``Grouping`` classes.
+    (See the next two changes for more details).
+
+  * Less surprising behaviour for ``Lookup.to_dictionary()``:
+    The default key and value selectors for ``Lookup.to_dictionary()`` are
+    overidden, so that the produced dictionary contains a single item for each
+    ``Grouping`` such that the key of each item is the key of the corresponding
+    ``Grouping`` and the value of the item is a list of the elements from the
+    ``Grouping``.
+
+  * Less surprising behaviour for ``Grouping.to_dictionary()``:
+    The default key and value selectors for ``Grouping.to_dictionary()`` are
+    overidden, so that the produced dictionary contains a single item, such that
+    the key of the item is the key of the ``Grouping`` and the value of the item
+    is a ``list`` containing the elements from the ``Grouping``.
 
 asq 1.2.1
 ---------

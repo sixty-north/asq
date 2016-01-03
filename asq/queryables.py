@@ -2084,7 +2084,6 @@ class Queryable(object):
 
         Raises:
             ValueError: If the Queryable is closed.
-            ValueError: If duplicate keys are in the projected source sequence.
             TypeError: If key_selector is not callable.
             TypeError: If value_selector is not callable.
         """
@@ -2101,8 +2100,6 @@ class Queryable(object):
 
         dictionary = {}
         for key, value in self.select(lambda x: (key_selector(x), value_selector(x))):
-            if key in dictionary:
-                raise ValueError("Duplicate key value {key} in sequence during to_dictionary()".format(key=repr(key)))
             dictionary[key] = value
         return dictionary
 
@@ -2742,7 +2739,7 @@ class Lookup(Queryable):
     def to_dictionary(
             self,
             key_selector=lambda item: item.key,
-            value_selector=lambda item: item.to_list()):
+            value_selector=list):
         """Build a dictionary from the source sequence.
 
         Args:
@@ -2756,7 +2753,6 @@ class Lookup(Queryable):
 
         Raises:
             ValueError: If the Queryable is closed.
-            ValueError: If duplicate keys are in the projected source sequence.
             TypeError: If key_selector is not callable.
             TypeError: If value_selector is not callable.
         """
@@ -2827,20 +2823,24 @@ class Grouping(Queryable):
 
         Args:
             key_selector: A unary callable to extract a key from each item or None.
-                By default the key is the key from this Grouping.
+                If None, the default key selector produces a single dictionary key, which
+                if the key of this Grouping.
 
             value_selector: A unary callable to extract a value from each item.
-                By default the single value is a list containing all items from the
-                Grouping.
+                If None, the default value selector produces a list, which contains all
+                elements from this Grouping.
 
         Note: This method uses immediate execution.
 
         Raises:
             ValueError: If the Queryable is closed.
-            ValueError: If duplicate keys are in the projected source sequence.
             TypeError: If key_selector is not callable.
             TypeError: If value_selector is not callable.
         """
-        if key_selector is None and value_selector is None:
-            return {self.key: self.to_list()}
+        if key_selector is None:
+            key_selector = lambda _: self.key
+
+        if value_selector is None:
+            value_selector = lambda _: self.to_list()
+
         return super(Grouping, self).to_dictionary(key_selector, value_selector)
