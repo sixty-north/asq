@@ -41,7 +41,7 @@ How to get it
 =============
 
 ``asq`` is available on the Python Package Index and can be installed with
-easy_install from setuptools::
+``easy_install`` or ``pip``::
 
   $ pip install asq
 
