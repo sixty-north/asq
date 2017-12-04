@@ -1,7 +1,8 @@
 import unittest
-from asq.initiators import query
+from asq import query
 
 __author__ = "Sixty North"
+
 
 class TestAsq(unittest.TestCase):
 

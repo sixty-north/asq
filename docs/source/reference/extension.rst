@@ -66,7 +66,7 @@
        ...             prev = item
        ...     return self._create(generate_pairs())
        ...
-       >>> from asq.initiators import query
+       >>> from asq import query
        >>> a = [5, 4, 7, 2, 8, 9, 1, 0, 4]
        >>> query(a).pairs().to_list()
        [(5, 4), (4, 7), (7, 2), (2, 8), (8, 9), (9, 1), (1, 0), (0, 4)]

@@ -77,7 +77,7 @@ in the examples directory with::
 Now we can import the query tools we need. We'll start with the most commonly
 used import from ``asq`` which is the ``query`` initiator::
 
-  >>> from asq.initiators import query
+  >>> from asq import query
 
 The ``query`` initiator allows us to perform queries over any Python iterable,
 such as the ``students`` object we imported.
