@@ -47,7 +47,7 @@ How to get it
 
 Alternatively you can download and unpack the source and install using::
 
-  $ cd asq-1.2
+  $ cd asq-1.3
   $ python setup.py install
 
 Requirements
