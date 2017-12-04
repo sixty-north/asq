@@ -27,9 +27,9 @@ Installing ``asq``
 ==================
 
 ``asq`` is available on the `Python Package Index`_ (PyPI) and can be installed with
-``easy_install`` so long as you have `setuptools`_ installed already::
+``pip``::
 
-  $ easy_install asq
+  $ pip install asq
 
 Alternatively, you can download and unpack the source distribution from the
 ``asq`` `downloads page`_ or PyPI. You should then unpack the source
@@ -116,9 +116,11 @@ Initiators
 ----------
 
 All query expressions begin with query *initiator*. Initiators are the entry
-points to ``asq``. All initiators return Queryables on which any query method
-can be called. We have already seen the ``query()`` initiator in use. The
-full list of available query initiators is:
+points to ``asq`` and are to be found the in the ``initiators`` submodule. The
+most commonly used ``query`` initiator is also availble from the top-level
+``asq`` namespace for convenience. All initiators return Queryables on which
+any query method can be called. We have already seen the ``query()`` initiator
+in use. The full list of available query initiators is:
 
   ========================== ==================================================
   Initiator                  Purpose
@@ -159,9 +161,9 @@ Most of the query operators can be composed in chains to create more complex
 queries. For example, we could extract and compose the full names of the
 three students resulting from the previous query with::
 
-  >>> query(students).where(lambda s: s['firstname'].startswith('J'))      \
-  ...              .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
-  ...              .to_list()
+  >>> query(students).where(lambda s: s['firstname'].startswith('J'))        \
+  ...                .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
+  ...                .to_list()
   ['Joe Blogs', 'John Doe', 'Jane Doe']
 
 .. note::
@@ -172,7 +174,7 @@ three students resulting from the previous query with::
 If we would like our results sorted by the students' minimum scores we can use
 the Python built-in function ``min()`` with the ``order_by`` query operator::
 
- >>> query(students).where(lambda s: s['firstname'].startswith('J'))      \
+ >>> query(students).where(lambda s: s['firstname'].startswith('J'))        \
  ...                .order_by(lambda s: min(s['scores']))                   \
  ...                .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
  ...                .to_list()
@@ -186,9 +188,9 @@ primary query.  For example, to order the students by their average score we
 can invoke the ``query()`` initiator a second time and chain the ``average()``
 query operator to determine the mean score to pass to ``order_by()``::
 
-  >>>  query(students).order_by(lambda s: query(s['scores']).average()) \
+  >>>  query(students).order_by(lambda s: query(s['scores']).average())            \
   ...                 .where(lambda student: student['firstname'].startswith('J')) \
-  ...                 .select(lambda s: s['firstname'] + ' ' + s['lastname']) \
+  ...                 .select(lambda s: s['firstname'] + ' ' + s['lastname'])      \
   ...                 .to_list()
   ['Joe Blogs', 'John Doe', 'Jane Doe']
 

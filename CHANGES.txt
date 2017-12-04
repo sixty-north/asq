@@ -1,6 +1,11 @@
 Changes
 =======
 
+asq v.next
+----------
+
+  * Adds a convenience alias for ``asq.initiators.query`` as ``asq.query``.
+
 asq 1.3
 -------
 
