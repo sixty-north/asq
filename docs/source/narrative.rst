@@ -584,7 +584,7 @@ The provided predicates are:
   ``lt_(value)``                ``lambda x: x < value``
   ``le_(value)``                ``lambda x: x <= value``
   ``ge_(value)``                ``lambda x: x >= value``
-  ``gt_(value)``                ``lambda x: x >= value``
+  ``gt_(value)``                ``lambda x: x > value``
   ``is_(value)``                ``lambda x: x is value``
   ``contains_(value)``          ``lambda x: value in x``
   ============================= ===============================================
