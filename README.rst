@@ -54,5 +54,5 @@ Requirements
 ============
 
 This version of ``asq`` works with  and 2.7 and higher, including Python 3.
-It is tested on Python 2.7, Python 3.3, Python 3.4 and Python 3.5.
+It is tested on Python 2.7, and Python 3.4 to 3.7.
 Furthermore it is tested on IronPython 2.7.
