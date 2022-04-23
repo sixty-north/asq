@@ -91,8 +91,8 @@ def make_selector(value):
 
     Args:
         value: If is a callable, then returned unchanged.  If a string is used
-            then create an attribute selector. If in an integer is used then
-            create a key selector.
+            then create an attribute selector. If in an list containing a single item
+            is used then create a key/index selector.
 
     Returns:
         A callable selector based on the supplied value.
@@ -104,6 +104,8 @@ def make_selector(value):
         return value
     if is_string(value):
         return a_(value)
+    if isinstance(value, list) and len(value) == 1:
+        return k_(value[0])
     raise ValueError("Unable to create callable selector from '{0}'".format(value))
 
 
