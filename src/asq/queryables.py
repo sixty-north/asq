@@ -1677,13 +1677,14 @@ class Queryable(object):
 
     def _single_predicate(self, predicate):
         found = False
+        result = None
         for item in self:
             if predicate(item):
-                if found == True:
+                if found:
                     raise ValueError("Sequence contains more than one value matching single() predicate.")
                 result = item
                 found = True
-        if found == False:
+        if not found:
             raise ValueError("Sequence for single() contains no items matching the predicate.")
         return result
 
