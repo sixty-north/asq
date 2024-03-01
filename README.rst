@@ -1,12 +1,12 @@
-``asq`` is simple implementation of a LINQ-inspired API for Python which
+*Asq* is simple implementation of a LINQ-inspired API for Python which
 operates over Python iterables, including a parallel version implemented in
 terms of the Python standard library multiprocessing module.
 
 What It Does
 ============
 
-``asq`` is a package implementing queries over iterables of Python
-objects.  `asq` provides a fluent interface making extensive use of method
+*Asq* is a package implementing queries over iterables of Python
+objects. *Asq* provides a fluent interface making extensive use of method
 chaining to create complex queries without compromising readability.  For
 example, to take the first five uppercased results from a list of words sorted
 by length and then alphabetically, try::
@@ -29,8 +29,7 @@ Status
 
 Build status:
 
-.. image:: https://travis-ci.org/sixty-north/segpy.svg?branch=master
-    :target: https://travis-ci.org/sixty-north/asq
+.. image:: https://github.com/sixty-north/asq/workflows/actions.yml/badge.svg
     :alt: Build Status
 
 .. image:: https://readthedocs.org/projects/asq/badge/?version=latest
@@ -40,12 +39,11 @@ Build status:
 How to get it
 =============
 
-``asq`` is available on the Python Package Index and can be installed with
-``easy_install`` or ``pip``::
+*Asq* is available on the Python Package Index and can be installed with ``pip``::
 
   $ pip install asq
 
 Requirements
 ============
 
-This version of ``asq`` works with  and 3.9 and higher
+This version of *Asq* works with Python 3.9 and higher
