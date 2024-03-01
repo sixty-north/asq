@@ -9,7 +9,7 @@ class TestRange(unittest.TestCase):
         b = integers(54, 7).to_list()
         self.assertEqual(b, [54, 55, 56, 57, 58, 59, 60])
 
-    def test_range(self):
+    def test_range_spanning_zero(self):
         b = integers(-3, 6).to_list()
         self.assertEqual(b, [-3, -2, -1, 0, 1, 2])
 
