@@ -53,11 +53,8 @@ To avoid having to type in this data structure, you can navigate to the root of
 the unpacked source distribution of asq and then import it from ``pupils.py``
 in the examples directory with::
 
-  $ cd asq/examples/
+  $ cd examples/
   $ python
-  Python 2.6.2 (r262:71605, Apr 14 2009, 22:40:02) [MSC v.1500 32 bit (Intel)] on
-  win32
-  Type "help", "copyright", "credits" or "license" for more information.
   >>> from pupils import students
 
 Now we can import the query tools we need. We'll start with the most commonly
@@ -103,7 +100,7 @@ Initiators
 
 All query expressions begin with query *initiator*. Initiators are the entry
 points to ``asq`` and are to be found the in the ``initiators`` submodule. The
-most commonly used ``query`` initiator is also availble from the top-level
+most commonly used ``query`` initiator is also available from the top-level
 ``asq`` namespace for convenience. All initiators return Queryables on which
 any query method can be called. We have already seen the ``query()`` initiator
 in use. The full list of available query initiators is:
@@ -721,37 +718,37 @@ implemented with ``asq``. Fizz-Buzz is a game where the numbers 1 to 100 are
 read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
 divisible by five, "Buzz" is shouted::
 
-  >>> from src.asq import integers
+  >>> from asq import integers
   >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
 
 read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
 divisible by five, "Buzz" is shouted::
 
-  >>> from src.asq import integers
+  >>> from asq import integers
   >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
 
 read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
 divisible by five, "Buzz" is shouted::
 
-  >>> from src.asq import integers
+  >>> from asq import integers
   >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
 
 read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
 divisible by five, "Buzz" is shouted::
 
-  >>> from src.asq import integers
+  >>> from asq import integers
   >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
 
 read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
 divisible by five, "Buzz" is shouted::
 
-  >>> from src.asq import integers
+  >>> from asq import integers
   >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
 
 read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
 divisible by five, "Buzz" is shouted::
 
-  >>> from src.asq import integers
+  >>> from asq import integers
   >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
 
 read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
