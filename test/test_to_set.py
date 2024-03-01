@@ -8,7 +8,7 @@ class TestToSet(unittest.TestCase):
     def test_to_set(self):
         a = [1, 2, 4, 8, 16, 32]
         b = Queryable(a).to_set()
-        c = set([1, 2, 4, 8, 16, 32])
+        c = {1, 2, 4, 8, 16, 32}
         self.assertEqual(b, c)
 
     def test_to_set_closed(self):
