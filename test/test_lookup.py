@@ -51,7 +51,7 @@ class TestLookup(unittest.TestCase):
         lookup = Lookup(k_v)
         self.assertTrue('a' in lookup)
 
-    def test_lookup_in_positive(self):
+    def test_lookup_in_negative(self):
         k_v = [ ('a', 'artichoke'),
                 ('b', 'blackberry'),
                 ('c', 'clementine'),
