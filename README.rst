@@ -29,7 +29,7 @@ Status
 
 Build status:
 
-.. image:: https://github.com/sixty-north/asq/workflows/actions.yml/badge.svg
+.. image:: https://github.com/sixty-north/asq/actions/workflows/actions.yml/badge.svg
     :alt: Build Status
 
 .. image:: https://readthedocs.org/projects/asq/badge/?version=latest
