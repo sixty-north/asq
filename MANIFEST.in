@@ -1,3 +1,0 @@
-recursive-include docs/build/html *.html *.css *.png *.js
-recursive-include asq/test *.py
-recursive-include asq/examples *.py

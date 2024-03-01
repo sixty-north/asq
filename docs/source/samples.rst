@@ -12,13 +12,13 @@ Library <http://www.pythonware.com/products/pil/>`_ and so at the time of
 writing only works with Python 2.
 
 This example can be found in the source distribution of ``asq`` under
-``asq/examples/mandelbrot.py``.
+``examples/mandelbrot.py``.
 
-.. literalinclude:: ../../asq/examples/mandelbrot.py
+.. literalinclude:: ../../examples/mandelbrot.py
 
 This example can be be run with::
 
-  python -m asq.examples.mandelbrot
+  python examples/mandelbrot.py
 
 which produces
 

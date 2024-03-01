@@ -3,7 +3,7 @@
 
 ``asq`` implements a chained declarative style queries for Python *iterables*.
 This provides an alternative to traditional ``for`` loops or comprehensions
-which are ubiquitious in Python.  Query methods can offer the following
+which are ubiquitous in Python.  Query methods can offer the following
 advantages over loops or comprehensions:
 
  1. **Concision**: ``asq`` query expressions can be to the point, especially
@@ -31,23 +31,9 @@ Installing ``asq``
 
   $ pip install asq
 
-Alternatively, you can download and unpack the source distribution from the
-``asq`` `downloads page`_ or PyPI. You should then unpack the source
-distribution into a temporary directory and run the setup script which will
-install ``asq`` into the current Python environment, for example::
-
-  $ tar xzf asq-1.0.tar.gz
-  $ cd asq-1.0
-  $ python setup.py install
-
-If you are using Python 2.6 you will also need to install the back-ported
-`ordereddict`_ module which was introduced in Python 2.7.
-
 .. _Python Package Index: http://pypi.python.org/pypi/asq/
 
-.. _setuptools: http://pypi.python.org/pypi/setuptools/
 
-.. _ordereddict: http://pypi.python.org/pypi/ordereddict
 
 Diving in
 =========
@@ -733,7 +719,43 @@ than lazy, evaluation of sequences.
 To demonstrate, let's start with a bug-ridden implementation of Fizz-Buzz
 implemented with ``asq``. Fizz-Buzz is a game where the numbers 1 to 100 are
 read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
-divisible by five, "Buzz" is shouted.
+divisible by five, "Buzz" is shouted::
+
+  >>> from src.asq import integers
+  >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
+
+read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
+divisible by five, "Buzz" is shouted::
+
+  >>> from src.asq import integers
+  >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
+
+read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
+divisible by five, "Buzz" is shouted::
+
+  >>> from src.asq import integers
+  >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
+
+read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
+divisible by five, "Buzz" is shouted::
+
+  >>> from src.asq import integers
+  >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
+
+read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
+divisible by five, "Buzz" is shouted::
+
+  >>> from src.asq import integers
+  >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
+
+read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
+divisible by five, "Buzz" is shouted::
+
+  >>> from src.asq import integers
+  >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x)
+
+read aloud but for numbers divisible by three "Fizz" is shouted, and for numbers
+divisible by five, "Buzz" is shouted::
 
   >>> from asq.initiators import integers
   >>> integers(1, 100).select(lambda x: "Fizz" if x % 3 == 0 else x) \
