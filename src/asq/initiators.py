@@ -1,9 +1,6 @@
 '''Initiators are factory functions for creating Queryables.'''
 import itertools
 
-from ._portability import irange
-from asq._portability import is_callable
-
 __author__ = 'Sixty North'
 
 
@@ -48,7 +45,7 @@ def integers(start, count):
     '''
     if count < 0:
         raise ValueError("integers() count cannot be negative")
-    return query(irange(start, start + count))
+    return query(range(start, start + count))
 
 
 def repeat(element, count):
@@ -87,7 +84,7 @@ def empty():
 
 
 def generate(func, initial):
-    if not is_callable(func):
+    if not callable(func):
         raise TypeError("func is not callable in call to generate().")
     return query(_generate_result(func, initial))
 

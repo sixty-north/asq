@@ -1,5 +1,4 @@
 import unittest
-from asq._portability import is_callable
 from asq.selectors import k_, a_, m_, identity
 
 __author__ = "Sixty North"
@@ -8,7 +7,7 @@ class TestKeySelector(unittest.TestCase):
 
     def test_k_result_is_callable(self):
         foo_selector = k_('foo')
-        self.assertTrue(is_callable(foo_selector))
+        self.assertTrue(callable(foo_selector))
 
     def test_k_positive(self):
         d = {'sheila' : 56, 'jim' : 23, 'fred' : 55}
@@ -31,7 +30,7 @@ class TestAttributeSelector(unittest.TestCase):
 
     def test_a_result_is_callable(self):
         foo_selector = a_('foo')
-        self.assertTrue(is_callable(foo_selector))
+        self.assertTrue(callable(foo_selector))
 
     def test_a_positive(self):
         c = TestAttributeSelector.HasAttributes()
@@ -58,7 +57,7 @@ class TestMethodSelector(unittest.TestCase):
 
     def test_m_result_is_callable(self):
         foo_selector = m_('foo')
-        self.assertTrue(is_callable(foo_selector))
+        self.assertTrue(callable(foo_selector))
 
     def test_m_positive(self):
         c = TestMethodSelector.HasMethods()

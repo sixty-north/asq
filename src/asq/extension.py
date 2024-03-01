@@ -2,8 +2,6 @@
 
 __author__ = 'Sixty North'
 
-from ._portability import function_name
-
 
 def add_method(function, klass, name=None):
     '''Add an existing function to a class as a method.
@@ -28,7 +26,7 @@ def add_method(function, klass, name=None):
     '''
     # Should we be using functools.update_wrapper in here?
     if name is None:
-        name = function_name(function)
+        name = function.__name__
     if hasattr(klass, name):
         raise ValueError("Cannot replace existing attribute with method "
                          "'{name}'".format(name=name))

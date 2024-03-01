@@ -1,7 +1,6 @@
 '''
 Predicate functions for testing Python objects to determine their type.
 '''
-from asq import _portability
 
 __author__ = "Sixty North"
 
@@ -39,4 +38,4 @@ def is_type(obj):
 
 
 def is_string(obj):
-    return _portability.is_string(obj)
+    return isinstance(obj, str)

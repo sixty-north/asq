@@ -23,16 +23,14 @@
 import heapq
 import itertools
 import operator
+from collections import OrderedDict
+from functools import reduce, total_ordering
 
 from asq.selectors import make_selector
 
 from .selectors import identity
-from .extension import extend
 from asq.namedelements import IndexedElement, KeyedElement
 from ._types import (is_iterable, is_type)
-from ._portability import (imap, ifilter, irange, izip, izip_longest,
-                           fold, is_callable, OrderedDict, has_unicode_type,
-                           itervalues, iteritems, totally_ordered)
 
 
 # A sentinel singleton used to identify default argument values.
@@ -189,7 +187,7 @@ class Queryable(object):
         if selector is identity:
             return self
 
-        return self._create(imap(selector, self))
+        return self._create(map(selector, self))
 
     def select_with_index(
             self,
@@ -227,15 +225,15 @@ class Queryable(object):
             raise ValueError("Attempt to call select_with_index() on a "
                              "closed Queryable.")
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("select_with_index() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
-        if not is_callable(transform):
+        if not callable(transform):
             raise TypeError("select_with_index() parameter item_selector={0} is "
                             "not callable".format(repr(selector)))
 
-        return self._create(itertools.starmap(selector, enumerate(imap(transform, iter(self)))))
+        return self._create(itertools.starmap(selector, enumerate(map(transform, iter(self)))))
 
     def select_with_correspondence(
             self,
@@ -278,11 +276,11 @@ class Queryable(object):
             raise ValueError("Attempt to call select_with_correspondence() on a "
                              "closed Queryable.")
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("select_with_correspondence() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("select_with_correspondence() parameter result_selector={0} is "
                             "not callable".format(repr(result_selector)))
 
@@ -331,11 +329,11 @@ class Queryable(object):
             raise ValueError("Attempt to call select_many() on a closed "
                              "Queryable.")
 
-        if not is_callable(collection_selector):
+        if not callable(collection_selector):
             raise TypeError("select_many() parameter projector={0} is not "
                             "callable".format(repr(collection_selector)))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("select_many() parameter selector={selector} is "
                         " not callable".format(selector=repr(result_selector)))
 
@@ -394,11 +392,11 @@ class Queryable(object):
             raise ValueError("Attempt to call select_many_with_index() on a "
                              "closed Queryable.")
 
-        if not is_callable(collection_selector):
+        if not callable(collection_selector):
             raise TypeError("select_many_with_index() parameter "
              "projector={0} is not callable".format(repr(collection_selector)))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("select_many_with_index() parameter "
                 "selector={0} is not callable".format(repr(result_selector)))
 
@@ -463,11 +461,11 @@ class Queryable(object):
             raise ValueError("Attempt to call "
                 "select_many_with_correspondence() on a closed Queryable.")
 
-        if not is_callable(collection_selector):
+        if not callable(collection_selector):
             raise TypeError("select_many_with_correspondence() parameter "
              "projector={0} is not callable".format(repr(collection_selector)))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("select_many_with_correspondence() parameter "
                 "selector={0} is not callable".format(repr(result_selector)))
 
@@ -527,15 +525,15 @@ class Queryable(object):
             raise ValueError("Attempt to call group_by() on a closed "
                              "Queryable.")
 
-        if not is_callable(key_selector):
+        if not callable(key_selector):
             raise TypeError("group_by() parameter key_selector={0} is not "
                             "callable".format(repr(key_selector)))
 
-        if not is_callable(element_selector):
+        if not callable(element_selector):
             raise TypeError("group_by() parameter element_selector={0} is not "
                             "callable".format(repr(element_selector)))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("group_by() parameter result_selector={0} is not "
                             "callable".format(repr(result_selector)))
 
@@ -569,11 +567,11 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call where() on a closed Queryable.")
 
-        if not is_callable(predicate):
+        if not callable(predicate):
             raise TypeError("where() parameter predicate={predicate} is not "
                                   "callable".format(predicate=repr(predicate)))
 
-        return self._create(ifilter(predicate, self))
+        return self._create(filter(predicate, self))
 
     def of_type(self, classinfo):
         '''Filters elements according to whether they are of a certain type.
@@ -635,7 +633,7 @@ class Queryable(object):
             raise ValueError("Attempt to call order_by() on a "
                              "closed Queryable.")
 
-        if not is_callable(key_selector):
+        if not callable(key_selector):
             raise TypeError("order_by() parameter key_selector={key_selector} "
                     "is not callable".format(key_selector=repr(key_selector)))
 
@@ -670,7 +668,7 @@ class Queryable(object):
             raise ValueError("Attempt to call order_by_descending() on a "
                              "closed Queryable.")
 
-        if not is_callable(key_selector):
+        if not callable(key_selector):
             raise TypeError("order_by_descending() parameter key_selector={0} "
                             "is not callable".format(repr(key_selector)))
 
@@ -722,7 +720,7 @@ class Queryable(object):
             raise ValueError("Attempt to call take_while() on a closed "
                              "Queryable.")
 
-        if not is_callable(predicate):
+        if not callable(predicate):
             raise TypeError("take_while() parameter predicate={0} is "
                             "not callable".format(repr(predicate)))
 
@@ -777,7 +775,7 @@ class Queryable(object):
         return self._create(self._generate_skip_result(count))
 
     def _generate_optimized_skip_result(self, count, stop):
-        for i in irange(count, stop):
+        for i in range(count, stop):
             yield self._iterable[i]
 
     def _generate_skip_result(self, count):
@@ -806,7 +804,7 @@ class Queryable(object):
             raise ValueError("Attempt to call take_while() on a "
                             "closed Queryable.")
 
-        if not is_callable(predicate):
+        if not callable(predicate):
             raise TypeError("skip_while() parameter predicate={0} is "
                             "not callable".format(repr(predicate)))
 
@@ -947,7 +945,7 @@ class Queryable(object):
         return index + 1
 
     def _count_predicate(self, predicate):
-        if not is_callable(predicate):
+        if not callable(predicate):
             raise TypeError("count() parameter predicate={0} is "
                             "not callable".format(repr(predicate)))
 
@@ -979,7 +977,7 @@ class Queryable(object):
         if predicate is None:
             predicate = lambda x: True
 
-        if not is_callable(predicate):
+        if not callable(predicate):
             raise TypeError("any() parameter predicate={predicate} is not callable".format(predicate=repr(predicate)))
 
         for item in self.select(predicate):
@@ -1010,7 +1008,7 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call all() on a closed Queryable.")
 
-        if not is_callable(predicate):
+        if not callable(predicate):
             raise TypeError("all() parameter predicate={0} is "
                             "not callable".format(repr(predicate)))
 
@@ -1038,7 +1036,7 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call min() on a closed Queryable.")
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("min() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
@@ -1067,7 +1065,7 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call max() on a closed Queryable.")
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("max() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
@@ -1096,7 +1094,7 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call sum() on a closed Queryable.")
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("sum() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
@@ -1125,7 +1123,7 @@ class Queryable(object):
             raise ValueError("Attempt to call average() on a "
                              "closed Queryable.")
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("average() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
@@ -1160,7 +1158,7 @@ class Queryable(object):
             raise ValueError("Attempt to call contains() on a "
                              "closed Queryable.")
 
-        if not is_callable(equality_comparer):
+        if not callable(equality_comparer):
             raise TypeError("contains() parameter equality_comparer={0} is "
                 "not callable".format(repr(equality_comparer)))
 
@@ -1237,7 +1235,7 @@ class Queryable(object):
             raise ValueError("Attempt to call distinct() on a "
                              "closed Queryable.")
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("distinct() parameter selector={0} is "
                 "not callable".format(repr(selector)))
 
@@ -1291,7 +1289,7 @@ class Queryable(object):
             raise TypeError("Cannot compute difference() with second_iterable"
                "of non-iterable {0}".format(str(type(second_iterable))[7: -2]))
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("difference() parameter selector={0} is "
                 "not callable".format(repr(selector)))
 
@@ -1339,7 +1337,7 @@ class Queryable(object):
             raise TypeError("Cannot compute intersect() with second_iterable "
                "of non-iterable {0}".format(str(type(second_iterable))[7: -1]))
 
-        if not is_callable(selector):
+        if not callable(selector):
             raise TypeError("intersect() parameter selector={0} is "
                             "not callable".format(repr(selector)))
 
@@ -1436,15 +1434,15 @@ class Queryable(object):
             raise TypeError("Cannot compute join() with inner_iterable of "
                    "non-iterable {0}".format(str(type(inner_iterable))[7: -1]))
 
-        if not is_callable(outer_key_selector):
+        if not callable(outer_key_selector):
             raise TypeError("join() parameter outer_key_selector={0} is not "
                             "callable".format(repr(outer_key_selector)))
 
-        if not is_callable(inner_key_selector):
+        if not callable(inner_key_selector):
             raise TypeError("join() parameter inner_key_selector={0} is not "
                             "callable".format(repr(inner_key_selector)))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("join() parameter result_selector={0} is not "
                             "callable".format(repr(result_selector)))
 
@@ -1513,15 +1511,15 @@ class Queryable(object):
             raise TypeError("Cannot compute group_join() with inner_iterable of non-iterable {type}".format(
                     type=str(type(inner_iterable))[7: -1]))
 
-        if not is_callable(outer_key_selector):
+        if not callable(outer_key_selector):
             raise TypeError("group_join() parameter outer_key_selector={outer_key_selector} is not callable".format(
                     outer_key_selector=repr(outer_key_selector)))
 
-        if not is_callable(inner_key_selector):
+        if not callable(inner_key_selector):
             raise TypeError("group_join() parameter inner_key_selector={inner_key_selector} is not callable".format(
                     inner_key_selector=repr(inner_key_selector)))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("group_join() parameter result_selector={result_selector} is not callable".format(
                     result_selector=repr(result_selector)))
 
@@ -1934,22 +1932,22 @@ class Queryable(object):
             raise ValueError("Attempt to call aggregate() on a "
                              "closed Queryable.")
 
-        if not is_callable(reducer):
+        if not callable(reducer):
             raise TypeError("aggregate() parameter reducer={0} is "
                             "not callable".format(repr(reducer)))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("aggregate() parameter result_selector={0} is "
                             "not callable".format(repr(result_selector)))
 
         if seed is default:
             try:
-                return result_selector(fold(reducer, self))
+                return result_selector(reduce(reducer, self))
             except TypeError as e:
                 if 'empty' in str(e):
                     raise ValueError("Cannot aggregate() empty sequence with "
                                      "no seed value")
-        return result_selector(fold(reducer, self, seed))
+        return result_selector(reduce(reducer, self, seed))
 
     def zip(self, second_iterable, result_selector=lambda x, y: (x, y)):
         '''Elementwise combination of two sequences.
@@ -1987,11 +1985,11 @@ class Queryable(object):
             raise TypeError("Cannot compute zip() with second_iterable of "
                   "non-iterable {0}".format(str(type(second_iterable))[7: -1]))
 
-        if not is_callable(result_selector):
+        if not callable(result_selector):
             raise TypeError("zip() parameter result_selector={0} is "
                             "not callable".format(repr(result_selector)))
 
-        return self._create(result_selector(*t) for t in izip(self, second_iterable))
+        return self._create(result_selector(*t) for t in zip(self, second_iterable))
 
     def to_list(self):
         '''Convert the source sequence to a list.
@@ -2057,11 +2055,11 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call to_lookup() on a closed Queryable.")
 
-        if not is_callable(key_selector):
+        if not callable(key_selector):
             raise TypeError("to_lookup() parameter key_selector={key_selector} is not callable".format(
                     key_selector=repr(key_selector)))
 
-        if not is_callable(value_selector):
+        if not callable(value_selector):
             raise TypeError("to_lookup() parameter value_selector={value_selector} is not callable".format(
                     value_selector=repr(value_selector)))
 
@@ -2091,11 +2089,11 @@ class Queryable(object):
         if self.closed():
             raise ValueError("Attempt to call to_dictionary() on a closed Queryable.")
 
-        if not is_callable(key_selector):
+        if not callable(key_selector):
             raise TypeError("to_dictionary() parameter key_selector={key_selector} is not callable".format(
                     key_selector=repr(key_selector)))
 
-        if not is_callable(value_selector):
+        if not callable(value_selector):
             raise TypeError("to_dictionary() parameter value_selector={value_selector} is not callable".format(
                     value_selector=repr(value_selector)))
 
@@ -2170,7 +2168,7 @@ class Queryable(object):
             raise TypeError("Cannot compute sequence_equal() with second_iterable of non-iterable {type}".format(
                     type=str(type(second_iterable))[7: -1]))
 
-        if not is_callable(equality_comparer):
+        if not callable(equality_comparer):
             raise TypeError("aggregate() parameter equality_comparer={equality_comparer} is not callable".format(
                     equality_comparer=repr(equality_comparer)))
 
@@ -2182,7 +2180,7 @@ class Queryable(object):
             pass
 
         sentinel = object()
-        for first, second in izip_longest(self, second_iterable, fillvalue=sentinel):
+        for first, second in itertools.zip_longest(self, second_iterable, fillvalue=sentinel):
             if first is sentinel or second is sentinel:
                 return False
             if not equality_comparer(first, second):
@@ -2315,7 +2313,7 @@ class Queryable(object):
             raise ValueError("Attempt to call scan() on a "
                              "closed Queryable.")
 
-        if not is_callable(func):
+        if not callable(func):
             raise TypeError("scan() parameter func={0} is "
                             "not callable".format(repr(func)))
 
@@ -2360,7 +2358,7 @@ class Queryable(object):
             raise ValueError("Attempt to call pre_scan() on a "
                              "closed Queryable.")
 
-        if not is_callable(func):
+        if not callable(func):
             raise TypeError("pre_scan() parameter func={0} is "
                             "not callable".format(repr(func)))
 
@@ -2454,57 +2452,6 @@ class Queryable(object):
         '''
         return self.to_str()
 
-if has_unicode_type():
-
-    @extend(Queryable)
-    def __unicode__(self):
-        '''Returns a stringified unicode representation of the Queryable.
-
-        Note: This method is only available on Python implementations which
-            support the named unicode type (e.g. Python 2.x).
-
-        The string *will* necessarily contain the sequence data.
-
-        Returns:
-            A stringified unicode representation of the Queryable.
-        '''
-        return self.to_unicode()
-
-    @extend(Queryable)
-    def to_unicode(self, separator=''):
-        '''Build a unicode string from the source sequence.
-
-        Note: This method is only available on Python implementations which
-            support the named unicode type (e.g. Python 2.x).
-
-        The elements of the query result will each coerced to a unicode
-        string and then the resulting strings concatenated to return a
-        single string. This allows the natural processing of character
-        sequences as strings. An optional separator which will be inserted
-        between each item may be specified.
-
-        Note: this method uses immediate execution.
-
-        Args:
-            separator: An optional separator which will be coerced to a
-                unicode string and inserted between each source item in the
-                resulting string.
-
-        Returns:
-            A single unicode string which is the result of stringifying each
-            element and concatenating the results into a single string.
-
-        Raises:
-            TypeError: If any element cannot be coerced to a string.
-            TypeError: If the separator cannot be coerced to a string.
-            ValueError: If the Queryable is closed.
-        '''
-        if self.closed():
-            raise ValueError("Attempt to call to_unicode() on a closed "
-                             "Queryable.")
-
-        return unicode(separator).join(self.select(unicode))
-
 
 class OrderedQueryable(Queryable):
     '''A Queryable representing an ordered iterable.
@@ -2549,7 +2496,7 @@ class OrderedQueryable(Queryable):
             raise ValueError("Attempt to call then_by() on a "
                              "closed OrderedQueryable.")
 
-        if not is_callable(key_selector):
+        if not callable(key_selector):
             raise TypeError("then_by() parameter key_selector={key_selector} "
                     "is not callable".format(key_selector=repr(key_selector)))
 
@@ -2580,7 +2527,7 @@ class OrderedQueryable(Queryable):
         if self.closed():
             raise ValueError("Attempt to call then_by() on a closed OrderedQueryable.")
 
-        if not is_callable(key_selector):
+        if not callable(key_selector):
             raise TypeError("then_by_descending() parameter key_selector={key_selector} is not callable".format(key_selector=repr(key_selector)))
 
         self._funcs.append((+1, key_selector))
@@ -2602,7 +2549,7 @@ class OrderedQueryable(Queryable):
 
         elif direction_total == len(self._funcs):
             # Uniform descending sort - invert sense of operators
-            @totally_ordered
+            @total_ordering
             class MultiKey(object):
                 def __init__(self, t):
                     self.t = tuple(t)
@@ -2615,7 +2562,7 @@ class OrderedQueryable(Queryable):
                     return lhs.t == rhs.t
         else:
             # Mixed ascending/descending sort - override all operators
-            @totally_ordered
+            @total_ordering
             class MultiKey(object):
                 def __init__(self, t):
                     self.t = tuple(t)
@@ -2674,14 +2621,14 @@ class Lookup(Queryable):
             self._dict[key].append(value)
 
         # Replace each list with a Grouping
-        for key, value in iteritems(self._dict):
+        for key, value in iter(self._dict.items()):
             grouping = Grouping(key, value)
             self._dict[key] = grouping
 
         super(Lookup, self).__init__(self._dict)
 
     def _iter(self):
-        return itervalues(self._dict)
+        return iter(self._dict.values())
 
     def __getitem__(self, key):
         '''The sequence corresponding to a given key, or an empty sequence if

@@ -1,7 +1,6 @@
 '''Selector functions and selector function factories.'''
 
 import operator
-from asq._portability import is_callable
 from asq._types import is_string
 from asq.initiators import query
 
@@ -100,7 +99,7 @@ def make_selector(value):
     Raises:
         ValueError: If a selector cannot be created from the value.
     '''
-    if is_callable(value):
+    if callable(value):
         return value
     if is_string(value):
         return a_(value)

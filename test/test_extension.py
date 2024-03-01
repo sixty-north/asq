@@ -1,5 +1,4 @@
 import unittest
-from asq._portability import function_name
 
 from asq.extension import add_method, extend
 
@@ -24,7 +23,7 @@ class TestExtension(unittest.TestCase):
         self.assertTrue(hasattr(instance, "method"))
 
         self.assertEqual(method.__doc__, Extendee.method.__doc__)
-        self.assertEqual(function_name(method), function_name(Extendee.method))
+        self.assertEqual(method.__name__, Extendee.method.__name__)
 
         self.assertEqual(instance.method(), "The result of method()")
 
@@ -45,7 +44,7 @@ class TestExtension(unittest.TestCase):
         self.assertTrue(hasattr(instance, "foo"))
 
         self.assertEqual(method.__doc__, Extendee.foo.__doc__)
-        self.assertEqual(function_name(method), function_name(Extendee.foo))
+        self.assertEqual(method.__name__, Extendee.foo.__name__)
 
         self.assertEqual(instance.foo(), "The result of method()")
 
@@ -85,7 +84,7 @@ class TestExtension(unittest.TestCase):
         self.assertEqual(method.__doc__, Extendee.method.__doc__)
 
         self.assertEqual(instance.method(), "The result of method()")
-        self.assertEqual(function_name(method), function_name(Extendee.method))
+        self.assertEqual(method.__name__, Extendee.method.__name__)
 
     def test_extend_decorator_with_name(self):
 
@@ -103,7 +102,7 @@ class TestExtension(unittest.TestCase):
         self.assertTrue(hasattr(instance, "foo"))
 
         self.assertEqual(method.__doc__, Extendee.foo.__doc__)
-        self.assertEqual(function_name(method), function_name(Extendee.foo))
+        self.assertEqual(method.__name__, Extendee.foo.__name__)
 
         self.assertEqual(instance.foo(), "The result of method()")
 
