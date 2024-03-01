@@ -48,6 +48,4 @@ How to get it
 Requirements
 ============
 
-This version of ``asq`` works with  and 2.7 and higher, including Python 3.
-It is tested on Python 2.7, and Python 3.4 to 3.7.
-Furthermore it is tested on IronPython 2.7.
+This version of ``asq`` works with  and 3.9 and higher
