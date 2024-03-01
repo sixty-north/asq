@@ -1,7 +1,7 @@
 '''
 Predicate functions for testing Python objects to determine their type.
 '''
-from src.asq import _portability
+from asq import _portability
 
 __author__ = "Sixty North"
 

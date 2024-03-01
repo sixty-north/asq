@@ -2,8 +2,8 @@
 import sys
 from timeit import Timer
 
-from src.asq.initiators import query
-from src.asq.selectors import a_
+from asq.initiators import query
+from asq.selectors import a_
 
 class Foo(object):
     def __init__(self):

@@ -1,9 +1,9 @@
 '''Selector functions and selector function factories.'''
 
 import operator
-from src.asq._portability import is_callable
-from src.asq._types import is_string
-from src.asq.initiators import query
+from asq._portability import is_callable
+from asq._types import is_string
+from asq.initiators import query
 
 __author__ = 'Sixty North'
 

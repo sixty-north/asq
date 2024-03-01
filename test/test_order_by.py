@@ -1,6 +1,6 @@
 import itertools
 import unittest
-from src.asq.queryables import Queryable
+from asq.queryables import Queryable
 
 __author__ = "Sixty North"
 

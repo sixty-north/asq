@@ -1,6 +1,6 @@
 import unittest
-from src.asq._portability import is_callable
-from src.asq.selectors import k_, a_, m_, identity
+from asq._portability import is_callable
+from asq.selectors import k_, a_, m_, identity
 
 __author__ = "Sixty North"
 

@@ -1,7 +1,7 @@
 import unittest
-from src.asq._portability import function_name
+from asq._portability import function_name
 
-from src.asq.extension import add_method, extend
+from asq.extension import add_method, extend
 
 __author__ = 'Sixty North'
 

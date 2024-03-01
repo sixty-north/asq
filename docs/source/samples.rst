@@ -16,9 +16,14 @@ This example can be found in the source distribution of ``asq`` under
 
 .. literalinclude:: ../../examples/mandelbrot.py
 
+This examples requires the Python Imaging Library (PIL) to be installed. If you do not have PIL
+installed, you can install it with::
+
+  $ pip install PIL
+
 This example can be be run with::
 
-  python examples/mandelbrot.py
+  $ python examples/mandelbrot.py
 
 which produces
 

@@ -2,7 +2,7 @@
 import itertools
 
 from ._portability import irange
-from src.asq._portability import is_callable
+from asq._portability import is_callable
 
 __author__ = 'Sixty North'
 

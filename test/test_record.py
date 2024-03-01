@@ -1,7 +1,7 @@
 import unittest
 import pickle
 
-from src.asq.record import Record, new
+from asq.record import Record, new
 
 __author__ = "Sixty North"
 

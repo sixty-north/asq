@@ -24,11 +24,11 @@ import heapq
 import itertools
 import operator
 
-from src.asq.selectors import make_selector
+from asq.selectors import make_selector
 
 from .selectors import identity
 from .extension import extend
-from src.asq.namedelements import IndexedElement, KeyedElement
+from asq.namedelements import IndexedElement, KeyedElement
 from ._types import (is_iterable, is_type)
 from ._portability import (imap, ifilter, irange, izip, izip_longest,
                            fold, is_callable, OrderedDict, has_unicode_type,

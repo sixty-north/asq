@@ -1,5 +1,5 @@
-from src.asq.initiators import query
-from src.asq.selectors import k_
+from asq import query
+from asq.selectors import k_
 
 students = [dict(firstname='Joe', lastname='Blogs', scores=[56, 23, 21, 89]),
             dict(firstname='John', lastname='Doe', scores=[34, 12, 92, 93]),

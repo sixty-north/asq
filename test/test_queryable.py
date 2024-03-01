@@ -3,7 +3,7 @@ test_queryable.py Unit tests for asq.queryable.Queryable
 """
 import unittest
 
-from src.asq.queryables import Queryable
+from asq.queryables import Queryable
 
 
 class TestQueryable(unittest.TestCase):

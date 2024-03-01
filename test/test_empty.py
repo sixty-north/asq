@@ -1,5 +1,5 @@
 import unittest
-from src.asq.initiators import empty
+from asq.initiators import empty
 
 __author__ = "Sixty North"
 

@@ -1,5 +1,5 @@
 import unittest
-from src.asq.comparers import insensitive_eq
+from asq.comparers import insensitive_eq
 
 __author__ = "Sixty North"
 

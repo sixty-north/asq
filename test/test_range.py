@@ -1,5 +1,5 @@
 import unittest
-from src.asq.initiators import integers
+from asq.initiators import integers
 
 __author__ = "Sixty North"
 

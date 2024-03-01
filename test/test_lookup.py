@@ -1,5 +1,5 @@
 import unittest
-from src.asq.queryables import Lookup, Grouping
+from asq.queryables import Lookup, Grouping
 
 __author__ = "Sixty North"
 

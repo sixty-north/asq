@@ -1,6 +1,6 @@
 import unittest
-from src.asq._portability import has_unicode_type
-from src.asq.queryables import Queryable
+from asq._portability import has_unicode_type
+from asq.queryables import Queryable
 
 __author__ = "Sixty North"
 

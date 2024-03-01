@@ -1,5 +1,5 @@
 import unittest
-from src.asq import query
+from asq import query
 
 __author__ = "Sixty North"
 

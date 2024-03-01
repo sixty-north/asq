@@ -1,6 +1,6 @@
 import unittest
-from src.asq.queryables import Queryable
-from src.asq.record import new
+from asq.queryables import Queryable
+from asq.record import new
 from helpers import infinite, TracingGenerator
 
 __author__ = "Sixty North"
